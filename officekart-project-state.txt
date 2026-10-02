@@ -1,0 +1,3692 @@
+﻿
+===== SCAN TIME =====
+2026-09-24 08:45:41
+
+===== PROJECT PATH =====
+C:\Users\dwipr\OneDrive\Documents\Desktop\officekart
+
+===== PACKAGE.JSON =====
+{
+  "name": "officekart",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "postinstall": "prisma skills sync || exit 0"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "better-sqlite3": "^13.0.3",
+    "next": "16.3.5",
+    "prisma": "^7.10.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+
+
+===== NODE VERSION =====
+v26.8.2
+
+===== NPM VERSION =====
+11.19.1
+
+===== PRISMA VERSION =====
+Loaded Prisma config from prisma.config.ts. System.Management.Automation.RemoteException Prisma schema loaded from prisma\schema.prisma. prisma               : 7.10.0 @prisma/client       : 7.10.0 Operating System     : win32 Architecture         : x64 Node.js              : v26.8.2 TypeScript           : 5.9.3 Query Compiler       : enabled PSL                  : @prisma/prisma-schema-wasm 7.10.0-4.0edf323efd1d98336f3f0a68684b56f689b900d3 Schema Engine        : schema-engine-cli 0edf323efd1d98336f3f0a68684b56f689b900d3 (at node_modules\@prisma\engines\schema-engine-windows.exe) Default Engines Hash : 0edf323efd1d98336f3f0a68684b56f689b900d3 Studio               : 0.33.0 Prisma CLI Path      : C:\Users\dwipr\OneDrive\Documents\Desktop\officekart\node_modules\prisma
+
+===== PROJECT FILE LIST =====
+.agents\skills\prisma-composer-core-concepts\SKILL.md
+.agents\skills\prisma-platform-core-concepts\SKILL.md
+.claude\skills\prisma-composer-core-concepts\SKILL.md
+.claude\skills\prisma-platform-core-concepts\SKILL.md
+.cursor\skills\prisma-composer-core-concepts\SKILL.md
+.cursor\skills\prisma-platform-core-concepts\SKILL.md
+.devin\skills\prisma-composer-core-concepts\SKILL.md
+.devin\skills\prisma-platform-core-concepts\SKILL.md
+.env.local
+.gitignore
+add-all-function.txt
+AGENTS.md
+app\admin\customers\[id]\orders\page.tsx
+app\admin\customers\[id]\page.tsx
+app\admin\customers\page.tsx
+app\admin\login\page.tsx
+app\admin\orders\[id]\invoice\page.tsx
+app\admin\orders\[id]\page.tsx
+app\admin\orders\new\page.tsx
+app\admin\orders\page.tsx
+app\admin\page.tsx
+app\admin\products\[id]\page.tsx
+app\admin\products\new\page.tsx
+app\admin\products\page.tsx
+app\admin\products\page-backup.tsx
+app\admin\quotes\page.tsx
+app\admin\stock\page.tsx
+app\api\admin\customers\[id]\orders\route.ts
+app\api\admin\customers\[id]\route.ts
+app\api\admin\customers\route.ts
+app\api\admin\dashboard\route.ts
+app\api\admin\login\route.ts
+app\api\admin\logout\route.ts
+app\api\admin\orders\[id]\invoice\route.ts
+app\api\admin\orders\[id]\route.ts
+app\api\admin\orders\route.ts
+app\api\admin\products\[id]\route.ts
+app\api\admin\products\route.ts
+app\api\admin\products\route-backup.ts
+app\api\admin\quotes\[id]\route.ts
+app\api\admin\quotes\route.ts
+app\api\admin\stock\route.ts
+app\api\orders\route.ts
+app\api\products\route.ts
+app\api\quotes\route.ts
+app\bulk-order\page.tsx
+app\bulk-order\page-backup.tsx
+app\bulk-order\page-before-db.tsx
+app\cart\page.tsx
+app\checkout\page.tsx
+app\favicon.ico
+app\globals.css
+app\layout.tsx
+app\order-success\page.tsx
+app\page.tsx
+app\products\[category]\page.tsx
+app\quote\page.tsx
+backup\schema-before-orders-20260920-020313\schema.prisma
+CLAUDE.md
+dev.db
+eslint.config.mjs
+lib\prisma.ts
+next.config.ts
+next-env.d.ts
+officekart.db
+package.json
+package-lock.json
+postcss.config.mjs
+prisma.config.ts
+prisma\migrations\20260919194926_init\migration.sql
+prisma\migrations\20260919204735_add_customers_orders_quotes\migration.sql
+prisma\migrations\migration_lock.toml
+prisma\officekart.db
+prisma\schema.backup.prisma
+prisma\schema.prisma
+prisma\seed-test.ts
+proxy.ts
+public\file.svg
+public\globe.svg
+public\next.svg
+public\products\a4-paper.svg
+public\products\ball-pen.svg
+public\products\document-folder.svg
+public\products\marker.svg
+public\products\notebook.svg
+public\products\office-file.svg
+public\vercel.svg
+public\window.svg
+README.md
+tsconfig.json
+tsconfig.tsbuildinfo
+
+===== PRISMA SCHEMA =====
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  name           String
+  category       String
+  purchasePrice  Float
+  sellingPrice   Float
+  unit           String          @default("pcs")
+  stock          Int             @default(0)
+  image          String?
+  description    String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([category])
+  @@index([active])
+  @@index([name])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  companyName String?
+  gstin       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  subtotal        Float
+  deliveryCharge  Float       @default(0)
+  gstAmount       Float       @default(0)
+  totalAmount     Float
+  paymentStatus   String      @default("PENDING")
+  orderStatus     String      @default("PENDING")
+  paymentMethod   String      @default("COD")
+  shippingName    String
+  shippingPhone   String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingPincode String
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([orderStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  productId     String
+  productName   String
+  quantity      Int
+  unit          String
+  purchasePrice Float
+  sellingPrice  Float
+  totalPrice    Float
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model QuoteRequest {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  companyName String?
+  message     String?
+  status      String   @default("NEW")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  productId     String
+  type          String
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  note          String?
+  orderId       String?
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+
+===== PRISMA CONFIG =====
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+  },
+  datasource: {
+    url: "file:./officekart.db",
+  },
+});
+
+
+===== ENV VARIABLE NAMES =====
+ADMIN_USERNAME
+ADMIN_PASSWORD
+
+===== API ROUTES =====
+app\api\admin\customers\[id]\orders\route.ts
+app\api\admin\customers\[id]\route.ts
+app\api\admin\customers\route.ts
+app\api\admin\dashboard\route.ts
+app\api\admin\login\route.ts
+app\api\admin\logout\route.ts
+app\api\admin\orders\[id]\invoice\route.ts
+app\api\admin\orders\[id]\route.ts
+app\api\admin\orders\route.ts
+app\api\admin\products\[id]\route.ts
+app\api\admin\products\route.ts
+app\api\admin\quotes\[id]\route.ts
+app\api\admin\quotes\route.ts
+app\api\admin\stock\route.ts
+app\api\orders\route.ts
+app\api\products\route.ts
+app\api\quotes\route.ts
+
+===== APP PAGE ROUTES =====
+app\admin\customers\[id]\orders\page.tsx
+app\admin\customers\[id]\page.tsx
+app\admin\customers\page.tsx
+app\admin\login\page.tsx
+app\admin\orders\[id]\invoice\page.tsx
+app\admin\orders\[id]\page.tsx
+app\admin\orders\new\page.tsx
+app\admin\orders\page.tsx
+app\admin\page.tsx
+app\admin\products\[id]\page.tsx
+app\admin\products\new\page.tsx
+app\admin\products\page.tsx
+app\admin\quotes\page.tsx
+app\admin\stock\page.tsx
+app\bulk-order\page.tsx
+app\cart\page.tsx
+app\checkout\page.tsx
+app\order-success\page.tsx
+app\page.tsx
+app\products\[category]\page.tsx
+app\quote\page.tsx
+
+===== FEATURE DETECTION: AUTH =====
+ADMIN_PASSWORD -> app\api\admin\login\route.ts : line 15
+ADMIN_USERNAME -> app\api\admin\login\route.ts : line 12
+cookies -> app\api\admin\customers\[id]\orders\route.ts : line 2
+cookies -> app\api\admin\customers\[id]\orders\route.ts : line 24
+cookies -> app\api\admin\customers\[id]\orders\route.ts : line 26
+cookies -> app\api\admin\customers\[id]\orders\route.ts : line 33
+cookies -> app\api\admin\customers\[id]\orders\route.ts : line 34
+cookies -> app\api\admin\customers\[id]\route.ts : line 12
+cookies -> app\api\admin\customers\[id]\route.ts : line 14
+cookies -> app\api\admin\customers\[id]\route.ts : line 2
+cookies -> app\api\admin\customers\[id]\route.ts : line 21
+cookies -> app\api\admin\customers\[id]\route.ts : line 22
+cookies -> app\api\admin\customers\route.ts : line 2
+cookies -> app\api\admin\customers\route.ts : line 6
+cookies -> app\api\admin\customers\route.ts : line 9
+cookies -> app\api\admin\dashboard\route.ts : line 2
+cookies -> app\api\admin\dashboard\route.ts : line 6
+cookies -> app\api\admin\dashboard\route.ts : line 7
+cookies -> app\api\admin\login\route.ts : line 2
+cookies -> app\api\admin\login\route.ts : line 30
+cookies -> app\api\admin\login\route.ts : line 32
+cookies -> app\api\admin\logout\route.ts : line 8
+cookies -> app\api\admin\orders\[id]\invoice\route.ts : line 2
+cookies -> app\api\admin\orders\[id]\invoice\route.ts : line 6
+cookies -> app\api\admin\orders\[id]\invoice\route.ts : line 9
+cookies -> app\api\admin\orders\[id]\route.ts : line 12
+cookies -> app\api\admin\orders\[id]\route.ts : line 14
+cookies -> app\api\admin\orders\[id]\route.ts : line 2
+cookies -> app\api\admin\orders\[id]\route.ts : line 21
+cookies -> app\api\admin\orders\[id]\route.ts : line 22
+cookies -> app\api\admin\orders\route.ts : line 10
+cookies -> app\api\admin\orders\route.ts : line 11
+cookies -> app\api\admin\orders\route.ts : line 12
+cookies -> app\api\admin\orders\route.ts : line 2
+cookies -> app\api\admin\orders\route.ts : line 6
+cookies -> app\api\admin\orders\route.ts : line 9
+cookies -> app\api\admin\products\[id]\route.ts : line 2
+cookies -> app\api\admin\products\[id]\route.ts : line 6
+cookies -> app\api\admin\products\[id]\route.ts : line 9
+cookies -> app\api\admin\products\route.ts : line 15
+cookies -> app\api\admin\products\route.ts : line 16
+cookies -> app\api\admin\products\route.ts : line 2
+cookies -> app\api\admin\products\route.ts : line 6
+cookies -> app\api\admin\products\route.ts : line 8
+cookies -> app\api\admin\quotes\[id]\route.ts : line 2
+cookies -> app\api\admin\quotes\[id]\route.ts : line 6
+cookies -> app\api\admin\quotes\[id]\route.ts : line 9
+cookies -> app\api\admin\quotes\route.ts : line 2
+cookies -> app\api\admin\quotes\route.ts : line 6
+cookies -> app\api\admin\quotes\route.ts : line 9
+cookies -> app\api\admin\stock\route.ts : line 2
+cookies -> app\api\admin\stock\route.ts : line 6
+cookies -> app\api\admin\stock\route.ts : line 9
+cookies -> proxy.ts : line 19
+officekart_admin -> app\api\admin\customers\route.ts : line 9
+officekart_admin -> app\api\admin\dashboard\route.ts : line 7
+officekart_admin -> app\api\admin\login\route.ts : line 12
+officekart_admin -> app\api\admin\login\route.ts : line 15
+officekart_admin -> app\api\admin\login\route.ts : line 32
+officekart_admin -> app\api\admin\logout\route.ts : line 8
+officekart_admin -> app\api\admin\orders\[id]\invoice\route.ts : line 9
+officekart_admin -> app\api\admin\products\[id]\route.ts : line 9
+officekart_admin -> app\api\admin\quotes\[id]\route.ts : line 9
+officekart_admin -> app\api\admin\quotes\route.ts : line 9
+officekart_admin -> app\api\admin\stock\route.ts : line 9
+officekart_admin -> proxy.ts : line 19
+Unauthorized -> app\api\admin\customers\[id]\orders\route.ts : line 62
+Unauthorized -> app\api\admin\customers\[id]\route.ts : line 129
+Unauthorized -> app\api\admin\customers\[id]\route.ts : line 38
+Unauthorized -> app\api\admin\customers\route.ts : line 18
+Unauthorized -> app\api\admin\customers\route.ts : line 60
+Unauthorized -> app\api\admin\dashboard\route.ts : line 13
+Unauthorized -> app\api\admin\orders\[id]\invoice\route.ts : line 23
+Unauthorized -> app\api\admin\orders\[id]\route.ts : line 54
+Unauthorized -> app\api\admin\orders\route.ts : line 25
+Unauthorized -> app\api\admin\products\[id]\route.ts : line 220
+Unauthorized -> app\api\admin\products\[id]\route.ts : line 23
+Unauthorized -> app\api\admin\products\[id]\route.ts : line 62
+Unauthorized -> app\api\admin\products\route.ts : line 29
+Unauthorized -> app\api\admin\quotes\[id]\route.ts : line 30
+Unauthorized -> app\api\admin\quotes\route.ts : line 16
+Unauthorized -> app\api\admin\quotes\route.ts : line 42
+Unauthorized -> app\api\admin\stock\route.ts : line 18
+Unauthorized -> app\api\admin\stock\route.ts : line 69
+
+===== FEATURE DETECTION: PRODUCT =====
+category -> app\admin\orders\new\page.tsx : line 18
+category -> app\admin\products\[id]\page.tsx : line 117
+category -> app\admin\products\[id]\page.tsx : line 209
+category -> app\admin\products\[id]\page.tsx : line 212
+category -> app\admin\products\[id]\page.tsx : line 213
+category -> app\admin\products\[id]\page.tsx : line 22
+category -> app\admin\products\[id]\page.tsx : line 42
+category -> app\admin\products\[id]\page.tsx : line 76
+category -> app\admin\products\new\page.tsx : line 11
+category -> app\admin\products\new\page.tsx : line 128
+category -> app\admin\products\new\page.tsx : line 133
+category -> app\admin\products\new\page.tsx : line 134
+category -> app\admin\products\new\page.tsx : line 38
+category -> app\admin\products\page.tsx : line 24
+category -> app\admin\products\page.tsx : line 253
+category -> app\admin\products\page.tsx : line 258
+category -> app\admin\products\page.tsx : line 259
+category -> app\admin\products\page.tsx : line 321
+category -> app\admin\products\page.tsx : line 348
+category -> app\admin\products\page.tsx : line 63
+category -> app\admin\products\page.tsx : line 74
+category -> app\admin\products\page.tsx : line 77
+category -> app\admin\products\page.tsx : line 78
+category -> app\admin\products\page.tsx : line 86
+category -> app\admin\products\page.tsx : line 88
+category -> app\admin\products\page.tsx : line 9
+category -> app\admin\products\page-backup.tsx : line 143
+category -> app\admin\products\page-backup.tsx : line 196
+category -> app\admin\products\page-backup.tsx : line 226
+category -> app\admin\products\page-backup.tsx : line 239
+category -> app\admin\products\page-backup.tsx : line 415
+category -> app\admin\products\page-backup.tsx : line 419
+category -> app\admin\products\page-backup.tsx : line 420
+category -> app\admin\products\page-backup.tsx : line 58
+category -> app\admin\products\page-backup.tsx : line 719
+category -> app\admin\products\page-backup.tsx : line 8
+category -> app\admin\products\page-backup.tsx : line 80
+category -> app\admin\stock\page.tsx : line 153
+category -> app\admin\stock\page.tsx : line 168
+category -> app\admin\stock\page.tsx : line 28
+category -> app\admin\stock\page.tsx : line 613
+category -> app\admin\stock\page.tsx : line 9
+category -> app\api\admin\products\[id]\route.ts : line 108
+category -> app\api\admin\products\[id]\route.ts : line 109
+category -> app\api\admin\products\[id]\route.ts : line 111
+category -> app\api\admin\products\[id]\route.ts : line 113
+category -> app\api\admin\products\[id]\route.ts : line 118
+category -> app\api\admin\products\[id]\route.ts : line 85
+category -> app\api\admin\products\route-backup.ts : line 32
+category -> app\api\admin\products\route-backup.ts : line 42
+category -> app\api\admin\products\route-backup.ts : line 46
+category -> app\api\admin\products\route-backup.ts : line 80
+category -> app\api\admin\stock\route.ts : line 41
+category -> app\api\products\route.ts : line 30
+category -> app\api\products\route.ts : line 32
+category -> app\api\products\route.ts : line 50
+category -> app\api\products\route.ts : line 9
+category -> app\bulk-order\page.tsx : line 208
+category -> app\bulk-order\page.tsx : line 210
+category -> app\bulk-order\page.tsx : line 244
+category -> app\bulk-order\page.tsx : line 26
+category -> app\bulk-order\page.tsx : line 275
+category -> app\bulk-order\page.tsx : line 37
+category -> app\bulk-order\page.tsx : line 50
+category -> app\bulk-order\page.tsx : line 51
+category -> app\bulk-order\page.tsx : line 8
+category -> app\bulk-order\page.tsx : line 88
+category -> app\bulk-order\page-backup.tsx : line 408
+category -> app\bulk-order\page-backup.tsx : line 412
+category -> app\bulk-order\page-backup.tsx : line 420
+category -> app\bulk-order\page-backup.tsx : line 431
+category -> app\bulk-order\page-backup.tsx : line 442
+category -> app\bulk-order\page-backup.tsx : line 443
+category -> app\bulk-order\page-backup.tsx : line 444
+category -> app\bulk-order\page-backup.tsx : line 446
+category -> app\bulk-order\page-backup.tsx : line 448
+category -> app\bulk-order\page-backup.tsx : line 596
+category -> app\bulk-order\page-backup.tsx : line 598
+category -> app\bulk-order\page-backup.tsx : line 626
+category -> app\bulk-order\page-backup.tsx : line 672
+category -> app\bulk-order\page-backup.tsx : line 707
+category -> app\bulk-order\page-backup.tsx : line 8
+category -> app\bulk-order\page-before-db.tsx : line 408
+category -> app\bulk-order\page-before-db.tsx : line 412
+category -> app\bulk-order\page-before-db.tsx : line 420
+category -> app\bulk-order\page-before-db.tsx : line 431
+category -> app\bulk-order\page-before-db.tsx : line 442
+category -> app\bulk-order\page-before-db.tsx : line 443
+category -> app\bulk-order\page-before-db.tsx : line 444
+category -> app\bulk-order\page-before-db.tsx : line 446
+category -> app\bulk-order\page-before-db.tsx : line 448
+category -> app\bulk-order\page-before-db.tsx : line 596
+category -> app\bulk-order\page-before-db.tsx : line 598
+category -> app\bulk-order\page-before-db.tsx : line 626
+category -> app\bulk-order\page-before-db.tsx : line 672
+category -> app\bulk-order\page-before-db.tsx : line 707
+category -> app\bulk-order\page-before-db.tsx : line 8
+category -> app\page.tsx : line 10
+category -> app\page.tsx : line 16
+category -> app\page.tsx : line 22
+category -> app\page.tsx : line 28
+category -> app\page.tsx : line 34
+category -> app\page.tsx : line 40
+category -> app\page.tsx : line 44
+category -> app\page.tsx : line 95
+category -> app\products\[category]\page.tsx : line 17
+category -> app\products\[category]\page.tsx : line 226
+category -> app\products\[category]\page.tsx : line 25
+category -> app\products\[category]\page.tsx : line 37
+category -> app\products\[category]\page.tsx : line 49
+category -> app\products\[category]\page.tsx : line 61
+category -> app\products\[category]\page.tsx : line 73
+category -> app\products\[category]\page.tsx : line 8
+category -> app\products\[category]\page.tsx : line 85
+category -> backup\schema-before-orders-20260920-020313\schema.prisma : line 13
+category -> backup\schema-before-orders-20260920-020313\schema.prisma : line 24
+category -> prisma\schema.backup.prisma : line 13
+category -> prisma\schema.backup.prisma : line 25
+category -> prisma\schema.prisma : line 13
+category -> prisma\schema.prisma : line 26
+category -> prisma\seed-test.ts : line 24
+Product -> app\admin\customers\[id]\orders\page.tsx : line 100
+Product -> app\admin\customers\[id]\orders\page.tsx : line 101
+Product -> app\admin\customers\[id]\orders\page.tsx : line 124
+Product -> app\admin\customers\[id]\orders\page.tsx : line 16
+Product -> app\admin\customers\[id]\orders\page.tsx : line 239
+Product -> app\admin\customers\[id]\orders\page.tsx : line 246
+Product -> app\admin\customers\[id]\orders\page.tsx : line 250
+Product -> app\admin\customers\[id]\orders\page.tsx : line 251
+Product -> app\admin\customers\[id]\orders\page.tsx : line 255
+Product -> app\admin\customers\[id]\orders\page.tsx : line 258
+Product -> app\admin\customers\[id]\orders\page.tsx : line 260
+Product -> app\admin\customers\[id]\orders\page.tsx : line 261
+Product -> app\admin\customers\[id]\orders\page.tsx : line 263
+Product -> app\admin\customers\[id]\orders\page.tsx : line 264
+Product -> app\admin\customers\[id]\orders\page.tsx : line 30
+Product -> app\admin\customers\[id]\orders\page.tsx : line 32
+Product -> app\admin\customers\[id]\orders\page.tsx : line 63
+Product -> app\admin\customers\[id]\orders\page.tsx : line 64
+Product -> app\admin\customers\[id]\orders\page.tsx : line 71
+Product -> app\admin\customers\[id]\orders\page.tsx : line 73
+Product -> app\admin\customers\[id]\orders\page.tsx : line 74
+Product -> app\admin\customers\[id]\orders\page.tsx : line 76
+Product -> app\admin\orders\[id]\invoice\page.tsx : line 266
+Product -> app\admin\orders\[id]\invoice\page.tsx : line 295
+Product -> app\admin\orders\[id]\invoice\page.tsx : line 9
+Product -> app\admin\orders\[id]\page.tsx : line 10
+Product -> app\admin\orders\[id]\page.tsx : line 286
+Product -> app\admin\orders\[id]\page.tsx : line 301
+Product -> app\admin\orders\[id]\page.tsx : line 9
+Product -> app\admin\orders\new\page.tsx : line 101
+Product -> app\admin\orders\new\page.tsx : line 102
+Product -> app\admin\orders\new\page.tsx : line 132
+Product -> app\admin\orders\new\page.tsx : line 139
+Product -> app\admin\orders\new\page.tsx : line 142
+Product -> app\admin\orders\new\page.tsx : line 15
+Product -> app\admin\orders\new\page.tsx : line 160
+Product -> app\admin\orders\new\page.tsx : line 169
+Product -> app\admin\orders\new\page.tsx : line 178
+Product -> app\admin\orders\new\page.tsx : line 179
+Product -> app\admin\orders\new\page.tsx : line 182
+Product -> app\admin\orders\new\page.tsx : line 184
+Product -> app\admin\orders\new\page.tsx : line 186
+Product -> app\admin\orders\new\page.tsx : line 204
+Product -> app\admin\orders\new\page.tsx : line 208
+Product -> app\admin\orders\new\page.tsx : line 213
+Product -> app\admin\orders\new\page.tsx : line 214
+Product -> app\admin\orders\new\page.tsx : line 217
+Product -> app\admin\orders\new\page.tsx : line 218
+Product -> app\admin\orders\new\page.tsx : line 222
+Product -> app\admin\orders\new\page.tsx : line 224
+Product -> app\admin\orders\new\page.tsx : line 27
+Product -> app\admin\orders\new\page.tsx : line 300
+Product -> app\admin\orders\new\page.tsx : line 316
+Product -> app\admin\orders\new\page.tsx : line 318
+Product -> app\admin\orders\new\page.tsx : line 35
+Product -> app\admin\orders\new\page.tsx : line 368
+Product -> app\admin\orders\new\page.tsx : line 371
+Product -> app\admin\orders\new\page.tsx : line 380
+Product -> app\admin\orders\new\page.tsx : line 386
+Product -> app\admin\orders\new\page.tsx : line 387
+Product -> app\admin\orders\new\page.tsx : line 39
+Product -> app\admin\orders\new\page.tsx : line 392
+Product -> app\admin\orders\new\page.tsx : line 397
+Product -> app\admin\orders\new\page.tsx : line 401
+Product -> app\admin\orders\new\page.tsx : line 405
+Product -> app\admin\orders\new\page.tsx : line 412
+Product -> app\admin\orders\new\page.tsx : line 414
+Product -> app\admin\orders\new\page.tsx : line 416
+Product -> app\admin\orders\new\page.tsx : line 417
+Product -> app\admin\orders\new\page.tsx : line 419
+Product -> app\admin\orders\new\page.tsx : line 420
+Product -> app\admin\orders\new\page.tsx : line 421
+Product -> app\admin\orders\new\page.tsx : line 435
+Product -> app\admin\orders\new\page.tsx : line 456
+Product -> app\admin\orders\new\page.tsx : line 458
+Product -> app\admin\orders\new\page.tsx : line 64
+Product -> app\admin\orders\new\page.tsx : line 683
+Product -> app\admin\orders\new\page.tsx : line 69
+Product -> app\admin\orders\new\page.tsx : line 79
+Product -> app\admin\orders\new\page.tsx : line 80
+Product -> app\admin\orders\new\page.tsx : line 84
+Product -> app\admin\orders\new\page.tsx : line 92
+Product -> app\admin\orders\new\page.tsx : line 93
+Product -> app\admin\orders\new\page.tsx : line 94
+Product -> app\admin\orders\new\page.tsx : line 95
+Product -> app\admin\orders\new\page.tsx : line 96
+Product -> app\admin\orders\new\page.tsx : line 97
+Product -> app\admin\page.tsx : line 113
+Product -> app\admin\page.tsx : line 128
+Product -> app\admin\page.tsx : line 131
+Product -> app\admin\page.tsx : line 158
+Product -> app\admin\page.tsx : line 163
+Product -> app\admin\page.tsx : line 172
+Product -> app\admin\page.tsx : line 176
+Product -> app\admin\page.tsx : line 180
+Product -> app\admin\page.tsx : line 309
+Product -> app\admin\page.tsx : line 332
+Product -> app\admin\page.tsx : line 336
+Product -> app\admin\page.tsx : line 340
+Product -> app\admin\page.tsx : line 402
+Product -> app\admin\page.tsx : line 406
+Product -> app\admin\page.tsx : line 410
+Product -> app\admin\page.tsx : line 7
+Product -> app\admin\products\[id]\page.tsx : line 108
+Product -> app\admin\products\[id]\page.tsx : line 133
+Product -> app\admin\products\[id]\page.tsx : line 137
+Product -> app\admin\products\[id]\page.tsx : line 143
+Product -> app\admin\products\[id]\page.tsx : line 155
+Product -> app\admin\products\[id]\page.tsx : line 169
+Product -> app\admin\products\[id]\page.tsx : line 172
+Product -> app\admin\products\[id]\page.tsx : line 177
+Product -> app\admin\products\[id]\page.tsx : line 180
+Product -> app\admin\products\[id]\page.tsx : line 19
+Product -> app\admin\products\[id]\page.tsx : line 197
+Product -> app\admin\products\[id]\page.tsx : line 287
+Product -> app\admin\products\[id]\page.tsx : line 292
+Product -> app\admin\products\[id]\page.tsx : line 32
+Product -> app\admin\products\[id]\page.tsx : line 324
+Product -> app\admin\products\[id]\page.tsx : line 328
+Product -> app\admin\products\[id]\page.tsx : line 337
+Product -> app\admin\products\[id]\page.tsx : line 52
+Product -> app\admin\products\[id]\page.tsx : line 58
+Product -> app\admin\products\[id]\page.tsx : line 69
+Product -> app\admin\products\[id]\page.tsx : line 73
+Product -> app\admin\products\[id]\page.tsx : line 75
+Product -> app\admin\products\[id]\page.tsx : line 76
+Product -> app\admin\products\[id]\page.tsx : line 77
+Product -> app\admin\products\[id]\page.tsx : line 78
+Product -> app\admin\products\[id]\page.tsx : line 79
+Product -> app\admin\products\[id]\page.tsx : line 80
+Product -> app\admin\products\[id]\page.tsx : line 81
+Product -> app\admin\products\[id]\page.tsx : line 82
+Product -> app\admin\products\[id]\page.tsx : line 83
+Product -> app\admin\products\[id]\page.tsx : line 88
+Product -> app\admin\products\[id]\page.tsx : line 95
+Product -> app\admin\products\new\page.tsx : line 102
+Product -> app\admin\products\new\page.tsx : line 114
+Product -> app\admin\products\new\page.tsx : line 23
+Product -> app\admin\products\new\page.tsx : line 231
+Product -> app\admin\products\new\page.tsx : line 238
+Product -> app\admin\products\new\page.tsx : line 254
+Product -> app\admin\products\new\page.tsx : line 270
+Product -> app\admin\products\new\page.tsx : line 274
+Product -> app\admin\products\new\page.tsx : line 283
+Product -> app\admin\products\new\page.tsx : line 294
+Product -> app\admin\products\new\page.tsx : line 30
+Product -> app\admin\products\new\page.tsx : line 54
+Product -> app\admin\products\new\page.tsx : line 58
+Product -> app\admin\products\new\page.tsx : line 66
+Product -> app\admin\products\new\page.tsx : line 7
+Product -> app\admin\products\new\page.tsx : line 79
+Product -> app\admin\products\new\page.tsx : line 82
+Product -> app\admin\products\new\page.tsx : line 88
+Product -> app\admin\products\new\page.tsx : line 93
+Product -> app\admin\products\new\page.tsx : line 97
+Product -> app\admin\products\page.tsx : line 101
+Product -> app\admin\products\page.tsx : line 102
+Product -> app\admin\products\page.tsx : line 103
+Product -> app\admin\products\page.tsx : line 109
+Product -> app\admin\products\page.tsx : line 116
+Product -> app\admin\products\page.tsx : line 123
+Product -> app\admin\products\page.tsx : line 126
+Product -> app\admin\products\page.tsx : line 132
+Product -> app\admin\products\page.tsx : line 137
+Product -> app\admin\products\page.tsx : line 139
+Product -> app\admin\products\page.tsx : line 145
+Product -> app\admin\products\page.tsx : line 153
+Product -> app\admin\products\page.tsx : line 156
+Product -> app\admin\products\page.tsx : line 162
+Product -> app\admin\products\page.tsx : line 183
+Product -> app\admin\products\page.tsx : line 188
+Product -> app\admin\products\page.tsx : line 192
+Product -> app\admin\products\page.tsx : line 197
+Product -> app\admin\products\page.tsx : line 20
+Product -> app\admin\products\page.tsx : line 200
+Product -> app\admin\products\page.tsx : line 21
+Product -> app\admin\products\page.tsx : line 213
+Product -> app\admin\products\page.tsx : line 216
+Product -> app\admin\products\page.tsx : line 222
+Product -> app\admin\products\page.tsx : line 225
+Product -> app\admin\products\page.tsx : line 234
+Product -> app\admin\products\page.tsx : line 243
+Product -> app\admin\products\page.tsx : line 253
+Product -> app\admin\products\page.tsx : line 28
+Product -> app\admin\products\page.tsx : line 287
+Product -> app\admin\products\page.tsx : line 290
+Product -> app\admin\products\page.tsx : line 295
+Product -> app\admin\products\page.tsx : line 304
+Product -> app\admin\products\page.tsx : line 306
+Product -> app\admin\products\page.tsx : line 309
+Product -> app\admin\products\page.tsx : line 320
+Product -> app\admin\products\page.tsx : line 33
+Product -> app\admin\products\page.tsx : line 331
+Product -> app\admin\products\page.tsx : line 333
+Product -> app\admin\products\page.tsx : line 336
+Product -> app\admin\products\page.tsx : line 339
+Product -> app\admin\products\page.tsx : line 343
+Product -> app\admin\products\page.tsx : line 348
+Product -> app\admin\products\page.tsx : line 352
+Product -> app\admin\products\page.tsx : line 357
+Product -> app\admin\products\page.tsx : line 374
+Product -> app\admin\products\page.tsx : line 376
+Product -> app\admin\products\page.tsx : line 381
+Product -> app\admin\products\page.tsx : line 388
+Product -> app\admin\products\page.tsx : line 393
+Product -> app\admin\products\page.tsx : line 400
+Product -> app\admin\products\page.tsx : line 407
+Product -> app\admin\products\page.tsx : line 41
+Product -> app\admin\products\page.tsx : line 410
+Product -> app\admin\products\page.tsx : line 414
+Product -> app\admin\products\page.tsx : line 44
+Product -> app\admin\products\page.tsx : line 50
+Product -> app\admin\products\page.tsx : line 58
+Product -> app\admin\products\page.tsx : line 6
+Product -> app\admin\products\page.tsx : line 63
+Product -> app\admin\products\page.tsx : line 65
+Product -> app\admin\products\page.tsx : line 67
+Product -> app\admin\products\page.tsx : line 70
+Product -> app\admin\products\page.tsx : line 73
+Product -> app\admin\products\page.tsx : line 74
+Product -> app\admin\products\page.tsx : line 75
+Product -> app\admin\products\page.tsx : line 78
+Product -> app\admin\products\page.tsx : line 82
+Product -> app\admin\products\page.tsx : line 83
+Product -> app\admin\products\page.tsx : line 84
+Product -> app\admin\products\page.tsx : line 88
+Product -> app\admin\products\page.tsx : line 90
+Product -> app\admin\products\page.tsx : line 91
+Product -> app\admin\products\page.tsx : line 92
+Product -> app\admin\products\page.tsx : line 93
+Product -> app\admin\products\page.tsx : line 95
+Product -> app\admin\products\page.tsx : line 96
+Product -> app\admin\products\page.tsx : line 99
+Product -> app\admin\products\page-backup.tsx : line 101
+Product -> app\admin\products\page-backup.tsx : line 105
+Product -> app\admin\products\page-backup.tsx : line 106
+Product -> app\admin\products\page-backup.tsx : line 110
+Product -> app\admin\products\page-backup.tsx : line 162
+Product -> app\admin\products\page-backup.tsx : line 18
+Product -> app\admin\products\page-backup.tsx : line 189
+Product -> app\admin\products\page-backup.tsx : line 193
+Product -> app\admin\products\page-backup.tsx : line 204
+Product -> app\admin\products\page-backup.tsx : line 209
+Product -> app\admin\products\page-backup.tsx : line 212
+Product -> app\admin\products\page-backup.tsx : line 213
+Product -> app\admin\products\page-backup.tsx : line 216
+Product -> app\admin\products\page-backup.tsx : line 218
+Product -> app\admin\products\page-backup.tsx : line 220
+Product -> app\admin\products\page-backup.tsx : line 223
+Product -> app\admin\products\page-backup.tsx : line 236
+Product -> app\admin\products\page-backup.tsx : line 237
+Product -> app\admin\products\page-backup.tsx : line 238
+Product -> app\admin\products\page-backup.tsx : line 239
+Product -> app\admin\products\page-backup.tsx : line 240
+Product -> app\admin\products\page-backup.tsx : line 241
+Product -> app\admin\products\page-backup.tsx : line 242
+Product -> app\admin\products\page-backup.tsx : line 243
+Product -> app\admin\products\page-backup.tsx : line 244
+Product -> app\admin\products\page-backup.tsx : line 245
+Product -> app\admin\products\page-backup.tsx : line 254
+Product -> app\admin\products\page-backup.tsx : line 255
+Product -> app\admin\products\page-backup.tsx : line 256
+Product -> app\admin\products\page-backup.tsx : line 258
+Product -> app\admin\products\page-backup.tsx : line 259
+Product -> app\admin\products\page-backup.tsx : line 261
+Product -> app\admin\products\page-backup.tsx : line 264
+Product -> app\admin\products\page-backup.tsx : line 267
+Product -> app\admin\products\page-backup.tsx : line 269
+Product -> app\admin\products\page-backup.tsx : line 274
+Product -> app\admin\products\page-backup.tsx : line 275
+Product -> app\admin\products\page-backup.tsx : line 278
+Product -> app\admin\products\page-backup.tsx : line 280
+Product -> app\admin\products\page-backup.tsx : line 283
+Product -> app\admin\products\page-backup.tsx : line 284
+Product -> app\admin\products\page-backup.tsx : line 286
+Product -> app\admin\products\page-backup.tsx : line 287
+Product -> app\admin\products\page-backup.tsx : line 291
+Product -> app\admin\products\page-backup.tsx : line 292
+Product -> app\admin\products\page-backup.tsx : line 294
+Product -> app\admin\products\page-backup.tsx : line 295
+Product -> app\admin\products\page-backup.tsx : line 307
+Product -> app\admin\products\page-backup.tsx : line 308
+Product -> app\admin\products\page-backup.tsx : line 317
+Product -> app\admin\products\page-backup.tsx : line 321
+Product -> app\admin\products\page-backup.tsx : line 330
+Product -> app\admin\products\page-backup.tsx : line 333
+Product -> app\admin\products\page-backup.tsx : line 339
+Product -> app\admin\products\page-backup.tsx : line 342
+Product -> app\admin\products\page-backup.tsx : line 380
+Product -> app\admin\products\page-backup.tsx : line 381
+Product -> app\admin\products\page-backup.tsx : line 402
+Product -> app\admin\products\page-backup.tsx : line 5
+Product -> app\admin\products\page-backup.tsx : line 511
+Product -> app\admin\products\page-backup.tsx : line 533
+Product -> app\admin\products\page-backup.tsx : line 54
+Product -> app\admin\products\page-backup.tsx : line 542
+Product -> app\admin\products\page-backup.tsx : line 55
+Product -> app\admin\products\page-backup.tsx : line 551
+Product -> app\admin\products\page-backup.tsx : line 621
+Product -> app\admin\products\page-backup.tsx : line 622
+Product -> app\admin\products\page-backup.tsx : line 633
+Product -> app\admin\products\page-backup.tsx : line 637
+Product -> app\admin\products\page-backup.tsx : line 641
+Product -> app\admin\products\page-backup.tsx : line 643
+Product -> app\admin\products\page-backup.tsx : line 648
+Product -> app\admin\products\page-backup.tsx : line 651
+Product -> app\admin\products\page-backup.tsx : line 652
+Product -> app\admin\products\page-backup.tsx : line 655
+Product -> app\admin\products\page-backup.tsx : line 657
+Product -> app\admin\products\page-backup.tsx : line 662
+Product -> app\admin\products\page-backup.tsx : line 663
+Product -> app\admin\products\page-backup.tsx : line 666
+Product -> app\admin\products\page-backup.tsx : line 667
+Product -> app\admin\products\page-backup.tsx : line 674
+Product -> app\admin\products\page-backup.tsx : line 676
+Product -> app\admin\products\page-backup.tsx : line 683
+Product -> app\admin\products\page-backup.tsx : line 685
+Product -> app\admin\products\page-backup.tsx : line 686
+Product -> app\admin\products\page-backup.tsx : line 701
+Product -> app\admin\products\page-backup.tsx : line 706
+Product -> app\admin\products\page-backup.tsx : line 711
+Product -> app\admin\products\page-backup.tsx : line 719
+Product -> app\admin\products\page-backup.tsx : line 723
+Product -> app\admin\products\page-backup.tsx : line 731
+Product -> app\admin\products\page-backup.tsx : line 732
+Product -> app\admin\products\page-backup.tsx : line 737
+Product -> app\admin\products\page-backup.tsx : line 74
+Product -> app\admin\products\page-backup.tsx : line 751
+Product -> app\admin\products\page-backup.tsx : line 752
+Product -> app\admin\products\page-backup.tsx : line 76
+Product -> app\admin\products\page-backup.tsx : line 777
+Product -> app\admin\products\page-backup.tsx : line 787
+Product -> app\admin\products\page-backup.tsx : line 791
+Product -> app\admin\products\page-backup.tsx : line 799
+Product -> app\admin\products\page-backup.tsx : line 98
+Product -> app\admin\stock\page.tsx : line 104
+Product -> app\admin\stock\page.tsx : line 105
+Product -> app\admin\stock\page.tsx : line 106
+Product -> app\admin\stock\page.tsx : line 107
+Product -> app\admin\stock\page.tsx : line 117
+Product -> app\admin\stock\page.tsx : line 120
+Product -> app\admin\stock\page.tsx : line 121
+Product -> app\admin\stock\page.tsx : line 138
+Product -> app\admin\stock\page.tsx : line 139
+Product -> app\admin\stock\page.tsx : line 140
+Product -> app\admin\stock\page.tsx : line 143
+Product -> app\admin\stock\page.tsx : line 147
+Product -> app\admin\stock\page.tsx : line 150
+Product -> app\admin\stock\page.tsx : line 151
+Product -> app\admin\stock\page.tsx : line 152
+Product -> app\admin\stock\page.tsx : line 153
+Product -> app\admin\stock\page.tsx : line 155
+Product -> app\admin\stock\page.tsx : line 167
+Product -> app\admin\stock\page.tsx : line 168
+Product -> app\admin\stock\page.tsx : line 17
+Product -> app\admin\stock\page.tsx : line 176
+Product -> app\admin\stock\page.tsx : line 177
+Product -> app\admin\stock\page.tsx : line 178
+Product -> app\admin\stock\page.tsx : line 181
+Product -> app\admin\stock\page.tsx : line 182
+Product -> app\admin\stock\page.tsx : line 184
+Product -> app\admin\stock\page.tsx : line 185
+Product -> app\admin\stock\page.tsx : line 189
+Product -> app\admin\stock\page.tsx : line 194
+Product -> app\admin\stock\page.tsx : line 204
+Product -> app\admin\stock\page.tsx : line 205
+Product -> app\admin\stock\page.tsx : line 217
+Product -> app\admin\stock\page.tsx : line 218
+Product -> app\admin\stock\page.tsx : line 220
+Product -> app\admin\stock\page.tsx : line 236
+Product -> app\admin\stock\page.tsx : line 25
+Product -> app\admin\stock\page.tsx : line 254
+Product -> app\admin\stock\page.tsx : line 311
+Product -> app\admin\stock\page.tsx : line 314
+Product -> app\admin\stock\page.tsx : line 341
+Product -> app\admin\stock\page.tsx : line 344
+Product -> app\admin\stock\page.tsx : line 392
+Product -> app\admin\stock\page.tsx : line 396
+Product -> app\admin\stock\page.tsx : line 398
+Product -> app\admin\stock\page.tsx : line 404
+Product -> app\admin\stock\page.tsx : line 407
+Product -> app\admin\stock\page.tsx : line 409
+Product -> app\admin\stock\page.tsx : line 410
+Product -> app\admin\stock\page.tsx : line 412
+Product -> app\admin\stock\page.tsx : line 418
+Product -> app\admin\stock\page.tsx : line 425
+Product -> app\admin\stock\page.tsx : line 427
+Product -> app\admin\stock\page.tsx : line 498
+Product -> app\admin\stock\page.tsx : line 53
+Product -> app\admin\stock\page.tsx : line 549
+Product -> app\admin\stock\page.tsx : line 56
+Product -> app\admin\stock\page.tsx : line 589
+Product -> app\admin\stock\page.tsx : line 6
+Product -> app\admin\stock\page.tsx : line 609
+Product -> app\admin\stock\page.tsx : line 613
+Product -> app\admin\stock\page.tsx : line 630
+Product -> app\admin\stock\page.tsx : line 74
+Product -> app\admin\stock\page.tsx : line 75
+Product -> app\admin\stock\page.tsx : line 85
+Product -> app\admin\stock\page.tsx : line 88
+Product -> app\admin\stock\page.tsx : line 90
+Product -> app\admin\stock\page.tsx : line 91
+Product -> app\admin\stock\page.tsx : line 92
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 108
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 110
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 114
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 115
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 118
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 119
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 122
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 126
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 129
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 130
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 160
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 161
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 163
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 177
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 179
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 188
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 221
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 225
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 231
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 235
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 245
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 70
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 77
+Product -> app\api\admin\customers\[id]\orders\route.ts : line 81
+Product -> app\api\admin\customers\[id]\route.ts : line 74
+Product -> app\api\admin\customers\[id]\route.ts : line 78
+Product -> app\api\admin\customers\[id]\route.ts : line 79
+Product -> app\api\admin\dashboard\route.ts : line 21
+Product -> app\api\admin\dashboard\route.ts : line 22
+Product -> app\api\admin\dashboard\route.ts : line 31
+Product -> app\api\admin\dashboard\route.ts : line 33
+Product -> app\api\admin\dashboard\route.ts : line 89
+Product -> app\api\admin\dashboard\route.ts : line 90
+Product -> app\api\admin\dashboard\route.ts : line 91
+Product -> app\api\admin\login\route.ts : line 35
+Product -> app\api\admin\logout\route.ts : line 10
+Product -> app\api\admin\products\[id]\route.ts : line 100
+Product -> app\api\admin\products\[id]\route.ts : line 194
+Product -> app\api\admin\products\[id]\route.ts : line 201
+Product -> app\api\admin\products\[id]\route.ts : line 202
+Product -> app\api\admin\products\[id]\route.ts : line 205
+Product -> app\api\admin\products\[id]\route.ts : line 208
+Product -> app\api\admin\products\[id]\route.ts : line 228
+Product -> app\api\admin\products\[id]\route.ts : line 240
+Product -> app\api\admin\products\[id]\route.ts : line 242
+Product -> app\api\admin\products\[id]\route.ts : line 247
+Product -> app\api\admin\products\[id]\route.ts : line 251
+Product -> app\api\admin\products\[id]\route.ts : line 257
+Product -> app\api\admin\products\[id]\route.ts : line 263
+Product -> app\api\admin\products\[id]\route.ts : line 266
+Product -> app\api\admin\products\[id]\route.ts : line 269
+Product -> app\api\admin\products\[id]\route.ts : line 31
+Product -> app\api\admin\products\[id]\route.ts : line 35
+Product -> app\api\admin\products\[id]\route.ts : line 37
+Product -> app\api\admin\products\[id]\route.ts : line 44
+Product -> app\api\admin\products\[id]\route.ts : line 47
+Product -> app\api\admin\products\[id]\route.ts : line 50
+Product -> app\api\admin\products\[id]\route.ts : line 72
+Product -> app\api\admin\products\[id]\route.ts : line 76
+Product -> app\api\admin\products\[id]\route.ts : line 78
+Product -> app\api\admin\products\route.ts : line 35
+Product -> app\api\admin\products\route.ts : line 51
+Product -> app\api\admin\products\route.ts : line 52
+Product -> app\api\admin\products\route.ts : line 53
+Product -> app\api\admin\products\route.ts : line 54
+Product -> app\api\admin\products\route.ts : line 55
+Product -> app\api\admin\products\route.ts : line 56
+Product -> app\api\admin\products\route.ts : line 57
+Product -> app\api\admin\products\route.ts : line 65
+Product -> app\api\admin\products\route.ts : line 70
+Product -> app\api\admin\products\route-backup.ts : line 14
+Product -> app\api\admin\products\route-backup.ts : line 20
+Product -> app\api\admin\products\route-backup.ts : line 46
+Product -> app\api\admin\products\route-backup.ts : line 6
+Product -> app\api\admin\products\route-backup.ts : line 77
+Product -> app\api\admin\products\route-backup.ts : line 93
+Product -> app\api\admin\products\route-backup.ts : line 99
+Product -> app\api\admin\stock\route.ts : line 112
+Product -> app\api\admin\stock\route.ts : line 114
+Product -> app\api\admin\stock\route.ts : line 118
+Product -> app\api\admin\stock\route.ts : line 119
+Product -> app\api\admin\stock\route.ts : line 122
+Product -> app\api\admin\stock\route.ts : line 142
+Product -> app\api\admin\stock\route.ts : line 144
+Product -> app\api\admin\stock\route.ts : line 153
+Product -> app\api\admin\stock\route.ts : line 163
+Product -> app\api\admin\stock\route.ts : line 180
+Product -> app\api\admin\stock\route.ts : line 182
+Product -> app\api\admin\stock\route.ts : line 25
+Product -> app\api\admin\stock\route.ts : line 28
+Product -> app\api\admin\stock\route.ts : line 30
+Product -> app\api\admin\stock\route.ts : line 37
+Product -> app\api\admin\stock\route.ts : line 77
+Product -> app\api\admin\stock\route.ts : line 83
+Product -> app\api\admin\stock\route.ts : line 85
+Product -> app\api\orders\route.ts : line 10
+Product -> app\api\orders\route.ts : line 11
+Product -> app\api\orders\route.ts : line 121
+Product -> app\api\orders\route.ts : line 123
+Product -> app\api\orders\route.ts : line 126
+Product -> app\api\orders\route.ts : line 132
+Product -> app\api\orders\route.ts : line 136
+Product -> app\api\orders\route.ts : line 142
+Product -> app\api\orders\route.ts : line 143
+Product -> app\api\orders\route.ts : line 151
+Product -> app\api\orders\route.ts : line 153
+Product -> app\api\orders\route.ts : line 157
+Product -> app\api\orders\route.ts : line 163
+Product -> app\api\orders\route.ts : line 167
+Product -> app\api\orders\route.ts : line 174
+Product -> app\api\orders\route.ts : line 179
+Product -> app\api\orders\route.ts : line 180
+Product -> app\api\orders\route.ts : line 182
+Product -> app\api\orders\route.ts : line 183
+Product -> app\api\orders\route.ts : line 184
+Product -> app\api\orders\route.ts : line 258
+Product -> app\api\orders\route.ts : line 260
+Product -> app\api\orders\route.ts : line 261
+Product -> app\api\orders\route.ts : line 264
+Product -> app\api\orders\route.ts : line 266
+Product -> app\api\orders\route.ts : line 280
+Product -> app\api\products\route.ts : line 44
+Product -> app\api\products\route.ts : line 45
+Product -> app\api\products\route.ts : line 64
+Product -> app\api\products\route.ts : line 73
+Product -> app\api\products\route.ts : line 87
+Product -> app\api\quotes\route.ts : line 30
+Product -> app\bulk-order\page.tsx : line 100
+Product -> app\bulk-order\page.tsx : line 107
+Product -> app\bulk-order\page.tsx : line 109
+Product -> app\bulk-order\page.tsx : line 116
+Product -> app\bulk-order\page.tsx : line 117
+Product -> app\bulk-order\page.tsx : line 118
+Product -> app\bulk-order\page.tsx : line 121
+Product -> app\bulk-order\page.tsx : line 127
+Product -> app\bulk-order\page.tsx : line 136
+Product -> app\bulk-order\page.tsx : line 159
+Product -> app\bulk-order\page.tsx : line 161
+Product -> app\bulk-order\page.tsx : line 162
+Product -> app\bulk-order\page.tsx : line 163
+Product -> app\bulk-order\page.tsx : line 164
+Product -> app\bulk-order\page.tsx : line 165
+Product -> app\bulk-order\page.tsx : line 166
+Product -> app\bulk-order\page.tsx : line 18
+Product -> app\bulk-order\page.tsx : line 191
+Product -> app\bulk-order\page.tsx : line 203
+Product -> app\bulk-order\page.tsx : line 23
+Product -> app\bulk-order\page.tsx : line 235
+Product -> app\bulk-order\page.tsx : line 238
+Product -> app\bulk-order\page.tsx : line 241
+Product -> app\bulk-order\page.tsx : line 250
+Product -> app\bulk-order\page.tsx : line 252
+Product -> app\bulk-order\page.tsx : line 256
+Product -> app\bulk-order\page.tsx : line 260
+Product -> app\bulk-order\page.tsx : line 262
+Product -> app\bulk-order\page.tsx : line 263
+Product -> app\bulk-order\page.tsx : line 275
+Product -> app\bulk-order\page.tsx : line 279
+Product -> app\bulk-order\page.tsx : line 282
+Product -> app\bulk-order\page.tsx : line 284
+Product -> app\bulk-order\page.tsx : line 29
+Product -> app\bulk-order\page.tsx : line 292
+Product -> app\bulk-order\page.tsx : line 296
+Product -> app\bulk-order\page.tsx : line 301
+Product -> app\bulk-order\page.tsx : line 310
+Product -> app\bulk-order\page.tsx : line 322
+Product -> app\bulk-order\page.tsx : line 326
+Product -> app\bulk-order\page.tsx : line 337
+Product -> app\bulk-order\page.tsx : line 355
+Product -> app\bulk-order\page.tsx : line 36
+Product -> app\bulk-order\page.tsx : line 379
+Product -> app\bulk-order\page.tsx : line 39
+Product -> app\bulk-order\page.tsx : line 419
+Product -> app\bulk-order\page.tsx : line 5
+Product -> app\bulk-order\page.tsx : line 58
+Product -> app\bulk-order\page.tsx : line 68
+Product -> app\bulk-order\page.tsx : line 72
+Product -> app\bulk-order\page.tsx : line 74
+Product -> app\bulk-order\page.tsx : line 79
+Product -> app\bulk-order\page.tsx : line 88
+Product -> app\bulk-order\page.tsx : line 92
+Product -> app\bulk-order\page.tsx : line 95
+Product -> app\bulk-order\page-backup.tsx : line 13
+Product -> app\bulk-order\page-backup.tsx : line 407
+Product -> app\bulk-order\page-backup.tsx : line 411
+Product -> app\bulk-order\page-backup.tsx : line 412
+Product -> app\bulk-order\page-backup.tsx : line 414
+Product -> app\bulk-order\page-backup.tsx : line 434
+Product -> app\bulk-order\page-backup.tsx : line 436
+Product -> app\bulk-order\page-backup.tsx : line 437
+Product -> app\bulk-order\page-backup.tsx : line 438
+Product -> app\bulk-order\page-backup.tsx : line 444
+Product -> app\bulk-order\page-backup.tsx : line 451
+Product -> app\bulk-order\page-backup.tsx : line 456
+Product -> app\bulk-order\page-backup.tsx : line 460
+Product -> app\bulk-order\page-backup.tsx : line 461
+Product -> app\bulk-order\page-backup.tsx : line 464
+Product -> app\bulk-order\page-backup.tsx : line 466
+Product -> app\bulk-order\page-backup.tsx : line 467
+Product -> app\bulk-order\page-backup.tsx : line 468
+Product -> app\bulk-order\page-backup.tsx : line 472
+Product -> app\bulk-order\page-backup.tsx : line 473
+Product -> app\bulk-order\page-backup.tsx : line 475
+Product -> app\bulk-order\page-backup.tsx : line 476
+Product -> app\bulk-order\page-backup.tsx : line 481
+Product -> app\bulk-order\page-backup.tsx : line 483
+Product -> app\bulk-order\page-backup.tsx : line 495
+Product -> app\bulk-order\page-backup.tsx : line 497
+Product -> app\bulk-order\page-backup.tsx : line 499
+Product -> app\bulk-order\page-backup.tsx : line 5
+Product -> app\bulk-order\page-backup.tsx : line 501
+Product -> app\bulk-order\page-backup.tsx : line 504
+Product -> app\bulk-order\page-backup.tsx : line 505
+Product -> app\bulk-order\page-backup.tsx : line 508
+Product -> app\bulk-order\page-backup.tsx : line 509
+Product -> app\bulk-order\page-backup.tsx : line 522
+Product -> app\bulk-order\page-backup.tsx : line 547
+Product -> app\bulk-order\page-backup.tsx : line 571
+Product -> app\bulk-order\page-backup.tsx : line 575
+Product -> app\bulk-order\page-backup.tsx : line 576
+Product -> app\bulk-order\page-backup.tsx : line 591
+Product -> app\bulk-order\page-backup.tsx : line 622
+Product -> app\bulk-order\page-backup.tsx : line 639
+Product -> app\bulk-order\page-backup.tsx : line 642
+Product -> app\bulk-order\page-backup.tsx : line 646
+Product -> app\bulk-order\page-backup.tsx : line 656
+Product -> app\bulk-order\page-backup.tsx : line 662
+Product -> app\bulk-order\page-backup.tsx : line 666
+Product -> app\bulk-order\page-backup.tsx : line 672
+Product -> app\bulk-order\page-backup.tsx : line 676
+Product -> app\bulk-order\page-backup.tsx : line 687
+Product -> app\bulk-order\page-backup.tsx : line 700
+Product -> app\bulk-order\page-backup.tsx : line 703
+Product -> app\bulk-order\page-backup.tsx : line 707
+Product -> app\bulk-order\page-backup.tsx : line 720
+Product -> app\bulk-order\page-backup.tsx : line 724
+Product -> app\bulk-order\page-before-db.tsx : line 13
+Product -> app\bulk-order\page-before-db.tsx : line 407
+Product -> app\bulk-order\page-before-db.tsx : line 411
+Product -> app\bulk-order\page-before-db.tsx : line 412
+Product -> app\bulk-order\page-before-db.tsx : line 414
+Product -> app\bulk-order\page-before-db.tsx : line 434
+Product -> app\bulk-order\page-before-db.tsx : line 436
+Product -> app\bulk-order\page-before-db.tsx : line 437
+Product -> app\bulk-order\page-before-db.tsx : line 438
+Product -> app\bulk-order\page-before-db.tsx : line 444
+Product -> app\bulk-order\page-before-db.tsx : line 451
+Product -> app\bulk-order\page-before-db.tsx : line 456
+Product -> app\bulk-order\page-before-db.tsx : line 460
+Product -> app\bulk-order\page-before-db.tsx : line 461
+Product -> app\bulk-order\page-before-db.tsx : line 464
+Product -> app\bulk-order\page-before-db.tsx : line 466
+Product -> app\bulk-order\page-before-db.tsx : line 467
+Product -> app\bulk-order\page-before-db.tsx : line 468
+Product -> app\bulk-order\page-before-db.tsx : line 472
+Product -> app\bulk-order\page-before-db.tsx : line 473
+Product -> app\bulk-order\page-before-db.tsx : line 475
+Product -> app\bulk-order\page-before-db.tsx : line 476
+Product -> app\bulk-order\page-before-db.tsx : line 481
+Product -> app\bulk-order\page-before-db.tsx : line 483
+Product -> app\bulk-order\page-before-db.tsx : line 495
+Product -> app\bulk-order\page-before-db.tsx : line 497
+Product -> app\bulk-order\page-before-db.tsx : line 499
+Product -> app\bulk-order\page-before-db.tsx : line 5
+Product -> app\bulk-order\page-before-db.tsx : line 501
+Product -> app\bulk-order\page-before-db.tsx : line 504
+Product -> app\bulk-order\page-before-db.tsx : line 505
+Product -> app\bulk-order\page-before-db.tsx : line 508
+Product -> app\bulk-order\page-before-db.tsx : line 509
+Product -> app\bulk-order\page-before-db.tsx : line 522
+Product -> app\bulk-order\page-before-db.tsx : line 547
+Product -> app\bulk-order\page-before-db.tsx : line 571
+Product -> app\bulk-order\page-before-db.tsx : line 575
+Product -> app\bulk-order\page-before-db.tsx : line 576
+Product -> app\bulk-order\page-before-db.tsx : line 591
+Product -> app\bulk-order\page-before-db.tsx : line 622
+Product -> app\bulk-order\page-before-db.tsx : line 639
+Product -> app\bulk-order\page-before-db.tsx : line 642
+Product -> app\bulk-order\page-before-db.tsx : line 646
+Product -> app\bulk-order\page-before-db.tsx : line 656
+Product -> app\bulk-order\page-before-db.tsx : line 662
+Product -> app\bulk-order\page-before-db.tsx : line 666
+Product -> app\bulk-order\page-before-db.tsx : line 672
+Product -> app\bulk-order\page-before-db.tsx : line 676
+Product -> app\bulk-order\page-before-db.tsx : line 687
+Product -> app\bulk-order\page-before-db.tsx : line 700
+Product -> app\bulk-order\page-before-db.tsx : line 703
+Product -> app\bulk-order\page-before-db.tsx : line 707
+Product -> app\bulk-order\page-before-db.tsx : line 720
+Product -> app\bulk-order\page-before-db.tsx : line 724
+Product -> app\cart\page.tsx : line 100
+Product -> app\cart\page.tsx : line 104
+Product -> app\cart\page.tsx : line 107
+Product -> app\cart\page.tsx : line 78
+Product -> app\checkout\page.tsx : line 176
+Product -> app\checkout\page.tsx : line 183
+Product -> app\page.tsx : line 103
+Product -> app\page.tsx : line 108
+Product -> app\page.tsx : line 5
+Product -> app\page.tsx : line 75
+Product -> app\page.tsx : line 84
+Product -> app\page.tsx : line 86
+Product -> app\page.tsx : line 95
+Product -> app\page.tsx : line 99
+Product -> app\products\[category]\page.tsx : line 100
+Product -> app\products\[category]\page.tsx : line 101
+Product -> app\products\[category]\page.tsx : line 107
+Product -> app\products\[category]\page.tsx : line 124
+Product -> app\products\[category]\page.tsx : line 125
+Product -> app\products\[category]\page.tsx : line 126
+Product -> app\products\[category]\page.tsx : line 131
+Product -> app\products\[category]\page.tsx : line 132
+Product -> app\products\[category]\page.tsx : line 135
+Product -> app\products\[category]\page.tsx : line 136
+Product -> app\products\[category]\page.tsx : line 137
+Product -> app\products\[category]\page.tsx : line 138
+Product -> app\products\[category]\page.tsx : line 139
+Product -> app\products\[category]\page.tsx : line 143
+Product -> app\products\[category]\page.tsx : line 145
+Product -> app\products\[category]\page.tsx : line 194
+Product -> app\products\[category]\page.tsx : line 203
+Product -> app\products\[category]\page.tsx : line 204
+Product -> app\products\[category]\page.tsx : line 205
+Product -> app\products\[category]\page.tsx : line 209
+Product -> app\products\[category]\page.tsx : line 21
+Product -> app\products\[category]\page.tsx : line 216
+Product -> app\products\[category]\page.tsx : line 217
+Product -> app\products\[category]\page.tsx : line 226
+Product -> app\products\[category]\page.tsx : line 230
+Product -> app\products\[category]\page.tsx : line 259
+Product -> app\products\[category]\page.tsx : line 26
+Product -> app\products\[category]\page.tsx : line 272
+Product -> app\products\[category]\page.tsx : line 291
+Product -> app\products\[category]\page.tsx : line 333
+Product -> app\products\[category]\page.tsx : line 38
+Product -> app\products\[category]\page.tsx : line 5
+Product -> app\products\[category]\page.tsx : line 50
+Product -> app\products\[category]\page.tsx : line 62
+Product -> app\products\[category]\page.tsx : line 74
+Product -> app\products\[category]\page.tsx : line 86
+Product -> app\quote\page.tsx : line 102
+Product -> app\quote\page.tsx : line 122
+Product -> app\quote\page.tsx : line 223
+Product -> backup\schema-before-orders-20260920-020313\schema.prisma : line 10
+Product -> lib\prisma.ts : line 18
+Product -> prisma\schema.backup.prisma : line 10
+Product -> prisma\schema.backup.prisma : line 76
+Product -> prisma\schema.backup.prisma : line 77
+Product -> prisma\schema.backup.prisma : line 84
+Product -> prisma\schema.backup.prisma : line 87
+Product -> prisma\schema.prisma : line 10
+Product -> prisma\schema.prisma : line 108
+Product -> prisma\schema.prisma : line 117
+Product -> prisma\schema.prisma : line 119
+Product -> prisma\schema.prisma : line 77
+Product -> prisma\schema.prisma : line 78
+Product -> prisma\schema.prisma : line 85
+Product -> prisma\schema.prisma : line 88
+Product -> prisma\seed-test.ts : line 21
+Product -> prisma\seed-test.ts : line 35
+purchasePrice -> app\admin\orders\[id]\page.tsx : line 13
+purchasePrice -> app\admin\orders\new\page.tsx : line 19
+purchasePrice -> app\admin\products\[id]\page.tsx : line 118
+purchasePrice -> app\admin\products\[id]\page.tsx : line 23
+purchasePrice -> app\admin\products\[id]\page.tsx : line 259
+purchasePrice -> app\admin\products\[id]\page.tsx : line 261
+purchasePrice -> app\admin\products\[id]\page.tsx : line 44
+purchasePrice -> app\admin\products\[id]\page.tsx : line 78
+purchasePrice -> app\admin\products\new\page.tsx : line 12
+purchasePrice -> app\admin\products\new\page.tsx : line 177
+purchasePrice -> app\admin\products\new\page.tsx : line 179
+purchasePrice -> app\admin\products\new\page.tsx : line 39
+purchasePrice -> app\admin\products\page.tsx : line 10
+purchasePrice -> app\admin\products\page.tsx : line 333
+purchasePrice -> app\admin\products\page.tsx : line 352
+purchasePrice -> app\admin\products\page-backup.tsx : line 144
+purchasePrice -> app\admin\products\page-backup.tsx : line 157
+purchasePrice -> app\admin\products\page-backup.tsx : line 166
+purchasePrice -> app\admin\products\page-backup.tsx : line 197
+purchasePrice -> app\admin\products\page-backup.tsx : line 227
+purchasePrice -> app\admin\products\page-backup.tsx : line 240
+purchasePrice -> app\admin\products\page-backup.tsx : line 286
+purchasePrice -> app\admin\products\page-backup.tsx : line 440
+purchasePrice -> app\admin\products\page-backup.tsx : line 442
+purchasePrice -> app\admin\products\page-backup.tsx : line 556
+purchasePrice -> app\admin\products\page-backup.tsx : line 559
+purchasePrice -> app\admin\products\page-backup.tsx : line 570
+purchasePrice -> app\admin\products\page-backup.tsx : line 576
+purchasePrice -> app\admin\products\page-backup.tsx : line 579
+purchasePrice -> app\admin\products\page-backup.tsx : line 580
+purchasePrice -> app\admin\products\page-backup.tsx : line 59
+purchasePrice -> app\admin\products\page-backup.tsx : line 590
+purchasePrice -> app\admin\products\page-backup.tsx : line 607
+purchasePrice -> app\admin\products\page-backup.tsx : line 652
+purchasePrice -> app\admin\products\page-backup.tsx : line 655
+purchasePrice -> app\admin\products\page-backup.tsx : line 657
+purchasePrice -> app\admin\products\page-backup.tsx : line 662
+purchasePrice -> app\admin\products\page-backup.tsx : line 737
+purchasePrice -> app\admin\products\page-backup.tsx : line 81
+purchasePrice -> app\admin\products\page-backup.tsx : line 82
+purchasePrice -> app\admin\products\page-backup.tsx : line 9
+purchasePrice -> app\api\admin\customers\[id]\orders\route.ts : line 130
+purchasePrice -> app\api\admin\customers\[id]\orders\route.ts : line 164
+purchasePrice -> app\api\admin\dashboard\route.ts : line 71
+purchasePrice -> app\api\admin\dashboard\route.ts : line 82
+purchasePrice -> app\api\admin\products\[id]\route.ts : line 121
+purchasePrice -> app\api\admin\products\[id]\route.ts : line 122
+purchasePrice -> app\api\admin\products\[id]\route.ts : line 124
+purchasePrice -> app\api\admin\products\[id]\route.ts : line 131
+purchasePrice -> app\api\admin\products\[id]\route.ts : line 86
+purchasePrice -> app\api\admin\products\route-backup.ts : line 33
+purchasePrice -> app\api\admin\products\route-backup.ts : line 53
+purchasePrice -> app\api\admin\products\route-backup.ts : line 54
+purchasePrice -> app\api\admin\products\route-backup.ts : line 81
+purchasePrice -> app\api\orders\route.ts : line 14
+purchasePrice -> app\api\orders\route.ts : line 183
+purchasePrice -> backup\schema-before-orders-20260920-020313\schema.prisma : line 14
+purchasePrice -> prisma\schema.backup.prisma : line 14
+purchasePrice -> prisma\schema.backup.prisma : line 80
+purchasePrice -> prisma\schema.prisma : line 14
+purchasePrice -> prisma\schema.prisma : line 81
+purchasePrice -> prisma\seed-test.ts : line 25
+sellingPrice -> app\admin\orders\[id]\invoice\page.tsx : line 12
+sellingPrice -> app\admin\orders\[id]\invoice\page.tsx : line 308
+sellingPrice -> app\admin\orders\[id]\page.tsx : line 14
+sellingPrice -> app\admin\orders\[id]\page.tsx : line 314
+sellingPrice -> app\admin\orders\new\page.tsx : line 184
+sellingPrice -> app\admin\orders\new\page.tsx : line 20
+sellingPrice -> app\admin\orders\new\page.tsx : line 420
+sellingPrice -> app\admin\orders\new\page.tsx : line 458
+sellingPrice -> app\admin\products\[id]\page.tsx : line 119
+sellingPrice -> app\admin\products\[id]\page.tsx : line 24
+sellingPrice -> app\admin\products\[id]\page.tsx : line 276
+sellingPrice -> app\admin\products\[id]\page.tsx : line 278
+sellingPrice -> app\admin\products\[id]\page.tsx : line 45
+sellingPrice -> app\admin\products\[id]\page.tsx : line 79
+sellingPrice -> app\admin\products\new\page.tsx : line 13
+sellingPrice -> app\admin\products\new\page.tsx : line 202
+sellingPrice -> app\admin\products\new\page.tsx : line 204
+sellingPrice -> app\admin\products\new\page.tsx : line 40
+sellingPrice -> app\admin\products\page.tsx : line 11
+sellingPrice -> app\admin\products\page.tsx : line 333
+sellingPrice -> app\admin\products\page.tsx : line 357
+sellingPrice -> app\admin\products\page-backup.tsx : line 10
+sellingPrice -> app\admin\products\page-backup.tsx : line 145
+sellingPrice -> app\admin\products\page-backup.tsx : line 158
+sellingPrice -> app\admin\products\page-backup.tsx : line 171
+sellingPrice -> app\admin\products\page-backup.tsx : line 198
+sellingPrice -> app\admin\products\page-backup.tsx : line 228
+sellingPrice -> app\admin\products\page-backup.tsx : line 241
+sellingPrice -> app\admin\products\page-backup.tsx : line 294
+sellingPrice -> app\admin\products\page-backup.tsx : line 462
+sellingPrice -> app\admin\products\page-backup.tsx : line 464
+sellingPrice -> app\admin\products\page-backup.tsx : line 557
+sellingPrice -> app\admin\products\page-backup.tsx : line 558
+sellingPrice -> app\admin\products\page-backup.tsx : line 569
+sellingPrice -> app\admin\products\page-backup.tsx : line 578
+sellingPrice -> app\admin\products\page-backup.tsx : line 598
+sellingPrice -> app\admin\products\page-backup.tsx : line 60
+sellingPrice -> app\admin\products\page-backup.tsx : line 606
+sellingPrice -> app\admin\products\page-backup.tsx : line 651
+sellingPrice -> app\admin\products\page-backup.tsx : line 666
+sellingPrice -> app\admin\products\page-backup.tsx : line 731
+sellingPrice -> app\admin\products\page-backup.tsx : line 84
+sellingPrice -> app\admin\products\page-backup.tsx : line 85
+sellingPrice -> app\api\admin\customers\[id]\orders\route.ts : line 129
+sellingPrice -> app\api\admin\customers\[id]\orders\route.ts : line 131
+sellingPrice -> app\api\admin\customers\[id]\orders\route.ts : line 165
+sellingPrice -> app\api\admin\customers\[id]\route.ts : line 82
+sellingPrice -> app\api\admin\dashboard\route.ts : line 72
+sellingPrice -> app\api\admin\dashboard\route.ts : line 82
+sellingPrice -> app\api\admin\products\[id]\route.ts : line 134
+sellingPrice -> app\api\admin\products\[id]\route.ts : line 135
+sellingPrice -> app\api\admin\products\[id]\route.ts : line 137
+sellingPrice -> app\api\admin\products\[id]\route.ts : line 144
+sellingPrice -> app\api\admin\products\[id]\route.ts : line 87
+sellingPrice -> app\api\admin\products\route.ts : line 45
+sellingPrice -> app\api\admin\products\route.ts : line 54
+sellingPrice -> app\api\admin\products\route.ts : line 55
+sellingPrice -> app\api\admin\products\route-backup.ts : line 34
+sellingPrice -> app\api\admin\products\route-backup.ts : line 55
+sellingPrice -> app\api\admin\products\route-backup.ts : line 56
+sellingPrice -> app\api\admin\products\route-backup.ts : line 82
+sellingPrice -> app\api\orders\route.ts : line 15
+sellingPrice -> app\api\orders\route.ts : line 174
+sellingPrice -> app\api\orders\route.ts : line 184
+sellingPrice -> app\api\products\route.ts : line 51
+sellingPrice -> app\bulk-order\page.tsx : line 136
+sellingPrice -> app\bulk-order\page.tsx : line 164
+sellingPrice -> app\bulk-order\page.tsx : line 292
+sellingPrice -> app\bulk-order\page.tsx : line 9
+sellingPrice -> backup\schema-before-orders-20260920-020313\schema.prisma : line 15
+sellingPrice -> prisma\schema.backup.prisma : line 15
+sellingPrice -> prisma\schema.backup.prisma : line 81
+sellingPrice -> prisma\schema.prisma : line 15
+sellingPrice -> prisma\schema.prisma : line 82
+sellingPrice -> prisma\seed-test.ts : line 26
+stock -> app\admin\customers\[id]\orders\page.tsx : line 20
+stock -> app\admin\customers\[id]\orders\page.tsx : line 263
+stock -> app\admin\customers\[id]\orders\page.tsx : line 264
+stock -> app\admin\orders\new\page.tsx : line 22
+stock -> app\admin\orders\new\page.tsx : line 222
+stock -> app\admin\orders\new\page.tsx : line 224
+stock -> app\admin\orders\new\page.tsx : line 285
+stock -> app\admin\orders\new\page.tsx : line 421
+stock -> app\admin\orders\new\page.tsx : line 435
+stock -> app\admin\page.tsx : line 113
+stock -> app\admin\page.tsx : line 371
+stock -> app\admin\page.tsx : line 375
+stock -> app\admin\page.tsx : line 379
+stock -> app\admin\page.tsx : line 415
+stock -> app\admin\page.tsx : line 419
+stock -> app\admin\page.tsx : line 423
+stock -> app\admin\products\[id]\page.tsx : line 121
+stock -> app\admin\products\[id]\page.tsx : line 172
+stock -> app\admin\products\[id]\page.tsx : line 238
+stock -> app\admin\products\[id]\page.tsx : line 244
+stock -> app\admin\products\[id]\page.tsx : line 245
+stock -> app\admin\products\[id]\page.tsx : line 26
+stock -> app\admin\products\[id]\page.tsx : line 46
+stock -> app\admin\products\[id]\page.tsx : line 80
+stock -> app\admin\products\new\page.tsx : line 15
+stock -> app\admin\products\new\page.tsx : line 214
+stock -> app\admin\products\new\page.tsx : line 222
+stock -> app\admin\products\new\page.tsx : line 223
+stock -> app\admin\products\new\page.tsx : line 42
+stock -> app\admin\products\page.tsx : line 13
+stock -> app\admin\products\page.tsx : line 192
+stock -> app\admin\products\page.tsx : line 231
+stock -> app\admin\products\page.tsx : line 234
+stock -> app\admin\products\page.tsx : line 240
+stock -> app\admin\products\page.tsx : line 243
+stock -> app\admin\products\page.tsx : line 25
+stock -> app\admin\products\page.tsx : line 271
+stock -> app\admin\products\page.tsx : line 272
+stock -> app\admin\products\page.tsx : line 275
+stock -> app\admin\products\page.tsx : line 276
+stock -> app\admin\products\page.tsx : line 277
+stock -> app\admin\products\page.tsx : line 278
+stock -> app\admin\products\page.tsx : line 324
+stock -> app\admin\products\page.tsx : line 374
+stock -> app\admin\products\page.tsx : line 376
+stock -> app\admin\products\page.tsx : line 381
+stock -> app\admin\products\page.tsx : line 80
+stock -> app\admin\products\page.tsx : line 81
+stock -> app\admin\products\page.tsx : line 82
+stock -> app\admin\products\page.tsx : line 83
+stock -> app\admin\products\page.tsx : line 84
+stock -> app\admin\products\page.tsx : line 86
+stock -> app\admin\products\page.tsx : line 88
+stock -> app\admin\products\page.tsx : line 92
+stock -> app\admin\products\page.tsx : line 93
+stock -> app\admin\products\page.tsx : line 95
+stock -> app\admin\products\page.tsx : line 96
+stock -> app\admin\products\page-backup.tsx : line 12
+stock -> app\admin\products\page-backup.tsx : line 147
+stock -> app\admin\products\page-backup.tsx : line 159
+stock -> app\admin\products\page-backup.tsx : line 183
+stock -> app\admin\products\page-backup.tsx : line 184
+stock -> app\admin\products\page-backup.tsx : line 200
+stock -> app\admin\products\page-backup.tsx : line 230
+stock -> app\admin\products\page-backup.tsx : line 243
+stock -> app\admin\products\page-backup.tsx : line 287
+stock -> app\admin\products\page-backup.tsx : line 295
+stock -> app\admin\products\page-backup.tsx : line 321
+stock -> app\admin\products\page-backup.tsx : line 348
+stock -> app\admin\products\page-backup.tsx : line 495
+stock -> app\admin\products\page-backup.tsx : line 502
+stock -> app\admin\products\page-backup.tsx : line 503
+stock -> app\admin\products\page-backup.tsx : line 588
+stock -> app\admin\products\page-backup.tsx : line 591
+stock -> app\admin\products\page-backup.tsx : line 596
+stock -> app\admin\products\page-backup.tsx : line 599
+stock -> app\admin\products\page-backup.tsx : line 604
+stock -> app\admin\products\page-backup.tsx : line 608
+stock -> app\admin\products\page-backup.tsx : line 62
+stock -> app\admin\products\page-backup.tsx : line 663
+stock -> app\admin\products\page-backup.tsx : line 667
+stock -> app\admin\products\page-backup.tsx : line 669
+stock -> app\admin\products\page-backup.tsx : line 751
+stock -> app\admin\products\page-backup.tsx : line 756
+stock -> app\admin\products\page-backup.tsx : line 761
+stock -> app\admin\products\page-backup.tsx : line 766
+stock -> app\admin\products\page-backup.tsx : line 767
+stock -> app\admin\products\page-backup.tsx : line 88
+stock -> app\admin\stock\page.tsx : line 100
+stock -> app\admin\stock\page.tsx : line 11
+stock -> app\admin\stock\page.tsx : line 110
+stock -> app\admin\stock\page.tsx : line 127
+stock -> app\admin\stock\page.tsx : line 15
+stock -> app\admin\stock\page.tsx : line 175
+stock -> app\admin\stock\page.tsx : line 178
+stock -> app\admin\stock\page.tsx : line 181
+stock -> app\admin\stock\page.tsx : line 182
+stock -> app\admin\stock\page.tsx : line 184
+stock -> app\admin\stock\page.tsx : line 185
+stock -> app\admin\stock\page.tsx : line 191
+stock -> app\admin\stock\page.tsx : line 192
+stock -> app\admin\stock\page.tsx : line 20
+stock -> app\admin\stock\page.tsx : line 21
+stock -> app\admin\stock\page.tsx : line 218
+stock -> app\admin\stock\page.tsx : line 220
+stock -> app\admin\stock\page.tsx : line 229
+stock -> app\admin\stock\page.tsx : line 249
+stock -> app\admin\stock\page.tsx : line 254
+stock -> app\admin\stock\page.tsx : line 265
+stock -> app\admin\stock\page.tsx : line 30
+stock -> app\admin\stock\page.tsx : line 301
+stock -> app\admin\stock\page.tsx : line 305
+stock -> app\admin\stock\page.tsx : line 344
+stock -> app\admin\stock\page.tsx : line 350
+stock -> app\admin\stock\page.tsx : line 353
+stock -> app\admin\stock\page.tsx : line 359
+stock -> app\admin\stock\page.tsx : line 362
+stock -> app\admin\stock\page.tsx : line 368
+stock -> app\admin\stock\page.tsx : line 37
+stock -> app\admin\stock\page.tsx : line 371
+stock -> app\admin\stock\page.tsx : line 379
+stock -> app\admin\stock\page.tsx : line 38
+stock -> app\admin\stock\page.tsx : line 412
+stock -> app\admin\stock\page.tsx : line 42
+stock -> app\admin\stock\page.tsx : line 421
+stock -> app\admin\stock\page.tsx : line 425
+stock -> app\admin\stock\page.tsx : line 43
+stock -> app\admin\stock\page.tsx : line 478
+stock -> app\admin\stock\page.tsx : line 48
+stock -> app\admin\stock\page.tsx : line 498
+stock -> app\admin\stock\page.tsx : line 516
+stock -> app\admin\stock\page.tsx : line 52
+stock -> app\admin\stock\page.tsx : line 526
+stock -> app\admin\stock\page.tsx : line 535
+stock -> app\admin\stock\page.tsx : line 54
+stock -> app\admin\stock\page.tsx : line 561
+stock -> app\admin\stock\page.tsx : line 562
+stock -> app\admin\stock\page.tsx : line 571
+stock -> app\admin\stock\page.tsx : line 576
+stock -> app\admin\stock\page.tsx : line 580
+stock -> app\admin\stock\page.tsx : line 592
+stock -> app\admin\stock\page.tsx : line 636
+stock -> app\admin\stock\page.tsx : line 644
+stock -> app\admin\stock\page.tsx : line 79
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 122
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 123
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 126
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 127
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 182
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 186
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 191
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 192
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 241
+stock -> app\api\admin\customers\[id]\orders\route.ts : line 245
+stock -> app\api\admin\products\[id]\route.ts : line 147
+stock -> app\api\admin\products\[id]\route.ts : line 148
+stock -> app\api\admin\products\[id]\route.ts : line 150
+stock -> app\api\admin\products\[id]\route.ts : line 152
+stock -> app\api\admin\products\[id]\route.ts : line 157
+stock -> app\api\admin\products\[id]\route.ts : line 89
+stock -> app\api\admin\products\route.ts : line 46
+stock -> app\api\admin\products\route.ts : line 56
+stock -> app\api\admin\products\route-backup.ts : line 36
+stock -> app\api\admin\products\route-backup.ts : line 67
+stock -> app\api\admin\products\route-backup.ts : line 71
+stock -> app\api\admin\products\route-backup.ts : line 84
+stock -> app\api\admin\stock\route.ts : line 122
+stock -> app\api\admin\stock\route.ts : line 124
+stock -> app\api\admin\stock\route.ts : line 127
+stock -> app\api\admin\stock\route.ts : line 131
+stock -> app\api\admin\stock\route.ts : line 132
+stock -> app\api\admin\stock\route.ts : line 135
+stock -> app\api\admin\stock\route.ts : line 139
+stock -> app\api\admin\stock\route.ts : line 147
+stock -> app\api\admin\stock\route.ts : line 151
+stock -> app\api\admin\stock\route.ts : line 156
+stock -> app\api\admin\stock\route.ts : line 157
+stock -> app\api\admin\stock\route.ts : line 171
+stock -> app\api\admin\stock\route.ts : line 177
+stock -> app\api\admin\stock\route.ts : line 187
+stock -> app\api\admin\stock\route.ts : line 190
+stock -> app\api\admin\stock\route.ts : line 199
+stock -> app\api\admin\stock\route.ts : line 27
+stock -> app\api\admin\stock\route.ts : line 43
+stock -> app\api\admin\stock\route.ts : line 54
+stock -> app\api\admin\stock\route.ts : line 59
+stock -> app\api\orders\route.ts : line 163
+stock -> app\api\orders\route.ts : line 167
+stock -> app\api\orders\route.ts : line 267
+stock -> app\api\orders\route.ts : line 272
+stock -> app\api\products\route.ts : line 53
+stock -> app\bulk-order\page.tsx : line 100
+stock -> app\bulk-order\page.tsx : line 11
+stock -> app\bulk-order\page.tsx : line 301
+stock -> app\bulk-order\page.tsx : line 322
+stock -> app\bulk-order\page-backup.tsx : line 82
+stock -> app\bulk-order\page-before-db.tsx : line 82
+stock -> backup\schema-before-orders-20260920-020313\schema.prisma : line 17
+stock -> prisma\schema.backup.prisma : line 17
+stock -> prisma\schema.prisma : line 106
+stock -> prisma\schema.prisma : line 111
+stock -> prisma\schema.prisma : line 112
+stock -> prisma\schema.prisma : line 17
+stock -> prisma\schema.prisma : line 24
+stock -> prisma\seed-test.ts : line 28
+
+===== FEATURE DETECTION: CUSTOMER =====
+companyName -> app\admin\customers\[id]\orders\page.tsx : line 12
+companyName -> app\admin\customers\[id]\orders\page.tsx : line 340
+companyName -> app\admin\customers\[id]\orders\page.tsx : line 347
+companyName -> app\admin\customers\[id]\page.tsx : line 128
+companyName -> app\admin\customers\[id]\page.tsx : line 21
+companyName -> app\admin\customers\[id]\page.tsx : line 308
+companyName -> app\admin\customers\[id]\page.tsx : line 310
+companyName -> app\admin\customers\[id]\page.tsx : line 50
+companyName -> app\admin\customers\[id]\page.tsx : line 80
+companyName -> app\admin\customers\page.tsx : line 11
+companyName -> app\admin\customers\page.tsx : line 110
+companyName -> app\admin\customers\page.tsx : line 185
+companyName -> app\admin\customers\page.tsx : line 31
+companyName -> app\admin\customers\page.tsx : line 312
+companyName -> app\admin\customers\page.tsx : line 313
+companyName -> app\admin\customers\page.tsx : line 455
+companyName -> app\admin\customers\page.tsx : line 94
+companyName -> app\admin\orders\[id]\invoice\page.tsx : line 20
+companyName -> app\admin\orders\[id]\invoice\page.tsx : line 205
+companyName -> app\admin\orders\[id]\invoice\page.tsx : line 209
+companyName -> app\admin\orders\[id]\page.tsx : line 23
+companyName -> app\admin\orders\[id]\page.tsx : line 485
+companyName -> app\admin\orders\[id]\page.tsx : line 492
+companyName -> app\admin\orders\new\page.tsx : line 11
+companyName -> app\admin\orders\page.tsx : line 18
+companyName -> app\admin\orders\page.tsx : line 194
+companyName -> app\admin\orders\page.tsx : line 196
+companyName -> app\admin\quotes\page.tsx : line 11
+companyName -> app\admin\quotes\page.tsx : line 352
+companyName -> app\admin\quotes\page.tsx : line 75
+companyName -> app\api\admin\customers\[id]\route.ts : line 157
+companyName -> app\api\admin\customers\[id]\route.ts : line 158
+companyName -> app\api\admin\customers\[id]\route.ts : line 159
+companyName -> app\api\admin\customers\[id]\route.ts : line 161
+companyName -> app\api\admin\customers\[id]\route.ts : line 212
+companyName -> app\api\admin\customers\route.ts : line 100
+companyName -> app\api\admin\customers\route.ts : line 72
+companyName -> app\api\admin\orders\route.ts : line 50
+companyName -> app\api\admin\quotes\route.ts : line 53
+companyName -> app\api\admin\quotes\route.ts : line 75
+companyName -> app\api\orders\route.ts : line 214
+companyName -> app\api\orders\route.ts : line 224
+companyName -> app\api\orders\route.ts : line 38
+companyName -> app\api\quotes\route.ts : line 11
+companyName -> app\api\quotes\route.ts : line 40
+companyName -> app\checkout\page.tsx : line 117
+companyName -> app\checkout\page.tsx : line 24
+companyName -> app\checkout\page.tsx : line 244
+companyName -> app\checkout\page.tsx : line 245
+companyName -> app\quote\page.tsx : line 10
+companyName -> app\quote\page.tsx : line 212
+companyName -> app\quote\page.tsx : line 214
+companyName -> app\quote\page.tsx : line 34
+companyName -> app\quote\page.tsx : line 54
+companyName -> prisma\schema.backup.prisma : line 35
+companyName -> prisma\schema.backup.prisma : line 95
+companyName -> prisma\schema.prisma : line 36
+companyName -> prisma\schema.prisma : line 96
+companyName -> prisma\seed-test.ts : line 16
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 116
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 141
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 166
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 171
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 175
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 179
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 182
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 204
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 210
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 213
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 23
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 27
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 29
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 315
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 326
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 336
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 340
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 347
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 352
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 359
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 45
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 46
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 53
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 55
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 57
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 61
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 7
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 90
+Customer -> app\admin\customers\[id]\orders\page.tsx : line 93
+Customer -> app\admin\customers\[id]\page.tsx : line 104
+Customer -> app\admin\customers\[id]\page.tsx : line 109
+Customer -> app\admin\customers\[id]\page.tsx : line 117
+Customer -> app\admin\customers\[id]\page.tsx : line 138
+Customer -> app\admin\customers\[id]\page.tsx : line 142
+Customer -> app\admin\customers\[id]\page.tsx : line 143
+Customer -> app\admin\customers\[id]\page.tsx : line 148
+Customer -> app\admin\customers\[id]\page.tsx : line 16
+Customer -> app\admin\customers\[id]\page.tsx : line 160
+Customer -> app\admin\customers\[id]\page.tsx : line 167
+Customer -> app\admin\customers\[id]\page.tsx : line 172
+Customer -> app\admin\customers\[id]\page.tsx : line 180
+Customer -> app\admin\customers\[id]\page.tsx : line 183
+Customer -> app\admin\customers\[id]\page.tsx : line 201
+Customer -> app\admin\customers\[id]\page.tsx : line 205
+Customer -> app\admin\customers\[id]\page.tsx : line 212
+Customer -> app\admin\customers\[id]\page.tsx : line 219
+Customer -> app\admin\customers\[id]\page.tsx : line 222
+Customer -> app\admin\customers\[id]\page.tsx : line 247
+Customer -> app\admin\customers\[id]\page.tsx : line 251
+Customer -> app\admin\customers\[id]\page.tsx : line 256
+Customer -> app\admin\customers\[id]\page.tsx : line 340
+Customer -> app\admin\customers\[id]\page.tsx : line 348
+Customer -> app\admin\customers\[id]\page.tsx : line 355
+Customer -> app\admin\customers\[id]\page.tsx : line 359
+Customer -> app\admin\customers\[id]\page.tsx : line 369
+Customer -> app\admin\customers\[id]\page.tsx : line 37
+Customer -> app\admin\customers\[id]\page.tsx : line 379
+Customer -> app\admin\customers\[id]\page.tsx : line 384
+Customer -> app\admin\customers\[id]\page.tsx : line 40
+Customer -> app\admin\customers\[id]\page.tsx : line 403
+Customer -> app\admin\customers\[id]\page.tsx : line 408
+Customer -> app\admin\customers\[id]\page.tsx : line 416
+Customer -> app\admin\customers\[id]\page.tsx : line 42
+Customer -> app\admin\customers\[id]\page.tsx : line 423
+Customer -> app\admin\customers\[id]\page.tsx : line 460
+Customer -> app\admin\customers\[id]\page.tsx : line 53
+Customer -> app\admin\customers\[id]\page.tsx : line 59
+Customer -> app\admin\customers\[id]\page.tsx : line 70
+Customer -> app\admin\customers\[id]\page.tsx : line 76
+Customer -> app\admin\customers\[id]\page.tsx : line 86
+Customer -> app\admin\customers\[id]\page.tsx : line 94
+Customer -> app\admin\customers\[id]\page.tsx : line 95
+Customer -> app\admin\customers\[id]\page.tsx : line 97
+Customer -> app\admin\customers\[id]\page.tsx : line 99
+Customer -> app\admin\customers\page.tsx : line 103
+Customer -> app\admin\customers\page.tsx : line 114
+Customer -> app\admin\customers\page.tsx : line 116
+Customer -> app\admin\customers\page.tsx : line 121
+Customer -> app\admin\customers\page.tsx : line 128
+Customer -> app\admin\customers\page.tsx : line 129
+Customer -> app\admin\customers\page.tsx : line 133
+Customer -> app\admin\customers\page.tsx : line 139
+Customer -> app\admin\customers\page.tsx : line 149
+Customer -> app\admin\customers\page.tsx : line 160
+Customer -> app\admin\customers\page.tsx : line 164
+Customer -> app\admin\customers\page.tsx : line 165
+Customer -> app\admin\customers\page.tsx : line 170
+Customer -> app\admin\customers\page.tsx : line 175
+Customer -> app\admin\customers\page.tsx : line 178
+Customer -> app\admin\customers\page.tsx : line 180
+Customer -> app\admin\customers\page.tsx : line 182
+Customer -> app\admin\customers\page.tsx : line 183
+Customer -> app\admin\customers\page.tsx : line 184
+Customer -> app\admin\customers\page.tsx : line 185
+Customer -> app\admin\customers\page.tsx : line 186
+Customer -> app\admin\customers\page.tsx : line 19
+Customer -> app\admin\customers\page.tsx : line 193
+Customer -> app\admin\customers\page.tsx : line 20
+Customer -> app\admin\customers\page.tsx : line 206
+Customer -> app\admin\customers\page.tsx : line 210
+Customer -> app\admin\customers\page.tsx : line 231
+Customer -> app\admin\customers\page.tsx : line 236
+Customer -> app\admin\customers\page.tsx : line 259
+Customer -> app\admin\customers\page.tsx : line 263
+Customer -> app\admin\customers\page.tsx : line 268
+Customer -> app\admin\customers\page.tsx : line 274
+Customer -> app\admin\customers\page.tsx : line 301
+Customer -> app\admin\customers\page.tsx : line 34
+Customer -> app\admin\customers\page.tsx : line 341
+Customer -> app\admin\customers\page.tsx : line 351
+Customer -> app\admin\customers\page.tsx : line 355
+Customer -> app\admin\customers\page.tsx : line 361
+Customer -> app\admin\customers\page.tsx : line 366
+Customer -> app\admin\customers\page.tsx : line 367
+Customer -> app\admin\customers\page.tsx : line 379
+Customer -> app\admin\customers\page.tsx : line 387
+Customer -> app\admin\customers\page.tsx : line 39
+Customer -> app\admin\customers\page.tsx : line 401
+Customer -> app\admin\customers\page.tsx : line 404
+Customer -> app\admin\customers\page.tsx : line 407
+Customer -> app\admin\customers\page.tsx : line 411
+Customer -> app\admin\customers\page.tsx : line 419
+Customer -> app\admin\customers\page.tsx : line 429
+Customer -> app\admin\customers\page.tsx : line 431
+Customer -> app\admin\customers\page.tsx : line 435
+Customer -> app\admin\customers\page.tsx : line 440
+Customer -> app\admin\customers\page.tsx : line 443
+Customer -> app\admin\customers\page.tsx : line 445
+Customer -> app\admin\customers\page.tsx : line 451
+Customer -> app\admin\customers\page.tsx : line 455
+Customer -> app\admin\customers\page.tsx : line 466
+Customer -> app\admin\customers\page.tsx : line 47
+Customer -> app\admin\customers\page.tsx : line 473
+Customer -> app\admin\customers\page.tsx : line 483
+Customer -> app\admin\customers\page.tsx : line 50
+Customer -> app\admin\customers\page.tsx : line 55
+Customer -> app\admin\customers\page.tsx : line 6
+Customer -> app\admin\customers\page.tsx : line 63
+Customer -> app\admin\customers\page.tsx : line 66
+Customer -> app\admin\customers\page.tsx : line 70
+Customer -> app\admin\customers\page.tsx : line 75
+Customer -> app\admin\customers\page.tsx : line 84
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 16
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 205
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 206
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 209
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 211
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 216
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 219
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 221
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 225
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 227
+Customer -> app\admin\orders\[id]\invoice\page.tsx : line 41
+Customer -> app\admin\orders\[id]\page.tsx : line 18
+Customer -> app\admin\orders\[id]\page.tsx : line 225
+Customer -> app\admin\orders\[id]\page.tsx : line 228
+Customer -> app\admin\orders\[id]\page.tsx : line 448
+Customer -> app\admin\orders\[id]\page.tsx : line 459
+Customer -> app\admin\orders\[id]\page.tsx : line 46
+Customer -> app\admin\orders\[id]\page.tsx : line 469
+Customer -> app\admin\orders\[id]\page.tsx : line 473
+Customer -> app\admin\orders\[id]\page.tsx : line 480
+Customer -> app\admin\orders\[id]\page.tsx : line 485
+Customer -> app\admin\orders\[id]\page.tsx : line 492
+Customer -> app\admin\orders\new\page.tsx : line 100
+Customer -> app\admin\orders\new\page.tsx : line 116
+Customer -> app\admin\orders\new\page.tsx : line 117
+Customer -> app\admin\orders\new\page.tsx : line 119
+Customer -> app\admin\orders\new\page.tsx : line 121
+Customer -> app\admin\orders\new\page.tsx : line 122
+Customer -> app\admin\orders\new\page.tsx : line 123
+Customer -> app\admin\orders\new\page.tsx : line 198
+Customer -> app\admin\orders\new\page.tsx : line 199
+Customer -> app\admin\orders\new\page.tsx : line 240
+Customer -> app\admin\orders\new\page.tsx : line 285
+Customer -> app\admin\orders\new\page.tsx : line 300
+Customer -> app\admin\orders\new\page.tsx : line 310
+Customer -> app\admin\orders\new\page.tsx : line 312
+Customer -> app\admin\orders\new\page.tsx : line 325
+Customer -> app\admin\orders\new\page.tsx : line 331
+Customer -> app\admin\orders\new\page.tsx : line 335
+Customer -> app\admin\orders\new\page.tsx : line 337
+Customer -> app\admin\orders\new\page.tsx : line 34
+Customer -> app\admin\orders\new\page.tsx : line 342
+Customer -> app\admin\orders\new\page.tsx : line 344
+Customer -> app\admin\orders\new\page.tsx : line 345
+Customer -> app\admin\orders\new\page.tsx : line 346
+Customer -> app\admin\orders\new\page.tsx : line 354
+Customer -> app\admin\orders\new\page.tsx : line 358
+Customer -> app\admin\orders\new\page.tsx : line 37
+Customer -> app\admin\orders\new\page.tsx : line 6
+Customer -> app\admin\orders\new\page.tsx : line 64
+Customer -> app\admin\orders\new\page.tsx : line 65
+Customer -> app\admin\orders\new\page.tsx : line 682
+Customer -> app\admin\orders\new\page.tsx : line 75
+Customer -> app\admin\orders\new\page.tsx : line 76
+Customer -> app\admin\orders\new\page.tsx : line 83
+Customer -> app\admin\orders\new\page.tsx : line 86
+Customer -> app\admin\orders\new\page.tsx : line 87
+Customer -> app\admin\orders\new\page.tsx : line 88
+Customer -> app\admin\orders\new\page.tsx : line 89
+Customer -> app\admin\orders\page.tsx : line 126
+Customer -> app\admin\orders\page.tsx : line 14
+Customer -> app\admin\orders\page.tsx : line 140
+Customer -> app\admin\orders\page.tsx : line 187
+Customer -> app\admin\orders\page.tsx : line 191
+Customer -> app\admin\orders\page.tsx : line 194
+Customer -> app\admin\orders\page.tsx : line 196
+Customer -> app\admin\orders\page.tsx : line 82
+Customer -> app\admin\page.tsx : line 11
+Customer -> app\admin\page.tsx : line 113
+Customer -> app\admin\page.tsx : line 185
+Customer -> app\admin\page.tsx : line 190
+Customer -> app\admin\page.tsx : line 199
+Customer -> app\admin\page.tsx : line 203
+Customer -> app\admin\page.tsx : line 207
+Customer -> app\admin\page.tsx : line 345
+Customer -> app\admin\page.tsx : line 349
+Customer -> app\admin\page.tsx : line 353
+Customer -> app\admin\page.tsx : line 397
+Customer -> app\admin\products\page-backup.tsx : line 471
+Customer -> app\admin\quotes\page.tsx : line 308
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 100
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 104
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 105
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 138
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 149
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 150
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 172
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 211
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 215
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 252
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 44
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 46
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 50
+Customer -> app\api\admin\customers\[id]\orders\route.ts : line 98
+Customer -> app\api\admin\customers\[id]\route.ts : line 103
+Customer -> app\api\admin\customers\[id]\route.ts : line 106
+Customer -> app\api\admin\customers\[id]\route.ts : line 111
+Customer -> app\api\admin\customers\[id]\route.ts : line 141
+Customer -> app\api\admin\customers\[id]\route.ts : line 172
+Customer -> app\api\admin\customers\[id]\route.ts : line 182
+Customer -> app\api\admin\customers\[id]\route.ts : line 188
+Customer -> app\api\admin\customers\[id]\route.ts : line 194
+Customer -> app\api\admin\customers\[id]\route.ts : line 198
+Customer -> app\api\admin\customers\[id]\route.ts : line 204
+Customer -> app\api\admin\customers\[id]\route.ts : line 226
+Customer -> app\api\admin\customers\[id]\route.ts : line 227
+Customer -> app\api\admin\customers\[id]\route.ts : line 230
+Customer -> app\api\admin\customers\[id]\route.ts : line 235
+Customer -> app\api\admin\customers\[id]\route.ts : line 50
+Customer -> app\api\admin\customers\[id]\route.ts : line 56
+Customer -> app\api\admin\customers\[id]\route.ts : line 91
+Customer -> app\api\admin\customers\[id]\route.ts : line 95
+Customer -> app\api\admin\customers\route.ts : line 115
+Customer -> app\api\admin\customers\route.ts : line 116
+Customer -> app\api\admin\customers\route.ts : line 121
+Customer -> app\api\admin\customers\route.ts : line 126
+Customer -> app\api\admin\customers\route.ts : line 25
+Customer -> app\api\admin\customers\route.ts : line 40
+Customer -> app\api\admin\customers\route.ts : line 43
+Customer -> app\api\admin\customers\route.ts : line 48
+Customer -> app\api\admin\customers\route.ts : line 79
+Customer -> app\api\admin\customers\route.ts : line 95
+Customer -> app\api\admin\dashboard\route.ts : line 23
+Customer -> app\api\admin\dashboard\route.ts : line 39
+Customer -> app\api\admin\dashboard\route.ts : line 93
+Customer -> app\api\admin\dashboard\route.ts : line 94
+Customer -> app\api\admin\orders\[id]\invoice\route.ts : line 34
+Customer -> app\api\admin\orders\[id]\route.ts : line 152
+Customer -> app\api\admin\orders\route.ts : line 45
+Customer -> app\api\orders\route.ts : line 200
+Customer -> app\api\orders\route.ts : line 206
+Customer -> app\api\orders\route.ts : line 207
+Customer -> app\api\orders\route.ts : line 209
+Customer -> app\api\orders\route.ts : line 212
+Customer -> app\api\orders\route.ts : line 213
+Customer -> app\api\orders\route.ts : line 214
+Customer -> app\api\orders\route.ts : line 215
+Customer -> app\api\orders\route.ts : line 219
+Customer -> app\api\orders\route.ts : line 221
+Customer -> app\api\orders\route.ts : line 233
+Customer -> app\api\orders\route.ts : line 241
+Customer -> app\api\orders\route.ts : line 35
+Customer -> app\api\orders\route.ts : line 55
+Customer -> app\api\orders\route.ts : line 59
+Customer -> app\checkout\page.tsx : line 114
+Customer -> app\checkout\page.tsx : line 21
+Customer -> app\checkout\page.tsx : line 217
+Customer -> app\checkout\page.tsx : line 222
+Customer -> app\checkout\page.tsx : line 223
+Customer -> app\checkout\page.tsx : line 81
+Customer -> prisma\schema.backup.prisma : line 30
+Customer -> prisma\schema.backup.prisma : line 48
+Customer -> prisma\schema.backup.prisma : line 49
+Customer -> prisma\schema.backup.prisma : line 68
+Customer -> prisma\schema.prisma : line 31
+Customer -> prisma\schema.prisma : line 49
+Customer -> prisma\schema.prisma : line 50
+Customer -> prisma\schema.prisma : line 69
+Customer -> prisma\seed-test.ts : line 11
+Customer -> prisma\seed-test.ts : line 13
+Customer -> prisma\seed-test.ts : line 34
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 116
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 141
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 210
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 27
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 46
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 90
+customerId -> app\admin\customers\[id]\orders\page.tsx : line 93
+customerId -> app\admin\customers\[id]\page.tsx : line 117
+customerId -> app\admin\customers\[id]\page.tsx : line 212
+customerId -> app\admin\customers\[id]\page.tsx : line 384
+customerId -> app\admin\customers\[id]\page.tsx : line 40
+customerId -> app\admin\customers\[id]\page.tsx : line 408
+customerId -> app\admin\customers\[id]\page.tsx : line 423
+customerId -> app\admin\customers\[id]\page.tsx : line 59
+customerId -> app\admin\customers\[id]\page.tsx : line 94
+customerId -> app\admin\customers\[id]\page.tsx : line 97
+customerId -> app\admin\orders\new\page.tsx : line 117
+customerId -> app\admin\orders\new\page.tsx : line 198
+customerId -> app\admin\orders\new\page.tsx : line 240
+customerId -> app\admin\orders\new\page.tsx : line 335
+customerId -> app\admin\orders\new\page.tsx : line 37
+customerId -> app\api\admin\customers\[id]\orders\route.ts : line 100
+customerId -> app\api\admin\customers\[id]\orders\route.ts : line 138
+customerId -> app\api\admin\customers\[id]\orders\route.ts : line 44
+customerId -> app\api\admin\customers\[id]\orders\route.ts : line 46
+customerId -> app\api\orders\route.ts : line 233
+customerId -> prisma\schema.backup.prisma : line 48
+customerId -> prisma\schema.backup.prisma : line 49
+customerId -> prisma\schema.backup.prisma : line 68
+customerId -> prisma\schema.prisma : line 49
+customerId -> prisma\schema.prisma : line 50
+customerId -> prisma\schema.prisma : line 69
+gstin -> app\admin\customers\[id]\orders\page.tsx : line 13
+gstin -> app\admin\customers\[id]\orders\page.tsx : line 352
+gstin -> app\admin\customers\[id]\orders\page.tsx : line 355
+gstin -> app\admin\customers\[id]\orders\page.tsx : line 359
+gstin -> app\admin\customers\[id]\page.tsx : line 129
+gstin -> app\admin\customers\[id]\page.tsx : line 22
+gstin -> app\admin\customers\[id]\page.tsx : line 318
+gstin -> app\admin\customers\[id]\page.tsx : line 322
+gstin -> app\admin\customers\[id]\page.tsx : line 324
+gstin -> app\admin\customers\[id]\page.tsx : line 51
+gstin -> app\admin\customers\[id]\page.tsx : line 81
+gstin -> app\admin\customers\page.tsx : line 111
+gstin -> app\admin\customers\page.tsx : line 12
+gstin -> app\admin\customers\page.tsx : line 186
+gstin -> app\admin\customers\page.tsx : line 32
+gstin -> app\admin\customers\page.tsx : line 321
+gstin -> app\admin\customers\page.tsx : line 325
+gstin -> app\admin\customers\page.tsx : line 327
+gstin -> app\admin\customers\page.tsx : line 329
+gstin -> app\admin\customers\page.tsx : line 95
+gstin -> app\admin\orders\[id]\invoice\page.tsx : line 21
+gstin -> app\admin\orders\[id]\invoice\page.tsx : line 225
+gstin -> app\admin\orders\[id]\invoice\page.tsx : line 227
+gstin -> app\admin\orders\[id]\page.tsx : line 24
+gstin -> app\admin\orders\new\page.tsx : line 12
+gstin -> app\api\admin\customers\[id]\route.ts : line 163
+gstin -> app\api\admin\customers\[id]\route.ts : line 164
+gstin -> app\api\admin\customers\[id]\route.ts : line 166
+gstin -> app\api\admin\customers\[id]\route.ts : line 213
+gstin -> app\api\admin\customers\route.ts : line 101
+gstin -> app\api\admin\customers\route.ts : line 73
+gstin -> app\api\orders\route.ts : line 215
+gstin -> app\api\orders\route.ts : line 225
+gstin -> app\api\orders\route.ts : line 39
+gstin -> app\checkout\page.tsx : line 118
+gstin -> app\checkout\page.tsx : line 25
+gstin -> app\checkout\page.tsx : line 251
+gstin -> app\checkout\page.tsx : line 252
+gstin -> app\checkout\page.tsx : line 253
+gstin -> prisma\schema.backup.prisma : line 36
+gstin -> prisma\schema.prisma : line 37
+gstin -> prisma\seed-test.ts : line 17
+
+===== FEATURE DETECTION: ORDER =====
+Order -> app\admin\customers\[id]\orders\page.tsx : line 116
+Order -> app\admin\customers\[id]\orders\page.tsx : line 135
+Order -> app\admin\customers\[id]\orders\page.tsx : line 139
+Order -> app\admin\customers\[id]\orders\page.tsx : line 147
+Order -> app\admin\customers\[id]\orders\page.tsx : line 200
+Order -> app\admin\customers\[id]\orders\page.tsx : line 204
+Order -> app\admin\customers\[id]\orders\page.tsx : line 226
+Order -> app\admin\customers\[id]\orders\page.tsx : line 23
+Order -> app\admin\customers\[id]\orders\page.tsx : line 235
+Order -> app\admin\customers\[id]\orders\page.tsx : line 242
+Order -> app\admin\customers\[id]\orders\page.tsx : line 252
+Order -> app\admin\customers\[id]\orders\page.tsx : line 280
+Order -> app\admin\customers\[id]\orders\page.tsx : line 293
+Order -> app\admin\customers\[id]\orders\page.tsx : line 294
+Order -> app\admin\customers\[id]\orders\page.tsx : line 305
+Order -> app\admin\customers\[id]\orders\page.tsx : line 306
+Order -> app\admin\customers\[id]\orders\page.tsx : line 82
+Order -> app\admin\customers\[id]\orders\page.tsx : line 95
+Order -> app\admin\customers\[id]\page.tsx : line 12
+Order -> app\admin\customers\[id]\page.tsx : line 205
+Order -> app\admin\customers\[id]\page.tsx : line 212
+Order -> app\admin\customers\[id]\page.tsx : line 215
+Order -> app\admin\customers\[id]\page.tsx : line 236
+Order -> app\admin\customers\[id]\page.tsx : line 24
+Order -> app\admin\customers\[id]\page.tsx : line 26
+Order -> app\admin\customers\[id]\page.tsx : line 269
+Order -> app\admin\customers\[id]\page.tsx : line 283
+Order -> app\admin\customers\[id]\page.tsx : line 298
+Order -> app\admin\customers\[id]\page.tsx : line 312
+Order -> app\admin\customers\[id]\page.tsx : line 326
+Order -> app\admin\customers\[id]\page.tsx : line 375
+Order -> app\admin\customers\[id]\page.tsx : line 379
+Order -> app\admin\customers\[id]\page.tsx : line 384
+Order -> app\admin\customers\[id]\page.tsx : line 387
+Order -> app\admin\customers\[id]\page.tsx : line 399
+Order -> app\admin\customers\[id]\page.tsx : line 403
+Order -> app\admin\customers\[id]\page.tsx : line 408
+Order -> app\admin\customers\[id]\page.tsx : line 411
+Order -> app\admin\customers\[id]\page.tsx : line 416
+Order -> app\admin\customers\[id]\page.tsx : line 417
+Order -> app\admin\customers\[id]\page.tsx : line 419
+Order -> app\admin\customers\[id]\page.tsx : line 423
+Order -> app\admin\customers\[id]\page.tsx : line 426
+Order -> app\admin\customers\[id]\page.tsx : line 432
+Order -> app\admin\customers\[id]\page.tsx : line 434
+Order -> app\admin\customers\[id]\page.tsx : line 460
+Order -> app\admin\customers\[id]\page.tsx : line 462
+Order -> app\admin\customers\[id]\page.tsx : line 463
+Order -> app\admin\customers\[id]\page.tsx : line 466
+Order -> app\admin\customers\[id]\page.tsx : line 471
+Order -> app\admin\customers\[id]\page.tsx : line 477
+Order -> app\admin\customers\[id]\page.tsx : line 483
+Order -> app\admin\customers\[id]\page.tsx : line 488
+Order -> app\admin\customers\[id]\page.tsx : line 493
+Order -> app\admin\customers\[id]\page.tsx : line 7
+Order -> app\admin\customers\[id]\page.tsx : line 9
+Order -> app\admin\customers\page.tsx : line 129
+Order -> app\admin\customers\page.tsx : line 131
+Order -> app\admin\customers\page.tsx : line 133
+Order -> app\admin\customers\page.tsx : line 15
+Order -> app\admin\customers\page.tsx : line 245
+Order -> app\admin\customers\page.tsx : line 251
+Order -> app\admin\customers\page.tsx : line 275
+Order -> app\admin\customers\page.tsx : line 288
+Order -> app\admin\customers\page.tsx : line 302
+Order -> app\admin\customers\page.tsx : line 315
+Order -> app\admin\customers\page.tsx : line 331
+Order -> app\admin\customers\page.tsx : line 361
+Order -> app\admin\customers\page.tsx : line 367
+Order -> app\admin\customers\page.tsx : line 394
+Order -> app\admin\customers\page.tsx : line 405
+Order -> app\admin\customers\page.tsx : line 418
+Order -> app\admin\customers\page.tsx : line 422
+Order -> app\admin\customers\page.tsx : line 430
+Order -> app\admin\customers\page.tsx : line 431
+Order -> app\admin\customers\page.tsx : line 436
+Order -> app\admin\customers\page.tsx : line 460
+Order -> app\admin\customers\page.tsx : line 481
+Order -> app\admin\login\page.tsx : line 103
+Order -> app\admin\login\page.tsx : line 70
+Order -> app\admin\login\page.tsx : line 87
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 120
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 133
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 136
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 148
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 151
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 164
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 185
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 189
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 193
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 198
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 205
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 206
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 209
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 211
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 216
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 219
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 221
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 225
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 227
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 238
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 24
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 242
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 246
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 248
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 250
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 251
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 26
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 260
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 284
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 287
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 327
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 33
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 337
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 347
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 351
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 357
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 363
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 42
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 49
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 60
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 7
+Order -> app\admin\orders\[id]\invoice\page.tsx : line 75
+Order -> app\admin\orders\[id]\page.tsx : line 103
+Order -> app\admin\orders\[id]\page.tsx : line 104
+Order -> app\admin\orders\[id]\page.tsx : line 110
+Order -> app\admin\orders\[id]\page.tsx : line 118
+Order -> app\admin\orders\[id]\page.tsx : line 119
+Order -> app\admin\orders\[id]\page.tsx : line 121
+Order -> app\admin\orders\[id]\page.tsx : line 130
+Order -> app\admin\orders\[id]\page.tsx : line 138
+Order -> app\admin\orders\[id]\page.tsx : line 148
+Order -> app\admin\orders\[id]\page.tsx : line 152
+Order -> app\admin\orders\[id]\page.tsx : line 154
+Order -> app\admin\orders\[id]\page.tsx : line 157
+Order -> app\admin\orders\[id]\page.tsx : line 162
+Order -> app\admin\orders\[id]\page.tsx : line 174
+Order -> app\admin\orders\[id]\page.tsx : line 181
+Order -> app\admin\orders\[id]\page.tsx : line 186
+Order -> app\admin\orders\[id]\page.tsx : line 190
+Order -> app\admin\orders\[id]\page.tsx : line 215
+Order -> app\admin\orders\[id]\page.tsx : line 219
+Order -> app\admin\orders\[id]\page.tsx : line 225
+Order -> app\admin\orders\[id]\page.tsx : line 241
+Order -> app\admin\orders\[id]\page.tsx : line 247
+Order -> app\admin\orders\[id]\page.tsx : line 256
+Order -> app\admin\orders\[id]\page.tsx : line 259
+Order -> app\admin\orders\[id]\page.tsx : line 263
+Order -> app\admin\orders\[id]\page.tsx : line 267
+Order -> app\admin\orders\[id]\page.tsx : line 27
+Order -> app\admin\orders\[id]\page.tsx : line 273
+Order -> app\admin\orders\[id]\page.tsx : line 277
+Order -> app\admin\orders\[id]\page.tsx : line 285
+Order -> app\admin\orders\[id]\page.tsx : line 29
+Order -> app\admin\orders\[id]\page.tsx : line 294
+Order -> app\admin\orders\[id]\page.tsx : line 297
+Order -> app\admin\orders\[id]\page.tsx : line 331
+Order -> app\admin\orders\[id]\page.tsx : line 338
+Order -> app\admin\orders\[id]\page.tsx : line 345
+Order -> app\admin\orders\[id]\page.tsx : line 349
+Order -> app\admin\orders\[id]\page.tsx : line 35
+Order -> app\admin\orders\[id]\page.tsx : line 355
+Order -> app\admin\orders\[id]\page.tsx : line 361
+Order -> app\admin\orders\[id]\page.tsx : line 368
+Order -> app\admin\orders\[id]\page.tsx : line 379
+Order -> app\admin\orders\[id]\page.tsx : line 385
+Order -> app\admin\orders\[id]\page.tsx : line 389
+Order -> app\admin\orders\[id]\page.tsx : line 391
+Order -> app\admin\orders\[id]\page.tsx : line 393
+Order -> app\admin\orders\[id]\page.tsx : line 395
+Order -> app\admin\orders\[id]\page.tsx : line 418
+Order -> app\admin\orders\[id]\page.tsx : line 459
+Order -> app\admin\orders\[id]\page.tsx : line 469
+Order -> app\admin\orders\[id]\page.tsx : line 47
+Order -> app\admin\orders\[id]\page.tsx : line 473
+Order -> app\admin\orders\[id]\page.tsx : line 480
+Order -> app\admin\orders\[id]\page.tsx : line 485
+Order -> app\admin\orders\[id]\page.tsx : line 492
+Order -> app\admin\orders\[id]\page.tsx : line 50
+Order -> app\admin\orders\[id]\page.tsx : line 510
+Order -> app\admin\orders\[id]\page.tsx : line 514
+Order -> app\admin\orders\[id]\page.tsx : line 517
+Order -> app\admin\orders\[id]\page.tsx : line 519
+Order -> app\admin\orders\[id]\page.tsx : line 523
+Order -> app\admin\orders\[id]\page.tsx : line 524
+Order -> app\admin\orders\[id]\page.tsx : line 525
+Order -> app\admin\orders\[id]\page.tsx : line 528
+Order -> app\admin\orders\[id]\page.tsx : line 529
+Order -> app\admin\orders\[id]\page.tsx : line 530
+Order -> app\admin\orders\[id]\page.tsx : line 66
+Order -> app\admin\orders\[id]\page.tsx : line 69
+Order -> app\admin\orders\[id]\page.tsx : line 7
+Order -> app\admin\orders\[id]\page.tsx : line 71
+Order -> app\admin\orders\[id]\page.tsx : line 73
+Order -> app\admin\orders\[id]\page.tsx : line 82
+Order -> app\admin\orders\[id]\page.tsx : line 88
+Order -> app\admin\orders\[id]\page.tsx : line 99
+Order -> app\admin\orders\new\page.tsx : line 233
+Order -> app\admin\orders\new\page.tsx : line 26
+Order -> app\admin\orders\new\page.tsx : line 261
+Order -> app\admin\orders\new\page.tsx : line 265
+Order -> app\admin\orders\new\page.tsx : line 269
+Order -> app\admin\orders\new\page.tsx : line 282
+Order -> app\admin\orders\new\page.tsx : line 285
+Order -> app\admin\orders\new\page.tsx : line 291
+Order -> app\admin\orders\new\page.tsx : line 292
+Order -> app\admin\orders\new\page.tsx : line 294
+Order -> app\admin\orders\new\page.tsx : line 299
+Order -> app\admin\orders\new\page.tsx : line 305
+Order -> app\admin\orders\new\page.tsx : line 31
+Order -> app\admin\orders\new\page.tsx : line 311
+Order -> app\admin\orders\new\page.tsx : line 317
+Order -> app\admin\orders\new\page.tsx : line 339
+Order -> app\admin\orders\new\page.tsx : line 38
+Order -> app\admin\orders\new\page.tsx : line 393
+Order -> app\admin\orders\new\page.tsx : line 409
+Order -> app\admin\orders\new\page.tsx : line 444
+Order -> app\admin\orders\new\page.tsx : line 468
+Order -> app\admin\orders\new\page.tsx : line 495
+Order -> app\admin\orders\new\page.tsx : line 510
+Order -> app\admin\orders\new\page.tsx : line 526
+Order -> app\admin\orders\new\page.tsx : line 542
+Order -> app\admin\orders\new\page.tsx : line 558
+Order -> app\admin\orders\new\page.tsx : line 574
+Order -> app\admin\orders\new\page.tsx : line 597
+Order -> app\admin\orders\new\page.tsx : line 619
+Order -> app\admin\orders\new\page.tsx : line 635
+Order -> app\admin\orders\new\page.tsx : line 643
+Order -> app\admin\orders\new\page.tsx : line 645
+Order -> app\admin\orders\new\page.tsx : line 670
+Order -> app\admin\orders\new\page.tsx : line 687
+Order -> app\admin\orders\page.tsx : line 102
+Order -> app\admin\orders\page.tsx : line 104
+Order -> app\admin\orders\page.tsx : line 108
+Order -> app\admin\orders\page.tsx : line 109
+Order -> app\admin\orders\page.tsx : line 11
+Order -> app\admin\orders\page.tsx : line 116
+Order -> app\admin\orders\page.tsx : line 119
+Order -> app\admin\orders\page.tsx : line 122
+Order -> app\admin\orders\page.tsx : line 126
+Order -> app\admin\orders\page.tsx : line 134
+Order -> app\admin\orders\page.tsx : line 136
+Order -> app\admin\orders\page.tsx : line 152
+Order -> app\admin\orders\page.tsx : line 170
+Order -> app\admin\orders\page.tsx : line 172
+Order -> app\admin\orders\page.tsx : line 173
+Order -> app\admin\orders\page.tsx : line 177
+Order -> app\admin\orders\page.tsx : line 181
+Order -> app\admin\orders\page.tsx : line 187
+Order -> app\admin\orders\page.tsx : line 191
+Order -> app\admin\orders\page.tsx : line 194
+Order -> app\admin\orders\page.tsx : line 196
+Order -> app\admin\orders\page.tsx : line 202
+Order -> app\admin\orders\page.tsx : line 206
+Order -> app\admin\orders\page.tsx : line 211
+Order -> app\admin\orders\page.tsx : line 217
+Order -> app\admin\orders\page.tsx : line 223
+Order -> app\admin\orders\page.tsx : line 229
+Order -> app\admin\orders\page.tsx : line 25
+Order -> app\admin\orders\page.tsx : line 26
+Order -> app\admin\orders\page.tsx : line 30
+Order -> app\admin\orders\page.tsx : line 36
+Order -> app\admin\orders\page.tsx : line 47
+Order -> app\admin\orders\page.tsx : line 51
+Order -> app\admin\orders\page.tsx : line 56
+Order -> app\admin\orders\page.tsx : line 6
+Order -> app\admin\orders\page.tsx : line 64
+Order -> app\admin\orders\page.tsx : line 78
+Order -> app\admin\orders\page.tsx : line 8
+Order -> app\admin\orders\page.tsx : line 82
+Order -> app\admin\orders\page.tsx : line 95
+Order -> app\admin\page.tsx : line 113
+Order -> app\admin\page.tsx : line 137
+Order -> app\admin\page.tsx : line 14
+Order -> app\admin\page.tsx : line 212
+Order -> app\admin\page.tsx : line 217
+Order -> app\admin\page.tsx : line 226
+Order -> app\admin\page.tsx : line 230
+Order -> app\admin\page.tsx : line 234
+Order -> app\admin\page.tsx : line 287
+Order -> app\admin\page.tsx : line 333
+Order -> app\admin\page.tsx : line 346
+Order -> app\admin\page.tsx : line 353
+Order -> app\admin\page.tsx : line 358
+Order -> app\admin\page.tsx : line 359
+Order -> app\admin\page.tsx : line 362
+Order -> app\admin\page.tsx : line 366
+Order -> app\admin\page.tsx : line 372
+Order -> app\admin\page.tsx : line 389
+Order -> app\admin\page.tsx : line 393
+Order -> app\admin\page.tsx : line 397
+Order -> app\admin\products\[id]\page.tsx : line 178
+Order -> app\admin\products\[id]\page.tsx : line 185
+Order -> app\admin\products\[id]\page.tsx : line 203
+Order -> app\admin\products\[id]\page.tsx : line 215
+Order -> app\admin\products\[id]\page.tsx : line 226
+Order -> app\admin\products\[id]\page.tsx : line 247
+Order -> app\admin\products\[id]\page.tsx : line 264
+Order -> app\admin\products\[id]\page.tsx : line 281
+Order -> app\admin\products\[id]\page.tsx : line 293
+Order -> app\admin\products\[id]\page.tsx : line 307
+Order -> app\admin\products\[id]\page.tsx : line 312
+Order -> app\admin\products\[id]\page.tsx : line 328
+Order -> app\admin\products\[id]\page.tsx : line 338
+Order -> app\admin\products\new\page.tsx : line 106
+Order -> app\admin\products\new\page.tsx : line 122
+Order -> app\admin\products\new\page.tsx : line 136
+Order -> app\admin\products\new\page.tsx : line 148
+Order -> app\admin\products\new\page.tsx : line 182
+Order -> app\admin\products\new\page.tsx : line 207
+Order -> app\admin\products\new\page.tsx : line 225
+Order -> app\admin\products\new\page.tsx : line 239
+Order -> app\admin\products\new\page.tsx : line 255
+Order -> app\admin\products\new\page.tsx : line 274
+Order -> app\admin\products\new\page.tsx : line 284
+Order -> app\admin\products\page.tsx : line 205
+Order -> app\admin\products\page.tsx : line 254
+Order -> app\admin\products\page.tsx : line 260
+Order -> app\admin\products\page.tsx : line 273
+Order -> app\admin\products\page.tsx : line 284
+Order -> app\admin\products\page.tsx : line 296
+Order -> app\admin\products\page.tsx : line 401
+Order -> app\admin\products\page.tsx : line 408
+Order -> app\admin\products\page.tsx : line 415
+Order -> app\admin\products\page-backup.tsx : line 370
+Order -> app\admin\products\page-backup.tsx : line 388
+Order -> app\admin\products\page-backup.tsx : line 409
+Order -> app\admin\products\page-backup.tsx : line 421
+Order -> app\admin\products\page-backup.tsx : line 445
+Order -> app\admin\products\page-backup.tsx : line 467
+Order -> app\admin\products\page-backup.tsx : line 483
+Order -> app\admin\products\page-backup.tsx : line 505
+Order -> app\admin\products\page-backup.tsx : line 518
+Order -> app\admin\products\page-backup.tsx : line 534
+Order -> app\admin\products\page-backup.tsx : line 552
+Order -> app\admin\products\page-backup.tsx : line 642
+Order -> app\admin\products\page-backup.tsx : line 675
+Order -> app\admin\quotes\page.tsx : line 180
+Order -> app\admin\quotes\page.tsx : line 183
+Order -> app\admin\quotes\page.tsx : line 205
+Order -> app\admin\quotes\page.tsx : line 266
+Order -> app\admin\quotes\page.tsx : line 274
+Order -> app\admin\quotes\page.tsx : line 306
+Order -> app\admin\quotes\page.tsx : line 337
+Order -> app\admin\quotes\page.tsx : line 381
+Order -> app\admin\stock\page.tsx : line 23
+Order -> app\admin\stock\page.tsx : line 312
+Order -> app\admin\stock\page.tsx : line 327
+Order -> app\admin\stock\page.tsx : line 333
+Order -> app\admin\stock\page.tsx : line 400
+Order -> app\admin\stock\page.tsx : line 419
+Order -> app\admin\stock\page.tsx : line 442
+Order -> app\admin\stock\page.tsx : line 444
+Order -> app\admin\stock\page.tsx : line 445
+Order -> app\admin\stock\page.tsx : line 492
+Order -> app\admin\stock\page.tsx : line 517
+Order -> app\admin\stock\page.tsx : line 550
+Order -> app\admin\stock\page.tsx : line 558
+Order -> app\admin\stock\page.tsx : line 574
+Order -> app\admin\stock\page.tsx : line 587
+Order -> app\admin\stock\page.tsx : line 601
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 11
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 133
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 135
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 137
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 146
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 193
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 194
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 198
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 204
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 252
+Order -> app\api\admin\customers\[id]\orders\route.ts : line 257
+Order -> app\api\admin\customers\[id]\route.ts : line 218
+Order -> app\api\admin\customers\[id]\route.ts : line 63
+Order -> app\api\admin\customers\[id]\route.ts : line 66
+Order -> app\api\admin\customers\[id]\route.ts : line 67
+Order -> app\api\admin\customers\[id]\route.ts : line 73
+Order -> app\api\admin\customers\route.ts : line 106
+Order -> app\api\admin\customers\route.ts : line 26
+Order -> app\api\admin\customers\route.ts : line 32
+Order -> app\api\admin\dashboard\route.ts : line 24
+Order -> app\api\admin\dashboard\route.ts : line 25
+Order -> app\api\admin\dashboard\route.ts : line 41
+Order -> app\api\admin\dashboard\route.ts : line 43
+Order -> app\api\admin\dashboard\route.ts : line 45
+Order -> app\api\admin\dashboard\route.ts : line 57
+Order -> app\api\admin\dashboard\route.ts : line 68
+Order -> app\api\admin\dashboard\route.ts : line 96
+Order -> app\api\admin\dashboard\route.ts : line 97
+Order -> app\api\admin\dashboard\route.ts : line 98
+Order -> app\api\admin\orders\[id]\invoice\route.ts : line 31
+Order -> app\api\admin\orders\[id]\invoice\route.ts : line 36
+Order -> app\api\admin\orders\[id]\invoice\route.ts : line 43
+Order -> app\api\admin\orders\[id]\invoice\route.ts : line 45
+Order -> app\api\admin\orders\[id]\invoice\route.ts : line 52
+Order -> app\api\admin\orders\[id]\route.ts : line 111
+Order -> app\api\admin\orders\[id]\route.ts : line 123
+Order -> app\api\admin\orders\[id]\route.ts : line 129
+Order -> app\api\admin\orders\[id]\route.ts : line 133
+Order -> app\api\admin\orders\[id]\route.ts : line 139
+Order -> app\api\admin\orders\[id]\route.ts : line 144
+Order -> app\api\admin\orders\[id]\route.ts : line 145
+Order -> app\api\admin\orders\[id]\route.ts : line 159
+Order -> app\api\admin\orders\[id]\route.ts : line 160
+Order -> app\api\admin\orders\[id]\route.ts : line 163
+Order -> app\api\admin\orders\[id]\route.ts : line 168
+Order -> app\api\admin\orders\[id]\route.ts : line 27
+Order -> app\api\admin\orders\[id]\route.ts : line 66
+Order -> app\api\admin\orders\[id]\route.ts : line 74
+Order -> app\api\admin\orders\[id]\route.ts : line 75
+Order -> app\api\admin\orders\[id]\route.ts : line 77
+Order -> app\api\admin\orders\[id]\route.ts : line 85
+Order -> app\api\admin\orders\[id]\route.ts : line 86
+Order -> app\api\admin\orders\[id]\route.ts : line 91
+Order -> app\api\admin\orders\route.ts : line 31
+Order -> app\api\admin\orders\route.ts : line 32
+Order -> app\api\admin\orders\route.ts : line 38
+Order -> app\api\admin\orders\route.ts : line 41
+Order -> app\api\admin\orders\route.ts : line 64
+Order -> app\api\admin\orders\route.ts : line 67
+Order -> app\api\admin\orders\route.ts : line 72
+Order -> app\api\admin\products\[id]\route.ts : line 231
+Order -> app\api\admin\products\[id]\route.ts : line 247
+Order -> app\api\admin\products\[id]\route.ts : line 251
+Order -> app\api\admin\products\route.ts : line 39
+Order -> app\api\admin\products\route-backup.ts : line 7
+Order -> app\api\admin\quotes\route.ts : line 23
+Order -> app\api\admin\stock\route.ts : line 33
+Order -> app\api\orders\route.ts : line 148
+Order -> app\api\orders\route.ts : line 178
+Order -> app\api\orders\route.ts : line 19
+Order -> app\api\orders\route.ts : line 199
+Order -> app\api\orders\route.ts : line 230
+Order -> app\api\orders\route.ts : line 232
+Order -> app\api\orders\route.ts : line 239
+Order -> app\api\orders\route.ts : line 249
+Order -> app\api\orders\route.ts : line 285
+Order -> app\api\orders\route.ts : line 290
+Order -> app\api\orders\route.ts : line 291
+Order -> app\api\orders\route.ts : line 292
+Order -> app\api\orders\route.ts : line 293
+Order -> app\api\orders\route.ts : line 294
+Order -> app\api\orders\route.ts : line 295
+Order -> app\api\orders\route.ts : line 296
+Order -> app\api\orders\route.ts : line 297
+Order -> app\api\orders\route.ts : line 298
+Order -> app\api\orders\route.ts : line 299
+Order -> app\api\orders\route.ts : line 300
+Order -> app\api\orders\route.ts : line 304
+Order -> app\api\orders\route.ts : line 309
+Order -> app\api\orders\route.ts : line 9
+Order -> app\api\products\route.ts : line 58
+Order -> app\bulk-order\page.tsx : line 184
+Order -> app\bulk-order\page.tsx : line 187
+Order -> app\bulk-order\page.tsx : line 204
+Order -> app\bulk-order\page.tsx : line 213
+Order -> app\bulk-order\page.tsx : line 22
+Order -> app\bulk-order\page.tsx : line 227
+Order -> app\bulk-order\page.tsx : line 257
+Order -> app\bulk-order\page.tsx : line 314
+Order -> app\bulk-order\page.tsx : line 330
+Order -> app\bulk-order\page.tsx : line 341
+Order -> app\bulk-order\page.tsx : line 372
+Order -> app\bulk-order\page.tsx : line 396
+Order -> app\bulk-order\page.tsx : line 411
+Order -> app\bulk-order\page-backup.tsx : line 426
+Order -> app\bulk-order\page-backup.tsx : line 534
+Order -> app\bulk-order\page-backup.tsx : line 576
+Order -> app\bulk-order\page-backup.tsx : line 577
+Order -> app\bulk-order\page-backup.tsx : line 582
+Order -> app\bulk-order\page-backup.tsx : line 592
+Order -> app\bulk-order\page-backup.tsx : line 600
+Order -> app\bulk-order\page-backup.tsx : line 613
+Order -> app\bulk-order\page-backup.tsx : line 615
+Order -> app\bulk-order\page-backup.tsx : line 648
+Order -> app\bulk-order\page-backup.tsx : line 691
+Order -> app\bulk-order\page-backup.tsx : line 714
+Order -> app\bulk-order\page-backup.tsx : line 752
+Order -> app\bulk-order\page-before-db.tsx : line 426
+Order -> app\bulk-order\page-before-db.tsx : line 534
+Order -> app\bulk-order\page-before-db.tsx : line 576
+Order -> app\bulk-order\page-before-db.tsx : line 577
+Order -> app\bulk-order\page-before-db.tsx : line 582
+Order -> app\bulk-order\page-before-db.tsx : line 592
+Order -> app\bulk-order\page-before-db.tsx : line 600
+Order -> app\bulk-order\page-before-db.tsx : line 613
+Order -> app\bulk-order\page-before-db.tsx : line 615
+Order -> app\bulk-order\page-before-db.tsx : line 648
+Order -> app\bulk-order\page-before-db.tsx : line 691
+Order -> app\bulk-order\page-before-db.tsx : line 714
+Order -> app\bulk-order\page-before-db.tsx : line 752
+Order -> app\cart\page.tsx : line 116
+Order -> app\cart\page.tsx : line 136
+Order -> app\cart\page.tsx : line 147
+Order -> app\cart\page.tsx : line 170
+Order -> app\cart\page.tsx : line 172
+Order -> app\cart\page.tsx : line 194
+Order -> app\cart\page.tsx : line 208
+Order -> app\cart\page.tsx : line 68
+Order -> app\cart\page.tsx : line 92
+Order -> app\checkout\page.tsx : line 105
+Order -> app\checkout\page.tsx : line 108
+Order -> app\checkout\page.tsx : line 138
+Order -> app\checkout\page.tsx : line 145
+Order -> app\checkout\page.tsx : line 146
+Order -> app\checkout\page.tsx : line 151
+Order -> app\checkout\page.tsx : line 153
+Order -> app\checkout\page.tsx : line 18
+Order -> app\checkout\page.tsx : line 180
+Order -> app\checkout\page.tsx : line 206
+Order -> app\checkout\page.tsx : line 211
+Order -> app\checkout\page.tsx : line 225
+Order -> app\checkout\page.tsx : line 232
+Order -> app\checkout\page.tsx : line 240
+Order -> app\checkout\page.tsx : line 247
+Order -> app\checkout\page.tsx : line 254
+Order -> app\checkout\page.tsx : line 269
+Order -> app\checkout\page.tsx : line 276
+Order -> app\checkout\page.tsx : line 286
+Order -> app\checkout\page.tsx : line 293
+Order -> app\checkout\page.tsx : line 300
+Order -> app\checkout\page.tsx : line 310
+Order -> app\checkout\page.tsx : line 320
+Order -> app\checkout\page.tsx : line 333
+Order -> app\checkout\page.tsx : line 335
+Order -> app\checkout\page.tsx : line 340
+Order -> app\checkout\page.tsx : line 348
+Order -> app\checkout\page.tsx : line 355
+Order -> app\checkout\page.tsx : line 395
+Order -> app\checkout\page.tsx : line 403
+Order -> app\checkout\page.tsx : line 406
+Order -> app\checkout\page.tsx : line 407
+Order -> app\checkout\page.tsx : line 408
+Order -> app\checkout\page.tsx : line 71
+Order -> app\order-success\page.tsx : line 10
+Order -> app\order-success\page.tsx : line 11
+Order -> app\order-success\page.tsx : line 21
+Order -> app\order-success\page.tsx : line 25
+Order -> app\order-success\page.tsx : line 30
+Order -> app\order-success\page.tsx : line 34
+Order -> app\order-success\page.tsx : line 40
+Order -> app\order-success\page.tsx : line 48
+Order -> app\order-success\page.tsx : line 58
+Order -> app\order-success\page.tsx : line 61
+Order -> app\order-success\page.tsx : line 7
+Order -> app\page.tsx : line 53
+Order -> app\page.tsx : line 87
+Order -> app\products\[category]\page.tsx : line 167
+Order -> app\products\[category]\page.tsx : line 210
+Order -> app\products\[category]\page.tsx : line 261
+Order -> app\products\[category]\page.tsx : line 274
+Order -> app\products\[category]\page.tsx : line 283
+Order -> app\quote\page.tsx : line 118
+Order -> app\quote\page.tsx : line 148
+Order -> app\quote\page.tsx : line 154
+Order -> app\quote\page.tsx : line 173
+Order -> app\quote\page.tsx : line 188
+Order -> app\quote\page.tsx : line 202
+Order -> app\quote\page.tsx : line 217
+Order -> app\quote\page.tsx : line 232
+Order -> app\quote\page.tsx : line 249
+Order -> app\quote\page.tsx : line 69
+Order -> prisma\schema.backup.prisma : line 23
+Order -> prisma\schema.backup.prisma : line 39
+Order -> prisma\schema.backup.prisma : line 45
+Order -> prisma\schema.backup.prisma : line 47
+Order -> prisma\schema.backup.prisma : line 55
+Order -> prisma\schema.backup.prisma : line 66
+Order -> prisma\schema.backup.prisma : line 69
+Order -> prisma\schema.backup.prisma : line 73
+Order -> prisma\schema.backup.prisma : line 75
+Order -> prisma\schema.backup.prisma : line 83
+Order -> prisma\schema.backup.prisma : line 86
+Order -> prisma\schema.prisma : line 114
+Order -> prisma\schema.prisma : line 23
+Order -> prisma\schema.prisma : line 40
+Order -> prisma\schema.prisma : line 46
+Order -> prisma\schema.prisma : line 48
+Order -> prisma\schema.prisma : line 56
+Order -> prisma\schema.prisma : line 67
+Order -> prisma\schema.prisma : line 70
+Order -> prisma\schema.prisma : line 74
+Order -> prisma\schema.prisma : line 76
+Order -> prisma\schema.prisma : line 84
+Order -> prisma\schema.prisma : line 87
+OrderItem -> app\admin\orders\[id]\invoice\page.tsx : line 42
+OrderItem -> app\admin\orders\[id]\invoice\page.tsx : line 7
+OrderItem -> app\admin\orders\[id]\page.tsx : line 47
+OrderItem -> app\admin\orders\[id]\page.tsx : line 7
+OrderItem -> app\admin\orders\new\page.tsx : line 26
+OrderItem -> app\admin\orders\new\page.tsx : line 38
+OrderItem -> app\api\admin\dashboard\route.ts : line 68
+OrderItem -> app\api\admin\products\[id]\route.ts : line 231
+OrderItem -> app\api\admin\products\[id]\route.ts : line 247
+OrderItem -> app\api\orders\route.ts : line 148
+OrderItem -> app\api\orders\route.ts : line 178
+OrderItem -> app\api\orders\route.ts : line 249
+OrderItem -> app\api\orders\route.ts : line 9
+OrderItem -> prisma\schema.backup.prisma : line 23
+OrderItem -> prisma\schema.backup.prisma : line 66
+OrderItem -> prisma\schema.backup.prisma : line 73
+OrderItem -> prisma\schema.prisma : line 23
+OrderItem -> prisma\schema.prisma : line 67
+OrderItem -> prisma\schema.prisma : line 74
+orderNumber -> app\admin\customers\[id]\page.tsx : line 466
+orderNumber -> app\admin\customers\[id]\page.tsx : line 9
+orderNumber -> app\admin\orders\[id]\invoice\page.tsx : line 185
+orderNumber -> app\admin\orders\[id]\invoice\page.tsx : line 26
+orderNumber -> app\admin\orders\[id]\page.tsx : line 219
+orderNumber -> app\admin\orders\[id]\page.tsx : line 263
+orderNumber -> app\admin\orders\[id]\page.tsx : line 29
+orderNumber -> app\admin\orders\page.tsx : line 177
+orderNumber -> app\admin\orders\page.tsx : line 8
+orderNumber -> app\api\admin\customers\[id]\orders\route.ts : line 11
+orderNumber -> app\api\admin\customers\[id]\orders\route.ts : line 133
+orderNumber -> app\api\admin\customers\[id]\orders\route.ts : line 137
+orderNumber -> app\api\admin\customers\[id]\orders\route.ts : line 193
+orderNumber -> app\api\admin\orders\route.ts : line 38
+orderNumber -> app\api\orders\route.ts : line 19
+orderNumber -> app\api\orders\route.ts : line 232
+orderNumber -> app\api\orders\route.ts : line 293
+orderNumber -> app\checkout\page.tsx : line 145
+orderNumber -> app\checkout\page.tsx : line 146
+orderNumber -> app\order-success\page.tsx : line 10
+orderNumber -> app\order-success\page.tsx : line 11
+orderNumber -> app\order-success\page.tsx : line 34
+orderNumber -> prisma\schema.backup.prisma : line 47
+orderNumber -> prisma\schema.prisma : line 48
+orderStatus -> app\admin\customers\[id]\page.tsx : line 12
+orderStatus -> app\admin\customers\[id]\page.tsx : line 483
+orderStatus -> app\admin\orders\[id]\invoice\page.tsx : line 33
+orderStatus -> app\admin\orders\[id]\page.tsx : line 104
+orderStatus -> app\admin\orders\[id]\page.tsx : line 138
+orderStatus -> app\admin\orders\[id]\page.tsx : line 154
+orderStatus -> app\admin\orders\[id]\page.tsx : line 273
+orderStatus -> app\admin\orders\[id]\page.tsx : line 35
+orderStatus -> app\admin\orders\[id]\page.tsx : line 389
+orderStatus -> app\admin\orders\[id]\page.tsx : line 391
+orderStatus -> app\admin\orders\[id]\page.tsx : line 73
+orderStatus -> app\admin\orders\page.tsx : line 11
+orderStatus -> app\admin\orders\page.tsx : line 211
+orderStatus -> app\api\admin\customers\[id]\orders\route.ts : line 146
+orderStatus -> app\api\admin\dashboard\route.ts : line 45
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 111
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 144
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 145
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 74
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 75
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 77
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 85
+orderStatus -> app\api\admin\orders\[id]\route.ts : line 86
+orderStatus -> app\api\admin\orders\route.ts : line 41
+orderStatus -> app\api\orders\route.ts : line 239
+orderStatus -> app\api\orders\route.ts : line 298
+orderStatus -> prisma\schema.backup.prisma : line 55
+orderStatus -> prisma\schema.backup.prisma : line 69
+orderStatus -> prisma\schema.prisma : line 56
+orderStatus -> prisma\schema.prisma : line 70
+paymentMethod -> app\admin\orders\[id]\invoice\page.tsx : line 32
+paymentMethod -> app\admin\orders\[id]\page.tsx : line 36
+paymentMethod -> app\admin\orders\new\page.tsx : line 248
+paymentMethod -> app\admin\orders\new\page.tsx : line 49
+paymentMethod -> app\admin\orders\new\page.tsx : line 593
+paymentMethod -> app\admin\orders\new\page.tsx : line 595
+paymentMethod -> app\admin\orders\page.tsx : line 12
+paymentMethod -> app\admin\orders\page.tsx : line 181
+paymentMethod -> app\api\admin\customers\[id]\orders\route.ts : line 147
+paymentMethod -> app\api\admin\orders\route.ts : line 42
+paymentMethod -> app\api\orders\route.ts : line 240
+paymentMethod -> app\api\orders\route.ts : line 48
+paymentMethod -> app\checkout\page.tsx : line 125
+paymentMethod -> prisma\schema.backup.prisma : line 56
+paymentMethod -> prisma\schema.prisma : line 57
+
+===== FEATURE DETECTION: PAYMENT =====
+Bank -> app\admin\orders\new\page.tsx : line 601
+Cash -> app\admin\orders\new\page.tsx : line 599
+Cash -> app\admin\orders\new\page.tsx : line 603
+Cash -> app\bulk-order\page-backup.tsx : line 81
+Cash -> app\bulk-order\page-before-db.tsx : line 81
+Cash -> app\checkout\page.tsx : line 322
+Payment -> app\admin\customers\[id]\page.tsx : line 11
+Payment -> app\admin\customers\[id]\page.tsx : line 442
+Payment -> app\admin\customers\[id]\page.tsx : line 477
+Payment -> app\admin\orders\[id]\invoice\page.tsx : line 193
+Payment -> app\admin\orders\[id]\invoice\page.tsx : line 31
+Payment -> app\admin\orders\[id]\invoice\page.tsx : line 32
+Payment -> app\admin\orders\[id]\page.tsx : line 105
+Payment -> app\admin\orders\[id]\page.tsx : line 139
+Payment -> app\admin\orders\[id]\page.tsx : line 155
+Payment -> app\admin\orders\[id]\page.tsx : line 277
+Payment -> app\admin\orders\[id]\page.tsx : line 34
+Payment -> app\admin\orders\[id]\page.tsx : line 36
+Payment -> app\admin\orders\[id]\page.tsx : line 410
+Payment -> app\admin\orders\[id]\page.tsx : line 414
+Payment -> app\admin\orders\[id]\page.tsx : line 416
+Payment -> app\admin\orders\[id]\page.tsx : line 420
+Payment -> app\admin\orders\[id]\page.tsx : line 59
+Payment -> app\admin\orders\[id]\page.tsx : line 74
+Payment -> app\admin\orders\new\page.tsx : line 248
+Payment -> app\admin\orders\new\page.tsx : line 49
+Payment -> app\admin\orders\new\page.tsx : line 583
+Payment -> app\admin\orders\new\page.tsx : line 589
+Payment -> app\admin\orders\new\page.tsx : line 593
+Payment -> app\admin\orders\new\page.tsx : line 595
+Payment -> app\admin\orders\page.tsx : line 10
+Payment -> app\admin\orders\page.tsx : line 12
+Payment -> app\admin\orders\page.tsx : line 156
+Payment -> app\admin\orders\page.tsx : line 181
+Payment -> app\admin\orders\page.tsx : line 217
+Payment -> app\admin\page.tsx : line 366
+Payment -> app\api\admin\customers\[id]\orders\route.ts : line 145
+Payment -> app\api\admin\customers\[id]\orders\route.ts : line 147
+Payment -> app\api\admin\dashboard\route.ts : line 62
+Payment -> app\api\admin\orders\[id]\route.ts : line 104
+Payment -> app\api\admin\orders\[id]\route.ts : line 112
+Payment -> app\api\admin\orders\[id]\route.ts : line 147
+Payment -> app\api\admin\orders\[id]\route.ts : line 148
+Payment -> app\api\admin\orders\[id]\route.ts : line 36
+Payment -> app\api\admin\orders\[id]\route.ts : line 79
+Payment -> app\api\admin\orders\[id]\route.ts : line 80
+Payment -> app\api\admin\orders\[id]\route.ts : line 82
+Payment -> app\api\admin\orders\[id]\route.ts : line 98
+Payment -> app\api\admin\orders\[id]\route.ts : line 99
+Payment -> app\api\admin\orders\route.ts : line 40
+Payment -> app\api\admin\orders\route.ts : line 42
+Payment -> app\api\orders\route.ts : line 238
+Payment -> app\api\orders\route.ts : line 240
+Payment -> app\api\orders\route.ts : line 299
+Payment -> app\api\orders\route.ts : line 48
+Payment -> app\checkout\page.tsx : line 125
+Payment -> app\checkout\page.tsx : line 317
+Payment -> app\checkout\page.tsx : line 326
+Payment -> prisma\schema.backup.prisma : line 54
+Payment -> prisma\schema.backup.prisma : line 56
+Payment -> prisma\schema.prisma : line 55
+Payment -> prisma\schema.prisma : line 57
+paymentMethod -> app\admin\orders\[id]\invoice\page.tsx : line 32
+paymentMethod -> app\admin\orders\[id]\page.tsx : line 36
+paymentMethod -> app\admin\orders\new\page.tsx : line 248
+paymentMethod -> app\admin\orders\new\page.tsx : line 49
+paymentMethod -> app\admin\orders\new\page.tsx : line 593
+paymentMethod -> app\admin\orders\new\page.tsx : line 595
+paymentMethod -> app\admin\orders\page.tsx : line 12
+paymentMethod -> app\admin\orders\page.tsx : line 181
+paymentMethod -> app\api\admin\customers\[id]\orders\route.ts : line 147
+paymentMethod -> app\api\admin\orders\route.ts : line 42
+paymentMethod -> app\api\orders\route.ts : line 240
+paymentMethod -> app\api\orders\route.ts : line 48
+paymentMethod -> app\checkout\page.tsx : line 125
+paymentMethod -> prisma\schema.backup.prisma : line 56
+paymentMethod -> prisma\schema.prisma : line 57
+paymentStatus -> app\admin\customers\[id]\page.tsx : line 11
+paymentStatus -> app\admin\customers\[id]\page.tsx : line 477
+paymentStatus -> app\admin\orders\[id]\invoice\page.tsx : line 193
+paymentStatus -> app\admin\orders\[id]\invoice\page.tsx : line 31
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 105
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 139
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 155
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 277
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 34
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 414
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 416
+paymentStatus -> app\admin\orders\[id]\page.tsx : line 74
+paymentStatus -> app\admin\orders\page.tsx : line 10
+paymentStatus -> app\admin\orders\page.tsx : line 217
+paymentStatus -> app\api\admin\customers\[id]\orders\route.ts : line 145
+paymentStatus -> app\api\admin\dashboard\route.ts : line 62
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 112
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 147
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 148
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 79
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 80
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 82
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 98
+paymentStatus -> app\api\admin\orders\[id]\route.ts : line 99
+paymentStatus -> app\api\admin\orders\route.ts : line 40
+paymentStatus -> app\api\orders\route.ts : line 238
+paymentStatus -> app\api\orders\route.ts : line 299
+paymentStatus -> prisma\schema.backup.prisma : line 54
+paymentStatus -> prisma\schema.prisma : line 55
+UPI -> app\admin\orders\new\page.tsx : line 600
+
+===== FEATURE DETECTION: SUPPLIER =====
+supplier -> app\admin\stock\page.tsx : line 516
+
+===== FEATURE DETECTION: GST =====
+gst -> app\admin\customers\[id]\orders\page.tsx : line 13
+GST -> app\admin\customers\[id]\orders\page.tsx : line 352
+GST -> app\admin\customers\[id]\orders\page.tsx : line 355
+GST -> app\admin\customers\[id]\orders\page.tsx : line 359
+gst -> app\admin\customers\[id]\page.tsx : line 129
+gst -> app\admin\customers\[id]\page.tsx : line 22
+GST -> app\admin\customers\[id]\page.tsx : line 318
+GST -> app\admin\customers\[id]\page.tsx : line 322
+gst -> app\admin\customers\[id]\page.tsx : line 324
+GST -> app\admin\customers\[id]\page.tsx : line 51
+gst -> app\admin\customers\[id]\page.tsx : line 81
+gst -> app\admin\customers\page.tsx : line 111
+gst -> app\admin\customers\page.tsx : line 12
+GST -> app\admin\customers\page.tsx : line 186
+gst -> app\admin\customers\page.tsx : line 32
+gst -> app\admin\customers\page.tsx : line 321
+gst -> app\admin\customers\page.tsx : line 325
+gst -> app\admin\customers\page.tsx : line 327
+GST -> app\admin\customers\page.tsx : line 329
+gst -> app\admin\customers\page.tsx : line 95
+gst -> app\admin\orders\[id]\invoice\page.tsx : line 175
+GST -> app\admin\orders\[id]\invoice\page.tsx : line 21
+gst -> app\admin\orders\[id]\invoice\page.tsx : line 225
+gst -> app\admin\orders\[id]\invoice\page.tsx : line 227
+GST -> app\admin\orders\[id]\invoice\page.tsx : line 250
+gst -> app\admin\orders\[id]\invoice\page.tsx : line 29
+GST -> app\admin\orders\[id]\invoice\page.tsx : line 343
+GST -> app\admin\orders\[id]\invoice\page.tsx : line 347
+GST -> app\admin\orders\[id]\invoice\page.tsx : line 38
+gst -> app\admin\orders\[id]\page.tsx : line 24
+gst -> app\admin\orders\[id]\page.tsx : line 32
+GST -> app\admin\orders\[id]\page.tsx : line 343
+gst -> app\admin\orders\[id]\page.tsx : line 345
+GST -> app\admin\orders\[id]\page.tsx : line 41
+GST -> app\admin\orders\[id]\page.tsx : line 524
+GST -> app\admin\orders\[id]\page.tsx : line 529
+GST -> app\admin\orders\new\page.tsx : line 12
+GST -> app\admin\orders\new\page.tsx : line 191
+gst -> app\admin\orders\new\page.tsx : line 246
+gst -> app\admin\orders\new\page.tsx : line 250
+gst -> app\admin\orders\new\page.tsx : line 46
+gst -> app\admin\orders\new\page.tsx : line 51
+gst -> app\admin\orders\new\page.tsx : line 553
+gst -> app\admin\orders\new\page.tsx : line 555
+gst -> app\admin\orders\new\page.tsx : line 625
+GST -> app\admin\orders\new\page.tsx : line 631
+GST -> app\admin\orders\new\page.tsx : line 633
+gst -> app\admin\orders\new\page.tsx : line 664
+gst -> app\admin\orders\new\page.tsx : line 666
+gst -> app\api\admin\customers\[id]\orders\route.ts : line 142
+GST -> app\api\admin\customers\[id]\orders\route.ts : line 153
+GST -> app\api\admin\customers\[id]\route.ts : line 163
+GST -> app\api\admin\customers\[id]\route.ts : line 164
+GST -> app\api\admin\customers\[id]\route.ts : line 166
+gst -> app\api\admin\customers\[id]\route.ts : line 213
+gst -> app\api\admin\customers\route.ts : line 101
+GST -> app\api\admin\customers\route.ts : line 73
+gst -> app\api\orders\route.ts : line 191
+GST -> app\api\orders\route.ts : line 196
+GST -> app\api\orders\route.ts : line 215
+gst -> app\api\orders\route.ts : line 225
+GST -> app\api\orders\route.ts : line 236
+gst -> app\api\orders\route.ts : line 245
+GST -> app\api\orders\route.ts : line 296
+GST -> app\api\orders\route.ts : line 39
+gst -> app\api\orders\route.ts : line 45
+gst -> app\api\orders\route.ts : line 85
+gst -> app\cart\page.tsx : line 189
+gst -> app\cart\page.tsx : line 190
+gst -> app\cart\page.tsx : line 62
+gst -> app\cart\page.tsx : line 64
+GST -> app\checkout\page.tsx : line 118
+GST -> app\checkout\page.tsx : line 123
+GST -> app\checkout\page.tsx : line 25
+GST -> app\checkout\page.tsx : line 251
+gst -> app\checkout\page.tsx : line 252
+GST -> app\checkout\page.tsx : line 253
+GST -> app\checkout\page.tsx : line 297
+gst -> app\checkout\page.tsx : line 298
+GST -> app\checkout\page.tsx : line 31
+GST -> app\checkout\page.tsx : line 391
+gst -> app\checkout\page.tsx : line 392
+gst -> app\checkout\page.tsx : line 63
+GST -> app\checkout\page.tsx : line 68
+GST -> app\checkout\page.tsx : line 98
+gst -> prisma\schema.backup.prisma : line 36
+gst -> prisma\schema.backup.prisma : line 52
+GST -> prisma\schema.backup.prisma : line 61
+gst -> prisma\schema.prisma : line 37
+GST -> prisma\schema.prisma : line 53
+gst -> prisma\schema.prisma : line 62
+gst -> prisma\seed-test.ts : line 17
+ITC -> app\admin\quotes\page.tsx : line 142
+ITC -> app\bulk-order\page-backup.tsx : line 201
+ITC -> app\bulk-order\page-before-db.tsx : line 201
+
+===== FEATURE DETECTION: OCR_AI =====
+AI -> app\admin\customers\[id]\orders\page.tsx : line 11
+AI -> app\admin\customers\[id]\orders\page.tsx : line 115
+AI -> app\admin\customers\[id]\orders\page.tsx : line 131
+AI -> app\admin\customers\[id]\orders\page.tsx : line 135
+AI -> app\admin\customers\[id]\orders\page.tsx : line 147
+AI -> app\admin\customers\[id]\orders\page.tsx : line 156
+AI -> app\admin\customers\[id]\orders\page.tsx : line 162
+AI -> app\admin\customers\[id]\orders\page.tsx : line 168
+AI -> app\admin\customers\[id]\orders\page.tsx : line 185
+AI -> app\admin\customers\[id]\orders\page.tsx : line 190
+AI -> app\admin\customers\[id]\orders\page.tsx : line 369
+AI -> app\admin\customers\[id]\orders\page.tsx : line 45
+AI -> app\admin\customers\[id]\orders\page.tsx : line 53
+AI -> app\admin\customers\[id]\orders\page.tsx : line 57
+AI -> app\admin\customers\[id]\orders\page.tsx : line 63
+AI -> app\admin\customers\[id]\orders\page.tsx : line 71
+AI -> app\admin\customers\[id]\orders\page.tsx : line 82
+AI -> app\admin\customers\[id]\page.tsx : line 116
+AI -> app\admin\customers\[id]\page.tsx : line 127
+AI -> app\admin\customers\[id]\page.tsx : line 134
+AI -> app\admin\customers\[id]\page.tsx : line 138
+AI -> app\admin\customers\[id]\page.tsx : line 142
+AI -> app\admin\customers\[id]\page.tsx : line 148
+AI -> app\admin\customers\[id]\page.tsx : line 157
+AI -> app\admin\customers\[id]\page.tsx : line 163
+AI -> app\admin\customers\[id]\page.tsx : line 169
+AI -> app\admin\customers\[id]\page.tsx : line 186
+AI -> app\admin\customers\[id]\page.tsx : line 191
+AI -> app\admin\customers\[id]\page.tsx : line 20
+AI -> app\admin\customers\[id]\page.tsx : line 201
+AI -> app\admin\customers\[id]\page.tsx : line 251
+AI -> app\admin\customers\[id]\page.tsx : line 289
+AI -> app\admin\customers\[id]\page.tsx : line 293
+AI -> app\admin\customers\[id]\page.tsx : line 294
+AI -> app\admin\customers\[id]\page.tsx : line 296
+AI -> app\admin\customers\[id]\page.tsx : line 37
+AI -> app\admin\customers\[id]\page.tsx : line 49
+AI -> app\admin\customers\[id]\page.tsx : line 508
+AI -> app\admin\customers\[id]\page.tsx : line 58
+AI -> app\admin\customers\[id]\page.tsx : line 66
+AI -> app\admin\customers\[id]\page.tsx : line 70
+AI -> app\admin\customers\[id]\page.tsx : line 79
+AI -> app\admin\customers\[id]\page.tsx : line 86
+AI -> app\admin\customers\page.tsx : line 10
+AI -> app\admin\customers\page.tsx : line 103
+AI -> app\admin\customers\page.tsx : line 109
+AI -> app\admin\customers\page.tsx : line 116
+AI -> app\admin\customers\page.tsx : line 121
+AI -> app\admin\customers\page.tsx : line 148
+AI -> app\admin\customers\page.tsx : line 156
+AI -> app\admin\customers\page.tsx : line 160
+AI -> app\admin\customers\page.tsx : line 165
+AI -> app\admin\customers\page.tsx : line 170
+AI -> app\admin\customers\page.tsx : line 184
+AI -> app\admin\customers\page.tsx : line 196
+AI -> app\admin\customers\page.tsx : line 294
+AI -> app\admin\customers\page.tsx : line 298
+AI -> app\admin\customers\page.tsx : line 299
+AI -> app\admin\customers\page.tsx : line 30
+AI -> app\admin\customers\page.tsx : line 300
+AI -> app\admin\customers\page.tsx : line 39
+AI -> app\admin\customers\page.tsx : line 393
+AI -> app\admin\customers\page.tsx : line 44
+AI -> app\admin\customers\page.tsx : line 443
+AI -> app\admin\customers\page.tsx : line 445
+AI -> app\admin\customers\page.tsx : line 47
+AI -> app\admin\customers\page.tsx : line 500
+AI -> app\admin\customers\page.tsx : line 55
+AI -> app\admin\customers\page.tsx : line 84
+AI -> app\admin\customers\page.tsx : line 93
+AI -> app\admin\customers\page.tsx : line 99
+AI -> app\admin\login\page.tsx : line 116
+AI -> app\admin\login\page.tsx : line 21
+AI -> app\admin\login\page.tsx : line 32
+AI -> app\admin\login\page.tsx : line 35
+AI -> app\admin\login\page.tsx : line 49
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 110
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 116
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 122
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 139
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 144
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 19
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 219
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 221
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 385
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 389
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 393
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 398
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 59
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 67
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 71
+AI -> app\admin\orders\[id]\invoice\page.tsx : line 80
+AI -> app\admin\orders\[id]\page.tsx : line 110
+AI -> app\admin\orders\[id]\page.tsx : line 129
+AI -> app\admin\orders\[id]\page.tsx : line 144
+AI -> app\admin\orders\[id]\page.tsx : line 148
+AI -> app\admin\orders\[id]\page.tsx : line 162
+AI -> app\admin\orders\[id]\page.tsx : line 171
+AI -> app\admin\orders\[id]\page.tsx : line 177
+AI -> app\admin\orders\[id]\page.tsx : line 183
+AI -> app\admin\orders\[id]\page.tsx : line 200
+AI -> app\admin\orders\[id]\page.tsx : line 205
+AI -> app\admin\orders\[id]\page.tsx : line 215
+AI -> app\admin\orders\[id]\page.tsx : line 22
+AI -> app\admin\orders\[id]\page.tsx : line 473
+AI -> app\admin\orders\[id]\page.tsx : line 476
+AI -> app\admin\orders\[id]\page.tsx : line 480
+AI -> app\admin\orders\[id]\page.tsx : line 544
+AI -> app\admin\orders\[id]\page.tsx : line 61
+AI -> app\admin\orders\[id]\page.tsx : line 62
+AI -> app\admin\orders\[id]\page.tsx : line 66
+AI -> app\admin\orders\[id]\page.tsx : line 87
+AI -> app\admin\orders\[id]\page.tsx : line 95
+AI -> app\admin\orders\[id]\page.tsx : line 99
+AI -> app\admin\orders\new\page.tsx : line 10
+AI -> app\admin\orders\new\page.tsx : line 106
+AI -> app\admin\orders\new\page.tsx : line 224
+AI -> app\admin\orders\new\page.tsx : line 233
+AI -> app\admin\orders\new\page.tsx : line 255
+AI -> app\admin\orders\new\page.tsx : line 261
+AI -> app\admin\orders\new\page.tsx : line 269
+AI -> app\admin\orders\new\page.tsx : line 277
+AI -> app\admin\orders\new\page.tsx : line 354
+AI -> app\admin\orders\new\page.tsx : line 481
+AI -> app\admin\orders\new\page.tsx : line 64
+AI -> app\admin\orders\new\page.tsx : line 693
+AI -> app\admin\orders\new\page.tsx : line 76
+AI -> app\admin\orders\new\page.tsx : line 80
+AI -> app\admin\orders\new\page.tsx : line 83
+AI -> app\admin\orders\new\page.tsx : line 84
+AI -> app\admin\orders\page.tsx : line 246
+AI -> app\admin\orders\page.tsx : line 35
+AI -> app\admin\orders\page.tsx : line 43
+AI -> app\admin\orders\page.tsx : line 47
+AI -> app\admin\orders\page.tsx : line 56
+AI -> app\admin\orders\page.tsx : line 68
+AI -> app\admin\page.tsx : line 147
+AI -> app\admin\page.tsx : line 287
+AI -> app\admin\page.tsx : line 324
+AI -> app\admin\page.tsx : line 433
+AI -> app\admin\page.tsx : line 52
+AI -> app\admin\page.tsx : line 57
+AI -> app\admin\page.tsx : line 61
+AI -> app\admin\page.tsx : line 70
+AI -> app\admin\page.tsx : line 84
+AI -> app\admin\page.tsx : line 94
+AI -> app\admin\page.tsx : line 99
+AI -> app\admin\products\[id]\page.tsx : line 107
+AI -> app\admin\products\[id]\page.tsx : line 129
+AI -> app\admin\products\[id]\page.tsx : line 133
+AI -> app\admin\products\[id]\page.tsx : line 143
+AI -> app\admin\products\[id]\page.tsx : line 151
+AI -> app\admin\products\[id]\page.tsx : line 159
+AI -> app\admin\products\[id]\page.tsx : line 164
+AI -> app\admin\products\[id]\page.tsx : line 353
+AI -> app\admin\products\[id]\page.tsx : line 57
+AI -> app\admin\products\[id]\page.tsx : line 65
+AI -> app\admin\products\[id]\page.tsx : line 69
+AI -> app\admin\products\[id]\page.tsx : line 88
+AI -> app\admin\products\new\page.tsx : line 299
+AI -> app\admin\products\new\page.tsx : line 30
+AI -> app\admin\products\new\page.tsx : line 48
+AI -> app\admin\products\new\page.tsx : line 54
+AI -> app\admin\products\new\page.tsx : line 66
+AI -> app\admin\products\new\page.tsx : line 74
+AI -> app\admin\products\page.tsx : line 109
+AI -> app\admin\products\page.tsx : line 120
+AI -> app\admin\products\page.tsx : line 123
+AI -> app\admin\products\page.tsx : line 126
+AI -> app\admin\products\page.tsx : line 132
+AI -> app\admin\products\page.tsx : line 145
+AI -> app\admin\products\page.tsx : line 150
+AI -> app\admin\products\page.tsx : line 153
+AI -> app\admin\products\page.tsx : line 156
+AI -> app\admin\products\page.tsx : line 162
+AI -> app\admin\products\page.tsx : line 168
+AI -> app\admin\products\page.tsx : line 33
+AI -> app\admin\products\page.tsx : line 38
+AI -> app\admin\products\page.tsx : line 41
+AI -> app\admin\products\page.tsx : line 430
+AI -> app\admin\products\page.tsx : line 50
+AI -> app\admin\products\page-backup.tsx : line 312
+AI -> app\admin\products\page-backup.tsx : line 551
+AI -> app\admin\products\page-backup.tsx : line 819
+AI -> app\admin\quotes\page.tsx : line 10
+AI -> app\admin\quotes\page.tsx : line 107
+AI -> app\admin\quotes\page.tsx : line 111
+AI -> app\admin\quotes\page.tsx : line 126
+AI -> app\admin\quotes\page.tsx : line 161
+AI -> app\admin\quotes\page.tsx : line 265
+AI -> app\admin\quotes\page.tsx : line 344
+AI -> app\admin\quotes\page.tsx : line 346
+AI -> app\admin\quotes\page.tsx : line 365
+AI -> app\admin\quotes\page.tsx : line 37
+AI -> app\admin\quotes\page.tsx : line 403
+AI -> app\admin\quotes\page.tsx : line 42
+AI -> app\admin\quotes\page.tsx : line 46
+AI -> app\admin\quotes\page.tsx : line 55
+AI -> app\admin\quotes\page.tsx : line 74
+AI -> app\admin\quotes\page.tsx : line 95
+AI -> app\admin\stock\page.tsx : line 100
+AI -> app\admin\stock\page.tsx : line 127
+AI -> app\admin\stock\page.tsx : line 220
+AI -> app\admin\stock\page.tsx : line 229
+AI -> app\admin\stock\page.tsx : line 243
+AI -> app\admin\stock\page.tsx : line 249
+AI -> app\admin\stock\page.tsx : line 260
+AI -> app\admin\stock\page.tsx : line 265
+AI -> app\admin\stock\page.tsx : line 292
+AI -> app\admin\stock\page.tsx : line 665
+AI -> app\admin\stock\page.tsx : line 74
+AI -> app\admin\stock\page.tsx : line 85
+AI -> app\admin\stock\page.tsx : line 86
+AI -> app\admin\stock\page.tsx : line 92
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 108
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 135
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 177
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 186
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 24
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 257
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 44
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 56
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 68
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 97
+AI -> app\api\admin\customers\[id]\orders\route.ts : line 98
+AI -> app\api\admin\customers\[id]\route.ts : line 111
+AI -> app\api\admin\customers\[id]\route.ts : line 12
+AI -> app\api\admin\customers\[id]\route.ts : line 123
+AI -> app\api\admin\customers\[id]\route.ts : line 135
+AI -> app\api\admin\customers\[id]\route.ts : line 147
+AI -> app\api\admin\customers\[id]\route.ts : line 152
+AI -> app\api\admin\customers\[id]\route.ts : line 153
+AI -> app\api\admin\customers\[id]\route.ts : line 155
+AI -> app\api\admin\customers\[id]\route.ts : line 188
+AI -> app\api\admin\customers\[id]\route.ts : line 204
+AI -> app\api\admin\customers\[id]\route.ts : line 211
+AI -> app\api\admin\customers\[id]\route.ts : line 235
+AI -> app\api\admin\customers\[id]\route.ts : line 32
+AI -> app\api\admin\customers\[id]\route.ts : line 44
+AI -> app\api\admin\customers\[id]\route.ts : line 56
+AI -> app\api\admin\customers\route.ts : line 126
+AI -> app\api\admin\customers\route.ts : line 14
+AI -> app\api\admin\customers\route.ts : line 25
+AI -> app\api\admin\customers\route.ts : line 48
+AI -> app\api\admin\customers\route.ts : line 56
+AI -> app\api\admin\customers\route.ts : line 6
+AI -> app\api\admin\customers\route.ts : line 67
+AI -> app\api\admin\customers\route.ts : line 71
+AI -> app\api\admin\customers\route.ts : line 95
+AI -> app\api\admin\customers\route.ts : line 99
+AI -> app\api\admin\dashboard\route.ts : line 116
+AI -> app\api\admin\dashboard\route.ts : line 30
+AI -> app\api\admin\dashboard\route.ts : line 6
+AI -> app\api\admin\dashboard\route.ts : line 63
+AI -> app\api\admin\login\route.ts : line 30
+AI -> app\api\admin\login\route.ts : line 50
+AI -> app\api\admin\login\route.ts : line 6
+AI -> app\api\admin\orders\[id]\invoice\route.ts : line 21
+AI -> app\api\admin\orders\[id]\invoice\route.ts : line 28
+AI -> app\api\admin\orders\[id]\invoice\route.ts : line 31
+AI -> app\api\admin\orders\[id]\invoice\route.ts : line 58
+AI -> app\api\admin\orders\[id]\invoice\route.ts : line 6
+AI -> app\api\admin\orders\[id]\route.ts : line 12
+AI -> app\api\admin\orders\[id]\route.ts : line 123
+AI -> app\api\admin\orders\[id]\route.ts : line 139
+AI -> app\api\admin\orders\[id]\route.ts : line 168
+AI -> app\api\admin\orders\[id]\route.ts : line 38
+AI -> app\api\admin\orders\[id]\route.ts : line 39
+AI -> app\api\admin\orders\[id]\route.ts : line 48
+AI -> app\api\admin\orders\[id]\route.ts : line 60
+AI -> app\api\admin\orders\[id]\route.ts : line 72
+AI -> app\api\admin\orders\route.ts : line 19
+AI -> app\api\admin\orders\route.ts : line 31
+AI -> app\api\admin\orders\route.ts : line 6
+AI -> app\api\admin\orders\route.ts : line 72
+AI -> app\api\admin\products\[id]\route.ts : line 194
+AI -> app\api\admin\products\[id]\route.ts : line 208
+AI -> app\api\admin\products\[id]\route.ts : line 21
+AI -> app\api\admin\products\[id]\route.ts : line 218
+AI -> app\api\admin\products\[id]\route.ts : line 225
+AI -> app\api\admin\products\[id]\route.ts : line 228
+AI -> app\api\admin\products\[id]\route.ts : line 257
+AI -> app\api\admin\products\[id]\route.ts : line 269
+AI -> app\api\admin\products\[id]\route.ts : line 28
+AI -> app\api\admin\products\[id]\route.ts : line 31
+AI -> app\api\admin\products\[id]\route.ts : line 50
+AI -> app\api\admin\products\[id]\route.ts : line 6
+AI -> app\api\admin\products\[id]\route.ts : line 60
+AI -> app\api\admin\products\[id]\route.ts : line 67
+AI -> app\api\admin\products\[id]\route.ts : line 70
+AI -> app\api\admin\products\[id]\route.ts : line 72
+AI -> app\api\admin\products\route.ts : line 23
+AI -> app\api\admin\products\route.ts : line 35
+AI -> app\api\admin\products\route.ts : line 6
+AI -> app\api\admin\products\route.ts : line 70
+AI -> app\api\admin\products\route-backup.ts : line 20
+AI -> app\api\admin\products\route-backup.ts : line 29
+AI -> app\api\admin\products\route-backup.ts : line 6
+AI -> app\api\admin\products\route-backup.ts : line 77
+AI -> app\api\admin\products\route-backup.ts : line 99
+AI -> app\api\admin\quotes\[id]\route.ts : line 28
+AI -> app\api\admin\quotes\[id]\route.ts : line 35
+AI -> app\api\admin\quotes\[id]\route.ts : line 38
+AI -> app\api\admin\quotes\[id]\route.ts : line 52
+AI -> app\api\admin\quotes\[id]\route.ts : line 6
+AI -> app\api\admin\quotes\[id]\route.ts : line 63
+AI -> app\api\admin\quotes\[id]\route.ts : line 73
+AI -> app\api\admin\quotes\route.ts : line 14
+AI -> app\api\admin\quotes\route.ts : line 22
+AI -> app\api\admin\quotes\route.ts : line 33
+AI -> app\api\admin\quotes\route.ts : line 40
+AI -> app\api\admin\quotes\route.ts : line 48
+AI -> app\api\admin\quotes\route.ts : line 52
+AI -> app\api\admin\quotes\route.ts : line 6
+AI -> app\api\admin\quotes\route.ts : line 70
+AI -> app\api\admin\quotes\route.ts : line 74
+AI -> app\api\admin\quotes\route.ts : line 85
+AI -> app\api\admin\stock\route.ts : line 111
+AI -> app\api\admin\stock\route.ts : line 112
+AI -> app\api\admin\stock\route.ts : line 142
+AI -> app\api\admin\stock\route.ts : line 151
+AI -> app\api\admin\stock\route.ts : line 16
+AI -> app\api\admin\stock\route.ts : line 199
+AI -> app\api\admin\stock\route.ts : line 27
+AI -> app\api\admin\stock\route.ts : line 59
+AI -> app\api\admin\stock\route.ts : line 6
+AI -> app\api\admin\stock\route.ts : line 67
+AI -> app\api\admin\stock\route.ts : line 75
+AI -> app\api\orders\route.ts : line 123
+AI -> app\api\orders\route.ts : line 136
+AI -> app\api\orders\route.ts : line 167
+AI -> app\api\orders\route.ts : line 199
+AI -> app\api\orders\route.ts : line 200
+AI -> app\api\orders\route.ts : line 207
+AI -> app\api\orders\route.ts : line 213
+AI -> app\api\orders\route.ts : line 219
+AI -> app\api\orders\route.ts : line 223
+AI -> app\api\orders\route.ts : line 230
+AI -> app\api\orders\route.ts : line 264
+AI -> app\api\orders\route.ts : line 280
+AI -> app\api\orders\route.ts : line 309
+AI -> app\api\orders\route.ts : line 33
+AI -> app\api\orders\route.ts : line 37
+AI -> app\api\products\route.ts : line 38
+AI -> app\api\products\route.ts : line 44
+AI -> app\api\products\route.ts : line 87
+AI -> app\api\quotes\route.ts : line 10
+AI -> app\api\quotes\route.ts : line 35
+AI -> app\api\quotes\route.ts : line 39
+AI -> app\api\quotes\route.ts : line 57
+AI -> app\api\quotes\route.ts : line 6
+AI -> app\bulk-order\page.tsx : line 183
+AI -> app\bulk-order\page.tsx : line 419
+AI -> app\bulk-order\page.tsx : line 424
+AI -> app\bulk-order\page.tsx : line 57
+AI -> app\bulk-order\page.tsx : line 64
+AI -> app\bulk-order\page.tsx : line 68
+AI -> app\bulk-order\page.tsx : line 79
+AI -> app\bulk-order\page-backup.tsx : line 186
+AI -> app\bulk-order\page-backup.tsx : line 248
+AI -> app\bulk-order\page-backup.tsx : line 249
+AI -> app\bulk-order\page-backup.tsx : line 250
+AI -> app\bulk-order\page-backup.tsx : line 274
+AI -> app\bulk-order\page-backup.tsx : line 34
+AI -> app\bulk-order\page-backup.tsx : line 358
+AI -> app\bulk-order\page-backup.tsx : line 382
+AI -> app\bulk-order\page-backup.tsx : line 383
+AI -> app\bulk-order\page-backup.tsx : line 384
+AI -> app\bulk-order\page-backup.tsx : line 399
+AI -> app\bulk-order\page-backup.tsx : line 52
+AI -> app\bulk-order\page-backup.tsx : line 532
+AI -> app\bulk-order\page-backup.tsx : line 778
+AI -> app\bulk-order\page-before-db.tsx : line 186
+AI -> app\bulk-order\page-before-db.tsx : line 248
+AI -> app\bulk-order\page-before-db.tsx : line 249
+AI -> app\bulk-order\page-before-db.tsx : line 250
+AI -> app\bulk-order\page-before-db.tsx : line 274
+AI -> app\bulk-order\page-before-db.tsx : line 34
+AI -> app\bulk-order\page-before-db.tsx : line 358
+AI -> app\bulk-order\page-before-db.tsx : line 382
+AI -> app\bulk-order\page-before-db.tsx : line 383
+AI -> app\bulk-order\page-before-db.tsx : line 384
+AI -> app\bulk-order\page-before-db.tsx : line 399
+AI -> app\bulk-order\page-before-db.tsx : line 52
+AI -> app\bulk-order\page-before-db.tsx : line 532
+AI -> app\bulk-order\page-before-db.tsx : line 778
+AI -> app\cart\page.tsx : line 121
+AI -> app\cart\page.tsx : line 221
+AI -> app\cart\page.tsx : line 67
+AI -> app\checkout\page.tsx : line 108
+AI -> app\checkout\page.tsx : line 116
+AI -> app\checkout\page.tsx : line 134
+AI -> app\checkout\page.tsx : line 138
+AI -> app\checkout\page.tsx : line 151
+AI -> app\checkout\page.tsx : line 159
+AI -> app\checkout\page.tsx : line 163
+AI -> app\checkout\page.tsx : line 169
+AI -> app\checkout\page.tsx : line 186
+AI -> app\checkout\page.tsx : line 191
+AI -> app\checkout\page.tsx : line 206
+AI -> app\checkout\page.tsx : line 217
+AI -> app\checkout\page.tsx : line 23
+AI -> app\checkout\page.tsx : line 236
+AI -> app\checkout\page.tsx : line 237
+AI -> app\checkout\page.tsx : line 238
+AI -> app\checkout\page.tsx : line 239
+AI -> app\checkout\page.tsx : line 413
+AI -> app\order-success\page.tsx : line 14
+AI -> app\order-success\page.tsx : line 54
+AI -> app\order-success\page.tsx : line 60
+AI -> app\page.tsx : line 121
+AI -> app\page.tsx : line 147
+AI -> app\page.tsx : line 52
+AI -> app\products\[category]\page.tsx : line 165
+AI -> app\products\[category]\page.tsx : line 218
+AI -> app\products\[category]\page.tsx : line 363
+AI -> app\quote\page.tsx : line 144
+AI -> app\quote\page.tsx : line 194
+AI -> app\quote\page.tsx : line 198
+AI -> app\quote\page.tsx : line 199
+AI -> app\quote\page.tsx : line 200
+AI -> app\quote\page.tsx : line 25
+AI -> app\quote\page.tsx : line 254
+AI -> app\quote\page.tsx : line 33
+AI -> app\quote\page.tsx : line 39
+AI -> app\quote\page.tsx : line 43
+AI -> app\quote\page.tsx : line 53
+AI -> app\quote\page.tsx : line 60
+AI -> app\quote\page.tsx : line 68
+AI -> app\quote\page.tsx : line 9
+AI -> prisma\schema.backup.prisma : line 34
+AI -> prisma\schema.backup.prisma : line 42
+AI -> prisma\schema.backup.prisma : line 94
+AI -> prisma\schema.prisma : line 35
+AI -> prisma\schema.prisma : line 43
+AI -> prisma\schema.prisma : line 95
+AI -> prisma\seed-test.ts : line 10
+AI -> prisma\seed-test.ts : line 11
+AI -> prisma\seed-test.ts : line 15
+AI -> prisma\seed-test.ts : line 21
+AI -> prisma\seed-test.ts : line 38
+AI -> prisma\seed-test.ts : line 44
+
+===== FEATURE DETECTION: ACCOUNTING =====
+NOT DETECTED
+
+===== FEATURE DETECTION: INVENTORY =====
+adjustment -> app\admin\stock\page.tsx : line 46
+adjustment -> app\admin\stock\page.tsx : line 47
+adjustment -> app\admin\stock\page.tsx : line 477
+adjustment -> app\admin\stock\page.tsx : line 496
+adjustment -> app\admin\stock\page.tsx : line 498
+adjustment -> app\admin\stock\page.tsx : line 563
+adjustment -> app\admin\stock\page.tsx : line 580
+adjustment -> app\api\admin\stock\route.ts : line 13
+adjustment -> app\api\admin\stock\route.ts : line 138
+adjustment -> app\api\admin\stock\route.ts : line 93
+inventory -> app\admin\page.tsx : line 379
+inventory -> app\admin\stock\page.tsx : line 305
+inventory -> app\admin\stock\page.tsx : line 38
+inventory -> app\admin\stock\page.tsx : line 383
+inventory -> app\admin\stock\page.tsx : line 43
+inventory -> app\admin\stock\page.tsx : line 539
+StockMovement -> app\admin\stock\page.tsx : line 110
+stockMovement -> app\admin\stock\page.tsx : line 15
+stockMovement -> app\admin\stock\page.tsx : line 54
+StockMovement -> app\api\admin\customers\[id]\orders\route.ts : line 186
+StockMovement -> app\api\admin\stock\route.ts : line 151
+stockMovement -> app\api\admin\stock\route.ts : line 27
+StockMovement -> prisma\schema.prisma : line 106
+stockMovement -> prisma\schema.prisma : line 24
+
+===== FEATURE DETECTION: AUDIT =====
+correction -> app\bulk-order\page-backup.tsx : line 39
+correction -> app\bulk-order\page-backup.tsx : line 40
+correction -> app\bulk-order\page-before-db.tsx : line 39
+correction -> app\bulk-order\page-before-db.tsx : line 40
+
+===== FEATURE DETECTION: DOCUMENTS =====
+Document -> app\bulk-order\page-backup.tsx : line 111
+document -> app\bulk-order\page-backup.tsx : line 127
+Document -> app\bulk-order\page-backup.tsx : line 301
+document -> app\bulk-order\page-backup.tsx : line 323
+Document -> app\bulk-order\page-backup.tsx : line 61
+document -> app\bulk-order\page-before-db.tsx : line 111
+document -> app\bulk-order\page-before-db.tsx : line 127
+Document -> app\bulk-order\page-before-db.tsx : line 301
+Document -> app\bulk-order\page-before-db.tsx : line 323
+document -> app\bulk-order\page-before-db.tsx : line 61
+document -> app\page.tsx : line 37
+document -> app\products\[category]\page.tsx : line 83
+document -> app\products\[category]\page.tsx : line 86
+upload -> app\admin\products\page-backup.tsx : line 114
+upload -> app\admin\products\page-backup.tsx : line 189
+upload -> app\admin\products\page-backup.tsx : line 517
+
+===== FEATURE DETECTION: COMPLIANCE =====
+alert -> app\admin\customers\[id]\orders\page.tsx : line 139
+alert -> app\admin\customers\[id]\page.tsx : line 143
+alert -> app\admin\quotes\page.tsx : line 123
+
+===== FEATURE DETECTION: ROLES =====
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 116
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 141
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 179
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 210
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 217
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 46
+ADMIN -> app\admin\customers\[id]\orders\page.tsx : line 64
+ADMIN -> app\admin\customers\[id]\page.tsx : line 117
+ADMIN -> app\admin\customers\[id]\page.tsx : line 180
+ADMIN -> app\admin\customers\[id]\page.tsx : line 212
+ADMIN -> app\admin\customers\[id]\page.tsx : line 219
+ADMIN -> app\admin\customers\[id]\page.tsx : line 226
+ADMIN -> app\admin\customers\[id]\page.tsx : line 384
+ADMIN -> app\admin\customers\[id]\page.tsx : line 408
+ADMIN -> app\admin\customers\[id]\page.tsx : line 423
+ADMIN -> app\admin\customers\[id]\page.tsx : line 493
+ADMIN -> app\admin\customers\[id]\page.tsx : line 59
+ADMIN -> app\admin\customers\page.tsx : line 149
+ADMIN -> app\admin\customers\page.tsx : line 216
+ADMIN -> app\admin\customers\page.tsx : line 39
+ADMIN -> app\admin\customers\page.tsx : line 473
+ADMIN -> app\admin\customers\page.tsx : line 84
+ADMIN -> app\admin\login\page.tsx : line 100
+ADMIN -> app\admin\login\page.tsx : line 21
+ADMIN -> app\admin\login\page.tsx : line 39
+ADMIN -> app\admin\login\page.tsx : line 57
+ADMIN -> app\admin\login\page.tsx : line 6
+ADMIN -> app\admin\login\page.tsx : line 66
+ADMIN -> app\admin\login\page.tsx : line 84
+ADMIN -> app\admin\orders\[id]\invoice\page.tsx : line 133
+ADMIN -> app\admin\orders\[id]\invoice\page.tsx : line 148
+ADMIN -> app\admin\orders\[id]\invoice\page.tsx : line 60
+ADMIN -> app\admin\orders\[id]\page.tsx : line 130
+ADMIN -> app\admin\orders\[id]\page.tsx : line 194
+ADMIN -> app\admin\orders\[id]\page.tsx : line 225
+ADMIN -> app\admin\orders\[id]\page.tsx : line 232
+ADMIN -> app\admin\orders\[id]\page.tsx : line 66
+ADMIN -> app\admin\orders\[id]\page.tsx : line 88
+ADMIN -> app\admin\orders\new\page.tsx : line 233
+ADMIN -> app\admin\orders\new\page.tsx : line 265
+ADMIN -> app\admin\orders\new\page.tsx : line 291
+ADMIN -> app\admin\orders\new\page.tsx : line 65
+ADMIN -> app\admin\orders\new\page.tsx : line 69
+ADMIN -> app\admin\orders\page.tsx : line 229
+ADMIN -> app\admin\orders\page.tsx : line 25
+ADMIN -> app\admin\orders\page.tsx : line 36
+ADMIN -> app\admin\orders\page.tsx : line 87
+ADMIN -> app\admin\page.tsx : line 109
+ADMIN -> app\admin\page.tsx : line 128
+ADMIN -> app\admin\page.tsx : line 158
+ADMIN -> app\admin\page.tsx : line 185
+ADMIN -> app\admin\page.tsx : line 212
+ADMIN -> app\admin\page.tsx : line 239
+ADMIN -> app\admin\page.tsx : line 332
+ADMIN -> app\admin\page.tsx : line 345
+ADMIN -> app\admin\page.tsx : line 358
+ADMIN -> app\admin\page.tsx : line 36
+ADMIN -> app\admin\page.tsx : line 371
+ADMIN -> app\admin\page.tsx : line 389
+ADMIN -> app\admin\page.tsx : line 402
+ADMIN -> app\admin\page.tsx : line 415
+ADMIN -> app\admin\page.tsx : line 52
+ADMIN -> app\admin\page.tsx : line 91
+ADMIN -> app\admin\products\[id]\page.tsx : line 108
+ADMIN -> app\admin\products\[id]\page.tsx : line 137
+ADMIN -> app\admin\products\[id]\page.tsx : line 177
+ADMIN -> app\admin\products\[id]\page.tsx : line 337
+ADMIN -> app\admin\products\[id]\page.tsx : line 58
+ADMIN -> app\admin\products\new\page.tsx : line 283
+ADMIN -> app\admin\products\new\page.tsx : line 30
+ADMIN -> app\admin\products\new\page.tsx : line 58
+ADMIN -> app\admin\products\new\page.tsx : line 79
+ADMIN -> app\admin\products\page.tsx : line 109
+ADMIN -> app\admin\products\page.tsx : line 145
+ADMIN -> app\admin\products\page.tsx : line 174
+ADMIN -> app\admin\products\page.tsx : line 197
+ADMIN -> app\admin\products\page.tsx : line 33
+ADMIN -> app\admin\products\page.tsx : line 400
+ADMIN -> app\admin\products\page-backup.tsx : line 322
+ADMIN -> app\admin\products\page-backup.tsx : line 54
+ADMIN -> app\admin\quotes\page.tsx : line 166
+ADMIN -> app\admin\quotes\page.tsx : line 180
+ADMIN -> app\admin\quotes\page.tsx : line 187
+ADMIN -> app\admin\quotes\page.tsx : line 25
+ADMIN -> app\admin\quotes\page.tsx : line 37
+ADMIN -> app\admin\quotes\page.tsx : line 96
+ADMIN -> app\admin\stock\page.tsx : line 229
+ADMIN -> app\admin\stock\page.tsx : line 297
+ADMIN -> app\admin\stock\page.tsx : line 311
+ADMIN -> app\admin\stock\page.tsx : line 318
+ADMIN -> app\admin\stock\page.tsx : line 75
+ADMIN -> app\admin\stock\page.tsx : line 79
+ADMIN -> app\api\admin\customers\[id]\orders\route.ts : line 23
+ADMIN -> app\api\admin\customers\[id]\orders\route.ts : line 27
+ADMIN -> app\api\admin\customers\[id]\orders\route.ts : line 28
+ADMIN -> app\api\admin\customers\[id]\orders\route.ts : line 56
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 106
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 11
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 123
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 15
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 16
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 230
+ADMIN -> app\api\admin\customers\[id]\route.ts : line 32
+ADMIN -> app\api\admin\customers\route.ts : line 14
+ADMIN -> app\api\admin\customers\route.ts : line 5
+ADMIN -> app\api\admin\customers\route.ts : line 56
+ADMIN -> app\api\admin\customers\route.ts : line 9
+ADMIN -> app\api\admin\dashboard\route.ts : line 7
+ADMIN -> app\api\admin\dashboard\route.ts : line 9
+ADMIN -> app\api\admin\login\route.ts : line 11
+ADMIN -> app\api\admin\login\route.ts : line 12
+ADMIN -> app\api\admin\login\route.ts : line 14
+ADMIN -> app\api\admin\login\route.ts : line 15
+ADMIN -> app\api\admin\login\route.ts : line 18
+ADMIN -> app\api\admin\login\route.ts : line 19
+ADMIN -> app\api\admin\login\route.ts : line 32
+ADMIN -> app\api\admin\login\route.ts : line 45
+ADMIN -> app\api\admin\logout\route.ts : line 8
+ADMIN -> app\api\admin\orders\[id]\invoice\route.ts : line 21
+ADMIN -> app\api\admin\orders\[id]\invoice\route.ts : line 5
+ADMIN -> app\api\admin\orders\[id]\invoice\route.ts : line 9
+ADMIN -> app\api\admin\orders\[id]\route.ts : line 11
+ADMIN -> app\api\admin\orders\[id]\route.ts : line 15
+ADMIN -> app\api\admin\orders\[id]\route.ts : line 16
+ADMIN -> app\api\admin\orders\[id]\route.ts : line 163
+ADMIN -> app\api\admin\orders\[id]\route.ts : line 48
+ADMIN -> app\api\admin\orders\route.ts : line 10
+ADMIN -> app\api\admin\orders\route.ts : line 19
+ADMIN -> app\api\admin\orders\route.ts : line 5
+ADMIN -> app\api\admin\orders\route.ts : line 67
+ADMIN -> app\api\admin\orders\route.ts : line 9
+ADMIN -> app\api\admin\products\[id]\route.ts : line 21
+ADMIN -> app\api\admin\products\[id]\route.ts : line 218
+ADMIN -> app\api\admin\products\[id]\route.ts : line 5
+ADMIN -> app\api\admin\products\[id]\route.ts : line 60
+ADMIN -> app\api\admin\products\[id]\route.ts : line 9
+ADMIN -> app\api\admin\products\route.ts : line 10
+ADMIN -> app\api\admin\products\route.ts : line 23
+ADMIN -> app\api\admin\products\route.ts : line 5
+ADMIN -> app\api\admin\products\route.ts : line 65
+ADMIN -> app\api\admin\products\route.ts : line 9
+ADMIN -> app\api\admin\quotes\[id]\route.ts : line 28
+ADMIN -> app\api\admin\quotes\[id]\route.ts : line 5
+ADMIN -> app\api\admin\quotes\[id]\route.ts : line 9
+ADMIN -> app\api\admin\quotes\route.ts : line 14
+ADMIN -> app\api\admin\quotes\route.ts : line 40
+ADMIN -> app\api\admin\quotes\route.ts : line 5
+ADMIN -> app\api\admin\quotes\route.ts : line 9
+ADMIN -> app\api\admin\stock\route.ts : line 16
+ADMIN -> app\api\admin\stock\route.ts : line 5
+ADMIN -> app\api\admin\stock\route.ts : line 67
+ADMIN -> app\api\admin\stock\route.ts : line 9
+ADMIN -> app\quote\page.tsx : line 25
+ADMIN -> proxy.ts : line 12
+ADMIN -> proxy.ts : line 14
+ADMIN -> proxy.ts : line 18
+ADMIN -> proxy.ts : line 19
+ADMIN -> proxy.ts : line 21
+ADMIN -> proxy.ts : line 23
+ADMIN -> proxy.ts : line 31
+ADMIN -> proxy.ts : line 7
+ADMIN -> proxy.ts : line 8
+ADMIN -> proxy.ts : line 9
+
+===== PRISMA MIGRATIONS =====
+20260919194926_init
+20260919204735_add_customers_orders_quotes
+
+===== DATABASE FILES =====
+dev.db | 0 bytes
+officekart.db | 135168 bytes
+prisma\officekart.db | 0 bytes
+
+===== TYPESCRIPT CHECK =====
+
+
+===== PRISMA VALIDATE =====
+node.exe : Loaded Prisma config from prisma.config.ts.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo          : NotSpecified: (Loaded Prisma c...i 
+   sma.config.ts.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Prisma schema loaded from prisma\schema.prisma.
+The schema at prisma\schema.prisma is valid ≡ƒÜÇ
+
+
+===== PRISMA MIGRATION STATUS =====
+node.exe : Loaded Prisma config from prisma.config.ts.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo          : NotSpecified: (Loaded Prisma c...i 
+   sma.config.ts.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": SQLite database "officekart.db" at "file:./officekart.db"
+
+2 migrations found in prisma/migrations
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö
+ÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé  Update available 7.10.0 -> 8.0.0-rc.15                 Γöé
+Γöé                                                         Γöé
+Γöé  This is a major update - please follow the guide at    Γöé
+Γöé  https://pris.ly/d/major-version-upgrade                Γöé
+Γöé                                                         Γöé
+Γöé  Run the following to update                            Γöé
+Γöé    npm i --save-dev prisma@latest                       Γöé
+Γöé    npm i @prisma/client@latest                          Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö
+ÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+Database schema is up to date!
+

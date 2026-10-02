@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfficeKart - Business Analytics & Performance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-emerald-500 text-slate-950 text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">Analytics</span>
+        <h1 class="text-xl font-bold">OfficeKart Sales & Growth Monitor</h1>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="/orders.html" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition">Orders Hub</a>
+        <a href="/admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">Product Admin</a>
+        <a href="/receivables.html" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition">Ledger</a>
+        <a href="/" target="_blank" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition">Storefront</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    
+    <!-- KPI Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Gross Sales Revenue</p>
+        <p class="text-2xl font-black text-slate-900 mt-1">INR <span id="kpi-revenue">0</span></p>
+        <p class="text-[11px] text-emerald-600 font-medium mt-1">From all recorded orders</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Total Volume</p>
+        <p id="kpi-orders-count" class="text-2xl font-black text-blue-700 mt-1">0</p>
+        <p class="text-[11px] text-slate-400 font-medium mt-1">Confirmed customer orders</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Average Order Value (AOV)</p>
+        <p class="text-2xl font-black text-indigo-700 mt-1">INR <span id="kpi-aov">0</span></p>
+        <p class="text-[11px] text-slate-400 font-medium mt-1">Average per transaction</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Cash Collected</p>
+        <p class="text-2xl font-black text-emerald-700 mt-1">INR <span id="kpi-collected">0</span></p>
+        <p class="text-[11px] text-slate-400 font-medium mt-1">Recorded ledger receipts</p>
+      </div>
+    </div>
+
+    <!-- Charts & Analytics Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+      
+      <!-- Top Selling Products (7 Cols) -->
+      <section class="lg:col-span-7">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-base font-bold text-slate-800">Top Moving Stationery</h2>
+              <p class="text-xs text-slate-500">Highest quantity ordered by customers</p>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">Ranked</span>
+          </div>
+
+          <div id="top-products-container" class="space-y-4">
+            <!-- Dynamic Top Items -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment Method Breakdown (5 Cols) -->
+      <section class="lg:col-span-5">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-base font-bold text-slate-800 mb-1">Payment Method Split</h2>
+          <p class="text-xs text-slate-500 mb-6">UPI QR Scanner vs Cash on Delivery</p>
+
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-blue-700">UPI / QR Code Scan</span>
+                <span id="upi-percent">0%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div id="upi-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1">Count: <span id="upi-count">0</span> orders</p>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-amber-700">Cash on Delivery (COD)</span>
+                <span id="cod-percent">0%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div id="cod-bar" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1">Count: <span id="cod-count">0</span> orders</p>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs">
+            <p class="font-bold text-slate-700 mb-1">Order Fulfillment Status</p>
+            <div class="flex justify-between text-slate-500 text-[11px]">
+              <span>Completed: <strong id="stat-completed" class="text-emerald-700">0</strong></span>
+              <span>Pending: <strong id="stat-pending" class="text-amber-700">0</strong></span>
+              <span>Dispatched: <strong id="stat-dispatched" class="text-blue-700">0</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    function loadAnalytics() {
+      const orders = JSON.parse(localStorage.getItem('officekart_orders_log') || '[]');
+      const receipts = JSON.parse(localStorage.getItem('officekart_receipts') || '[]');
+
+      // 1. Calculate KPI Metrics
+      const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+      const totalOrdersCount = orders.length;
+      const aov = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
+      const totalCollected = receipts.reduce((sum, r) => sum + Number(r.amountReceived || 0), 0);
+
+      document.getElementById('kpi-revenue').textContent = totalRevenue.toLocaleString('en-IN');
+      document.getElementById('kpi-orders-count').textContent = totalOrdersCount;
+      document.getElementById('kpi-aov').textContent = aov.toLocaleString('en-IN');
+      document.getElementById('kpi-collected').textContent = totalCollected.toLocaleString('en-IN');
+
+      // 2. Payment Method Split
+      let upiCount = 0;
+      let codCount = 0;
+      orders.forEach(o => {
+        if (o.paymentMethod === 'UPI') upiCount++;
+        else codCount++;
+      });
+
+      const upiPct = totalOrdersCount > 0 ? Math.round((upiCount / totalOrdersCount) * 100) : 0;
+      const codPct = totalOrdersCount > 0 ? (100 - upiPct) : 0;
+
+      document.getElementById('upi-percent').textContent = upiPct + '%';
+      document.getElementById('upi-bar').style.width = upiPct + '%';
+      document.getElementById('upi-count').textContent = upiCount;
+
+      document.getElementById('cod-percent').textContent = codPct + '%';
+      document.getElementById('cod-bar').style.width = codPct + '%';
+      document.getElementById('cod-count').textContent = codCount;
+
+      // Status stats
+      document.getElementById('stat-completed').textContent = orders.filter(o => o.status === 'COMPLETED').length;
+      document.getElementById('stat-pending').textContent = orders.filter(o => o.status === 'PENDING').length;
+      document.getElementById('stat-dispatched').textContent = orders.filter(o => o.status === 'DISPATCHED').length;
+
+      // 3. Calculate Top Products
+      const productMap = {};
+      orders.forEach(o => {
+        (o.items || []).forEach(item => {
+          if (!productMap[item.name]) {
+            productMap[item.name] = { name: item.name, units: 0, revenue: 0 };
+          }
+          productMap[item.name].units += Number(item.quantity || 0);
+          productMap[item.name].revenue += Number((item.price || 0) * (item.quantity || 0));
+        });
+      });
+
+      const sortedProducts = Object.values(productMap).sort((a, b) => b.units - a.units).slice(0, 5);
+      const topContainer = document.getElementById('top-products-container');
+
+      if (sortedProducts.length === 0) {
+        topContainer.innerHTML = `<p class="text-xs text-slate-400 py-6 text-center">No sales data recorded yet. Place orders from storefront to see performance analytics.</p>`;
+        return;
+      }
+
+      topContainer.innerHTML = sortedProducts.map((p, idx) => `
+        <div class="flex items-center justify-between p-3 border rounded-xl hover:bg-slate-50 transition">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+            <div>
+              <p class="text-xs font-bold text-slate-800">${p.name}</p>
+              <p class="text-[11px] text-slate-400">Total Revenue: INR ${p.revenue.toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+          <span class="text-xs font-black text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+            ${p.units} Units Sold
+          </span>
+        </div>
+      `).join('');
+    }
+
+    loadAnalytics();
+  </script>
+</body>
+</html>
+

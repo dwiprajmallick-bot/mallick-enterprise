@@ -1,0 +1,38 @@
+﻿{
+    "name":  "mallick-enterprise",
+    "version":  "0.1.0",
+    "private":  true,
+    "scripts":  {
+                    "dev":  "next dev",
+                    "build":  "next build",
+                    "lint":  "eslint",
+                    "postinstall":  "prisma skills sync || exit 0",
+                    "start":  "node src/server.js"
+                },
+    "dependencies":  {
+                         "@prisma/adapter-better-sqlite3":  "^7.10.0",
+                         "@prisma/client":  "^7.10.0",
+                         "better-sqlite3":  "^13.0.3",
+                         "cors":  "^2.8.6",
+                         "dotenv":  "^18.0.5",
+                         "express":  "^5.2.1",
+                         "express-rate-limit":  "^8.7.0",
+                         "helmet":  "^8.3.0",
+                         "mongoose":  "^9.10.3",
+                         "next":  "16.3.5",
+                         "prisma":  "^7.10.0",
+                         "react":  "19.2.8",
+                         "react-dom":  "19.2.8"
+                     },
+    "devDependencies":  {
+                            "@tailwindcss/postcss":  "^4",
+                            "@types/node":  "^20",
+                            "@types/react":  "^19",
+                            "@types/react-dom":  "^19",
+                            "eslint":  "^9",
+                            "eslint-config-next":  "16.3.5",
+                            "tailwindcss":  "^4",
+                            "typescript":  "^5"
+                        },
+    "type":  "module"
+}

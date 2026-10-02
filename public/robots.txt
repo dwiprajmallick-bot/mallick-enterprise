@@ -1,0 +1,9 @@
+﻿User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /orders.html
+Disallow: /customers.html
+Disallow: /analytics.html
+Disallow: /api/
+
+Sitemap: https://officekart.onrender.com/sitemap.xml

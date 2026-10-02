@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+<rect width="800" height="600" fill="#f1f5f9"/>
+<rect x="180" y="100" width="440" height="400" rx="15" fill="white" stroke="#cbd5e1" stroke-width="8"/>
+<text x="400" y="280" text-anchor="middle" font-family="Arial" font-size="55" font-weight="bold" fill="#2563eb">A4 PAPER</text>
+<text x="400" y="350" text-anchor="middle" font-family="Arial" font-size="30" fill="#64748b">OfficeKart</text>
+<text x="400" y="410" text-anchor="middle" font-family="Arial" font-size="24" fill="#64748b">500 Sheets</text>
+</svg>

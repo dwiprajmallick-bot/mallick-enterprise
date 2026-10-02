@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  name           String
+  category       String
+  purchasePrice  Float
+  sellingPrice   Float
+  unit           String          @default("pcs")
+  stock          Int             @default(0)
+  image          String?
+  description    String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([category])
+  @@index([active])
+  @@index([name])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  companyName String?
+  gstin       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  subtotal        Float
+  deliveryCharge  Float       @default(0)
+  gstAmount       Float       @default(0)
+  totalAmount     Float
+  paymentStatus   String      @default("PENDING")
+  orderStatus     String      @default("PENDING")
+  paymentMethod   String      @default("COD")
+  shippingName    String
+  shippingPhone   String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingPincode String
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([orderStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  productId     String
+  productName   String
+  quantity      Int
+  unit          String
+  purchasePrice Float
+  sellingPrice  Float
+  totalPrice    Float
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model QuoteRequest {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  companyName    String?
+  message        String?
+  status         String   @default("NEW")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  decisionReason String?
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  productId     String
+  type          String
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  note          String?
+  orderId       String?
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  name         String
+  email        String?   @unique
+  phone        String?   @unique
+  passwordHash String?
+  role         String    @default("STAFF")
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs AuditLog[]
+  sessions  AdminSession[]
+
+  @@index([role])
+  @@index([active])
+  @@index([createdAt])
+}
+
+model AdminSession {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorUserId   String?
+  actorRole     String?
+  action        String
+  entityType    String
+  entityId      String?
+  description   String?
+  oldValues     String?
+  newValues     String?
+  reason        String?
+  referenceType String?
+  referenceId   String?
+  ipAddress     String?
+  userAgent     String?
+  sessionId     String?
+  createdAt     DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([referenceType, referenceId])
+  @@index([createdAt])
+}

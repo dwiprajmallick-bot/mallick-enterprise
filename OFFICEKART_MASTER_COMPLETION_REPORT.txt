@@ -1,0 +1,417 @@
+
+============================================================
+              OFFICEKART MASTER COMPLETION CHECK             
+============================================================
+Project : C:\Users\dwipr\OneDrive\Documents\Desktop\officekart
+Date    : 2026-09-26 00:29:03
+
+============================================================
+1. PROJECT STRUCTURE
+============================================================
+[PASS] package.json
+[PASS] tsconfig.json
+[PASS] next.config.ts
+[PASS] prisma.config.ts
+[PASS] prisma\schema.prisma
+[PASS] lib\prisma.ts
+[PASS] lib\audit.ts
+[PASS] lib\admin-auth.ts
+[PASS] proxy.ts
+
+============================================================
+2. NODE / NPM / PRISMA
+============================================================
+[PASS] Node v26.8.2
+[PASS] npm 11.19.1
+[PASS] Prisma command available.
+
+============================================================
+3. DEPENDENCIES
+============================================================
+[PASS] next 16.3.5
+[PASS] react 19.2.8
+[PASS] react-dom 19.2.8
+[PASS] @prisma/client ^7.10.0
+[PASS] @prisma/adapter-better-sqlite3 ^7.10.0
+[PASS] prisma ^7.10.0
+
+============================================================
+4. PRISMA SCHEMA
+============================================================
+[PASS] Prisma model: User
+[PASS] Prisma model: AdminSession
+[PASS] Prisma model: AuditLog
+[PASS] Prisma model: Customer
+[PASS] Prisma model: Order
+[PASS] Prisma model: OrderItem
+[PASS] Prisma model: Product
+[PASS] Prisma model: QuoteRequest
+[PASS] Prisma model: StockMovement
+[PASS] Prisma model: Supplier
+[PASS] Prisma model: Purchase
+[PASS] Prisma model: PurchaseItem
+[PASS] Prisma model: Invoice
+[PASS] Prisma model: Payment
+[PASS] Prisma model: LedgerEntry
+[PASS] Prisma model: GstRecord
+[PASS] Prisma model: Document
+Loaded Prisma config from prisma.config.ts.
+System.Management.Automation.RemoteException
+Prisma schema loaded from prisma\schema.prisma.
+The schema at prisma\schema.prisma is valid =ƒÜÇ
+[PASS] Prisma validate
+Loaded Prisma config from prisma.config.ts.
+System.Management.Automation.RemoteException
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": SQLite database "officekart.db" at "file:./officekart.db"
+
+9 migrations found in prisma/migrations
+
+Database schema is up to date!
+[PASS] Prisma migration status
+
+============================================================
+5. DATABASE FILE
+============================================================
+[PASS] SQLite database exists.
+[INFO] Database size: 520192 bytes
+
+============================================================
+6. ADMIN API ROUTES
+============================================================
+[PASS] app\api\admin\login\route.ts
+[PASS] app\api\admin\logout\route.ts
+[PASS] app\api\admin\me\route.ts
+[PASS] app\api\admin\dashboard\route.ts
+[FAIL] Missing admin API: app\api\admin\business\route.ts
+[PASS] app\api\admin\audit-logs\route.ts
+[PASS] app\api\admin\customers\route.ts
+[PASS] app\api\admin\orders\route.ts
+[PASS] app\api\admin\products\route.ts
+[PASS] app\api\admin\quotes\route.ts
+[PASS] app\api\admin\suppliers\route.ts
+[PASS] app\api\admin\purchases\route.ts
+[PASS] app\api\admin\stock\route.ts
+[PASS] app\api\admin\payments\route.ts
+[PASS] app\api\admin\ledger\route.ts
+[PASS] app\api\admin\gst\route.ts
+[PASS] app\api\admin\invoices\route.ts
+[PASS] app\api\admin\documents\route.ts
+
+============================================================
+7. PUBLIC API ROUTES
+============================================================
+[PASS] app\api\products\route.ts
+[PASS] app\api\orders\route.ts
+[PASS] app\api\quotes\route.ts
+
+============================================================
+8. ADMIN PAGES
+============================================================
+[PASS] app\admin\page.tsx
+[PASS] app\admin\login\page.tsx
+[PASS] app\admin\audit-logs\page.tsx
+[PASS] app\admin\business\page.tsx
+[PASS] app\admin\customers\page.tsx
+[PASS] app\admin\documents\page.tsx
+[PASS] app\admin\gst\page.tsx
+[PASS] app\admin\invoices\page.tsx
+[PASS] app\admin\ledger\page.tsx
+[PASS] app\admin\orders\page.tsx
+[PASS] app\admin\payments\page.tsx
+[PASS] app\admin\products\page.tsx
+[PASS] app\admin\purchases\page.tsx
+[PASS] app\admin\quotes\page.tsx
+[PASS] app\admin\stock\page.tsx
+[PASS] app\admin\suppliers\page.tsx
+
+============================================================
+9. PUBLIC PAGES
+============================================================
+[PASS] app\page.tsx
+[PASS] app\cart\page.tsx
+[PASS] app\checkout\page.tsx
+[PASS] app\bulk-order\page.tsx
+[PASS] app\quote\page.tsx
+[PASS] app\order-success\page.tsx
+[PASS] app\products\[category]\page.tsx
+
+============================================================
+10. ADMIN AUTHENTICATION
+============================================================
+[PASS] lib\admin-auth.ts uses secure admin session.
+[WARN] app\api\admin\login\route.ts does not reference officekart_admin_session.
+[WARN] app\api\admin\logout\route.ts does not reference officekart_admin_session.
+[WARN] app\api\admin\me\route.ts does not reference officekart_admin_session.
+[PASS] proxy.ts uses secure admin session.
+
+============================================================
+11. AUDIT SYSTEM
+============================================================
+[PASS] Audit utility contains AuditLog
+[PASS] Audit utility contains writeAuditLog
+[PASS] Audit utility contains actorUserId
+[PASS] Audit utility contains actorRole
+[PASS] Audit utility contains action
+[PASS] Audit utility contains entityType
+
+============================================================
+12. AUDIT COVERAGE
+============================================================
+[WARN] No audit reference detected: app\api\admin\audit-logs\route.ts
+[PASS] Audit reference: app\api\admin\business-summary\route.ts
+[PASS] Audit reference: app\api\admin\customers\route.ts
+[PASS] Audit reference: app\api\admin\customers\[id]\route.ts
+[PASS] Audit reference: app\api\admin\customers\[id]\orders\route.ts
+[PASS] Audit reference: app\api\admin\dashboard\route.ts
+[PASS] Audit reference: app\api\admin\documents\route.ts
+[PASS] Audit reference: app\api\admin\documents\[id]\download\route.ts
+[PASS] Audit reference: app\api\admin\gst\route.ts
+[PASS] Audit reference: app\api\admin\invoices\route.ts
+[PASS] Audit reference: app\api\admin\ledger\route.ts
+[PASS] Audit reference: app\api\admin\login\route.ts
+[PASS] Audit reference: app\api\admin\logout\route.ts
+[PASS] Audit reference: app\api\admin\me\route.ts
+[PASS] Audit reference: app\api\admin\orders\route.ts
+[PASS] Audit reference: app\api\admin\orders\[id]\route.ts
+[PASS] Audit reference: app\api\admin\orders\[id]\cancel\route.ts
+[PASS] Audit reference: app\api\admin\orders\[id]\invoice\route.ts
+[PASS] Audit reference: app\api\admin\payments\route.ts
+[PASS] Audit reference: app\api\admin\payments\[id]\reverse\route.ts
+[WARN] No audit reference detected: app\api\admin\products\route.ts
+[PASS] Audit reference: app\api\admin\products\[id]\route.ts
+[PASS] Audit reference: app\api\admin\purchases\route.ts
+[PASS] Audit reference: app\api\admin\purchases\[id]\cancel\route.ts
+[PASS] Audit reference: app\api\admin\quotes\route.ts
+[PASS] Audit reference: app\api\admin\quotes\[id]\route.ts
+[PASS] Audit reference: app\api\admin\stock\route.ts
+[PASS] Audit reference: app\api\admin\suppliers\route.ts
+[PASS] Audit reference: app\api\admin\suppliers\[id]\route.ts
+
+============================================================
+13. TRANSACTION SAFETY
+============================================================
+[PASS] Transaction detected: app\api\admin\customers\route.ts
+[PASS] Transaction detected: app\api\admin\customers\[id]\route.ts
+[PASS] Transaction detected: app\api\admin\customers\[id]\orders\route.ts
+[PASS] Transaction detected: app\api\admin\documents\route.ts
+[PASS] Transaction detected: app\api\admin\invoices\route.ts
+[PASS] Transaction detected: app\api\admin\ledger\route.ts
+[PASS] Transaction detected: app\api\admin\login\route.ts
+[PASS] Transaction detected: app\api\admin\logout\route.ts
+[PASS] Transaction detected: app\api\admin\orders\[id]\route.ts
+[PASS] Transaction detected: app\api\admin\orders\[id]\cancel\route.ts
+[PASS] Transaction detected: app\api\admin\payments\route.ts
+[PASS] Transaction detected: app\api\admin\payments\[id]\reverse\route.ts
+[PASS] Transaction detected: app\api\admin\products\[id]\route.ts
+[PASS] Transaction detected: app\api\admin\purchases\route.ts
+[PASS] Transaction detected: app\api\admin\purchases\[id]\cancel\route.ts
+[PASS] Transaction detected: app\api\admin\quotes\route.ts
+[PASS] Transaction detected: app\api\admin\quotes\[id]\route.ts
+[PASS] Transaction detected: app\api\admin\stock\route.ts
+[PASS] Transaction detected: app\api\admin\suppliers\route.ts
+[PASS] Transaction detected: app\api\admin\suppliers\[id]\route.ts
+
+============================================================
+14. ACCOUNTING INTEGRITY
+============================================================
+[PASS] app\api\admin\purchases\route.ts -> payment, ledger, gst, writeAuditLog, transaction
+[PASS] app\api\admin\purchases\[id]\cancel\route.ts -> writeAuditLog, transaction
+[PASS] app\api\admin\payments\route.ts -> payment, ledger, writeAuditLog, transaction
+[PASS] app\api\admin\payments\[id]\reverse\route.ts -> payment, ledger, writeAuditLog, transaction
+[PASS] app\api\admin\ledger\route.ts -> payment, ledger, writeAuditLog, transaction
+[PASS] app\api\admin\gst\route.ts -> gst, writeAuditLog
+[PASS] app\api\admin\invoices\route.ts -> payment, gst, writeAuditLog, transaction
+
+============================================================
+15. LEGACY AUTH COOKIE CHECK
+============================================================
+[WARN] Legacy admin cookie reference: app\api\admin\login\route.ts
+[WARN] Legacy admin cookie reference: app\api\admin\logout\route.ts
+[WARN] Legacy admin cookie reference: backup-admin-auth-20260925-191138\app_api_admin_login_route.ts
+[WARN] Legacy admin cookie reference: backup-admin-auth-20260925-191138\app_api_admin_logout_route.ts
+[WARN] Legacy admin cookie reference: backup-admin-auth-20260925-191138\proxy.ts
+[WARN] Legacy admin cookie reference: backup-admin-auth-20260925-191728\app_api_admin_login_route.ts
+[WARN] Legacy admin cookie reference: backup-admin-auth-20260925-191728\app_api_admin_logout_route.ts
+[WARN] Legacy admin cookie reference: backup-master-repair-20260926-000741\app\api\admin\login\route.ts
+[WARN] Legacy admin cookie reference: backup-master-repair-20260926-000741\app\api\admin\logout\route.ts
+
+============================================================
+16. CURRENCY DISPLAY CHECK
+============================================================
+[WARN] Possible currency/question-mark issue: node_modules\@electric-sql\pglite-socket\src\scripts\server.ts
+[WARN] Possible currency/question-mark issue: node_modules\@types\lodash\common\string.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\@types\node\buffer.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\@typescript-eslint\types\dist\generated\ast-spec.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\@typescript-eslint\typescript-estree\node_modules\minimatch\dist\commonjs\ast.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\@typescript-eslint\typescript-estree\node_modules\minimatch\dist\esm\ast.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\effect\dist\dts\Schema.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\effect\src\Schema.ts
+[WARN] Possible currency/question-mark issue: node_modules\effect\src\SchemaAST.ts
+[WARN] Possible currency/question-mark issue: node_modules\fast-check\lib\esm\types\arbitrary\_internals\helpers\TokenizeRegex.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\fast-check\lib\types\arbitrary\_internals\helpers\TokenizeRegex.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\iconv-lite\lib\index.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\next\dist\client\components\segment-cache\vary-path.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\typescript\lib\lib.dom.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\typescript\lib\lib.webworker.d.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v3\types.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v3\tests\string.test.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v4\classic\tests\string.test.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v4\classic\tests\template-literal.test.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v4\core\util.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\src\v4\core\tests\compile-generative.test.ts
+[WARN] Possible currency/question-mark issue: node_modules\zod\v4\core\util.d.ts
+
+============================================================
+17. TYPESCRIPT CHECK
+============================================================
+[PASS] TypeScript = PASS
+
+============================================================
+18. PRODUCTION BUILD
+============================================================
+
+> officekart@0.1.0 build
+> next build
+
+Gû¦ Next.js 16.3.5 (Turbopack)
+- Environments: .env.local
+G£ô Running next.config.ts took 1386ms
+
+  Creating an optimized production build ...
+G£ô Compiled successfully in 3.3s
+  Running TypeScript ...
+  Finished TypeScript in 5.0s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/48) ...
+  Generating static pages using 3 workers (12/48) 
+  Generating static pages using 3 workers (24/48) 
+  Generating static pages using 3 workers (36/48) 
+G£ô Generating static pages using 3 workers (48/48) in 996ms
+Turbopack build encountered 1 warning:
+./app/api/admin/documents/[id]/download/route.ts:73:5
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m71 |[0m
+  [90m72 |[0m   [36mconst[0m absolutePath =
+[33m[1m>[0m [90m73 |[0m     path.resolve(
+  [90m   |[0m     [33m[1m^^^^^^^^^^^^[0m
+[33m[1m>[0m [90m74 |[0m       process.cwd(),
+  [90m   |[0m [33m[1m^^^^^^^^^^^^^^^^^^^^[0m
+[33m[1m>[0m [90m75 |[0m       document.storagePath
+  [90m   |[0m [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[33m[1m>[0m [90m76 |[0m     );
+  [90m   |[0m [33m[1m^^^^^[0m
+  [90m77 |[0m
+  [90m78 |[0m   [36mconst[0m relative =
+  [90m79 |[0m     path.relative(
+System.Management.Automation.RemoteException
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: path.resolve(/*turbopackIgnore: true*/ ...), or
+- remove them.
+System.Management.Automation.RemoteException
+Import trace:
+  App Route:
+    ./app/api/admin/documents/[id]/download/route.ts
+    ./app/api/admin/documents/[id]/download/route.ts
+System.Management.Automation.RemoteException
+System.Management.Automation.RemoteException
+  Finalizing page optimization ...
+
+Route (app)
+Göî Gùï /
+Gö£ Gùï /_not-found
+Gö£ Gùï /admin
+Gö£ Gùï /admin/audit-logs
+Gö£ Gùï /admin/business
+Gö£ Gùï /admin/customers
+Gö£ ¦Æ /admin/customers/[id]
+Gö£ ¦Æ /admin/customers/[id]/orders
+Gö£ Gùï /admin/documents
+Gö£ Gùï /admin/gst
+Gö£ Gùï /admin/invoices
+Gö£ Gùï /admin/ledger
+Gö£ Gùï /admin/login
+Gö£ Gùï /admin/orders
+Gö£ ¦Æ /admin/orders/[id]
+Gö£ ¦Æ /admin/orders/[id]/invoice
+Gö£ Gùï /admin/orders/new
+Gö£ Gùï /admin/payments
+Gö£ Gùï /admin/products
+Gö£ ¦Æ /admin/products/[id]
+Gö£ Gùï /admin/products/new
+Gö£ Gùï /admin/purchases
+Gö£ Gùï /admin/quotes
+Gö£ Gùï /admin/stock
+Gö£ Gùï /admin/suppliers
+Gö£ ¦Æ /api/admin/audit-logs
+Gö£ ¦Æ /api/admin/business-summary
+Gö£ ¦Æ /api/admin/customers
+Gö£ ¦Æ /api/admin/customers/[id]
+Gö£ ¦Æ /api/admin/customers/[id]/orders
+Gö£ ¦Æ /api/admin/dashboard
+Gö£ ¦Æ /api/admin/documents
+Gö£ ¦Æ /api/admin/documents/[id]/download
+Gö£ ¦Æ /api/admin/gst
+Gö£ ¦Æ /api/admin/invoices
+Gö£ ¦Æ /api/admin/ledger
+Gö£ ¦Æ /api/admin/login
+Gö£ ¦Æ /api/admin/logout
+Gö£ ¦Æ /api/admin/me
+Gö£ ¦Æ /api/admin/orders
+Gö£ ¦Æ /api/admin/orders/[id]
+Gö£ ¦Æ /api/admin/orders/[id]/cancel
+Gö£ ¦Æ /api/admin/orders/[id]/invoice
+Gö£ ¦Æ /api/admin/payments
+Gö£ ¦Æ /api/admin/payments/[id]/reverse
+Gö£ ¦Æ /api/admin/products
+Gö£ ¦Æ /api/admin/products/[id]
+Gö£ ¦Æ /api/admin/purchases
+Gö£ ¦Æ /api/admin/purchases/[id]/cancel
+Gö£ ¦Æ /api/admin/quotes
+Gö£ ¦Æ /api/admin/quotes/[id]
+Gö£ ¦Æ /api/admin/stock
+Gö£ ¦Æ /api/admin/suppliers
+Gö£ ¦Æ /api/admin/suppliers/[id]
+Gö£ ¦Æ /api/orders
+Gö£ ¦Æ /api/products
+Gö£ ¦Æ /api/quotes
+Gö£ Gùï /bulk-order
+Gö£ Gùï /cart
+Gö£ Gùï /checkout
+Gö£ Gùï /order-success
+Gö£ ¦Æ /products/[category]
+Göö Gùï /quote
+
+
+¦Æ Proxy (Middleware)
+
+Gùï  (Static)   prerendered as static content
+¦Æ  (Dynamic)  server-rendered on demand
+
+[PASS] Next.js production build = PASS
+
+============================================================
+19. PRISMA MIGRATIONS
+============================================================
+[PASS] Migration folders found: 9
+[PASS] Migration: 20260919194926_init
+[PASS] Migration: 20260919204735_add_customers_orders_quotes
+[PASS] Migration: 20260924000100_reconcile_stock_movement
+[PASS] Migration: 20260924000200_add_audit_architecture
+[PASS] Migration: 20260924000300_protect_audit_logs
+[PASS] Migration: 20260925000100_quote_decision_reason
+[PASS] Migration: 20260925000200_admin_identity_sessions
+[PASS] Migration: 20260925000300_business_core
+[PASS] Migration: 20260925000400_business_core_hardening
+
+============================================================
+              OFFICEKART MASTER CHECK COMPLETE               
+============================================================
+
+FULL REPORT:
+C:\Users\dwipr\OneDrive\Documents\Desktop\officekart\OFFICEKART_MASTER_COMPLETION_REPORT.txt

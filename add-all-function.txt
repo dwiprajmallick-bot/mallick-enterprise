@@ -1,0 +1,38 @@
+﻿function addAllToCart() {
+  type StoredCartItem = {
+    id: string;
+    name: string;
+    price: number;
+    unit: string;
+    image: string | null;
+    quantity: number;
+  };
+
+  const existing: StoredCartItem[] = JSON.parse(
+    localStorage.getItem("officekart-cart") || "[]"
+  );
+
+  const cartMap = new Map<string, StoredCartItem>(
+    existing.map((item) => [item.id, item])
+  );
+
+  selectedItems.forEach((item) => {
+    const existingItem = cartMap.get(item.product.id);
+
+    cartMap.set(item.product.id, {
+      id: item.product.id,
+      name: item.product.name,
+      price: item.product.sellingPrice,
+      unit: item.product.unit,
+      image: item.product.image,
+      quantity: (existingItem?.quantity || 0) + item.quantity,
+    });
+  });
+
+  localStorage.setItem(
+    "officekart-cart",
+    JSON.stringify(Array.from(cartMap.values()))
+  );
+
+  window.location.href = "/cart";
+}

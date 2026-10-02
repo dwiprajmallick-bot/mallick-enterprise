@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+<rect width="800" height="600" fill="#eff6ff"/>
+<rect x="330" y="100" width="140" height="400" rx="55" fill="#2563eb"/>
+<rect x="350" y="120" width="100" height="270" rx="40" fill="#3b82f6"/>
+<rect x="370" y="390" width="60" height="90" fill="#1e40af"/>
+<circle cx="400" cy="155" r="25" fill="white"/>
+<text x="400" y="550" text-anchor="middle" font-family="Arial" font-size="35" font-weight="bold" fill="#1e3a8a">BALL PEN</text>
+</svg>

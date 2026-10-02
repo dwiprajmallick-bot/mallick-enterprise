@@ -1,0 +1,2002 @@
+
+============================================================
+FILE: .\app\api\admin\purchases\route.ts
+============================================================
+import { NextResponse } from "next/server";
+
+import {
+  requireCurrentAdminUser,
+} from "@/lib/admin-auth";
+
+import {
+  AUDIT_ACTIONS,
+  getRequestAuditMeta,
+  writeAuditLog,
+} from "@/lib/audit";
+
+import { prisma } from "@/lib/prisma";
+
+function makeNumber(
+  prefix: string
+) {
+  const stamp =
+    new Date()
+      .toISOString()
+      .replace(/\D/g, "")
+      .slice(0, 14);
+
+  const random =
+    Math.random()
+      .toString(36)
+      .slice(2, 7)
+      .toUpperCase();
+
+  return `${prefix}-${stamp}-${random}`;
+}
+
+export async function GET(
+  request: Request
+) {
+  const user =
+    await requireCurrentAdminUser();
+
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Unauthorized.",
+      },
+      { status: 401 }
+    );
+  }
+
+  const url =
+    new URL(request.url);
+
+  const supplierId =
+    url.searchParams.get(
+      "supplierId"
+    ) || "";
+
+  const purchases =
+    await prisma.purchase.findMany({
+      where: supplierId
+        ? { supplierId }
+        : undefined,
+      orderBy: {
+        purchasedAt:
+          "desc",
+      },
+    });
+
+  await writeAuditLog({
+    actorUserId:
+      user.id,
+    actorRole:
+      user.role,
+    ...getRequestAuditMeta(
+      request
+    ),
+    action:
+      AUDIT_ACTIONS.VIEW,
+    entityType:
+      "Purchase",
+    description:
+      "Admin viewed purchase list.",
+    newValues: {
+      count:
+        purchases.length,
+      supplierId,
+    },
+  });
+
+  return NextResponse.json({
+    success: true,
+    purchases,
+  });
+}
+
+export async function POST(
+  request: Request
+) {
+  const user =
+    await requireCurrentAdminUser();
+
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Unauthorized.",
+      },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const body =
+      await request.json();
+
+    const supplierId =
+      String(
+        body.supplierId || ""
+      ).trim();
+
+    const items =
+      Array.isArray(
+        body.items
+      )
+        ? body.items
+        : [];
+
+    if (
+      !supplierId ||
+      items.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "supplierId and at least one item are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const deliveryPaise =
+      Number(
+        body.deliveryPaise ||
+          0
+      );
+
+    const paymentAmountPaise =
+      Number(
+        body.paymentAmountPaise ||
+          0
+      );
+
+    if (
+      !Number.isInteger(
+        deliveryPaise
+      ) ||
+      deliveryPaise < 0 ||
+      !Number.isInteger(
+        paymentAmountPaise
+      ) ||
+      paymentAmountPaise < 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Amounts must be non-negative integers.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const purchase =
+      await prisma.$transaction(
+        async (tx) => {
+
+          const supplier =
+            await tx.supplier.findUnique({
+              where: {
+                id: supplierId,
+              },
+            });
+
+          if (!supplier) {
+            throw new Error(
+              "SUPPLIER_NOT_FOUND"
+            );
+          }
+
+          let subtotalPaise =
+            0;
+
+          let gstPaise =
+            0;
+
+          const normalizedItems = [];
+
+          for (
+            const rawItem of items
+          ) {
+
+            const productId =
+              String(
+                rawItem.productId ||
+                  ""
+              ).trim();
+
+            const quantity =
+              Number(
+                rawItem.quantity
+              );
+
+            const unitCostPaise =
+              Number(
+                rawItem.unitCostPaise
+              );
+
+            const gstRate =
+              Number(
+                rawItem.gstRate ||
+                  0
+              );
+
+            if (
+              !productId ||
+              !Number.isInteger(
+                quantity
+              ) ||
+              quantity <= 0 ||
+              !Number.isInteger(
+                unitCostPaise
+              ) ||
+              unitCostPaise < 0 ||
+              !Number.isFinite(
+                gstRate
+              ) ||
+              gstRate < 0
+            ) {
+              throw new Error(
+                "INVALID_ITEM"
+              );
+            }
+
+            const product =
+              await tx.product.findUnique({
+                where: {
+                  id: productId,
+                },
+              });
+
+            if (!product) {
+              throw new Error(
+                "PRODUCT_NOT_FOUND"
+              );
+            }
+
+            const lineTotalPaise =
+              quantity *
+              unitCostPaise;
+
+            const lineGstPaise =
+              Math.round(
+                lineTotalPaise *
+                  (gstRate /
+                    100)
+              );
+
+            subtotalPaise +=
+              lineTotalPaise;
+
+            gstPaise +=
+              lineGstPaise;
+
+            normalizedItems.push(
+              {
+                product,
+                productId,
+                quantity,
+                unitCostPaise,
+                gstRate,
+                gstPaise:
+                  lineGstPaise,
+                lineTotalPaise,
+              }
+            );
+          }
+
+          const totalPaise =
+            subtotalPaise +
+            gstPaise +
+            deliveryPaise;
+
+          if (
+            paymentAmountPaise >
+            totalPaise
+          ) {
+            throw new Error(
+              "PAYMENT_EXCEEDS_TOTAL"
+            );
+          }
+
+          const paymentStatus =
+            paymentAmountPaise ===
+            0
+              ? "UNPAID"
+              : paymentAmountPaise ===
+                  totalPaise
+                ? "PAID"
+                : "PARTIAL";
+
+          const purchaseNumber =
+            makeNumber("PUR");
+
+          const created =
+            await tx.purchase.create({
+              data: {
+                purchaseNumber,
+                supplierId,
+                status:
+                  "RECEIVED",
+                subtotalPaise,
+                gstPaise,
+                deliveryPaise,
+                totalPaise,
+                paymentStatus,
+                notes:
+                  body.notes
+                    ? String(
+                        body.notes
+                      )
+                    : null,
+              },
+            });
+
+          for (
+            const item of
+              normalizedItems
+          ) {
+
+            await tx.purchaseItem.create({
+              data: {
+                purchaseId:
+                  created.id,
+                productId:
+                  item.productId,
+                description:
+                  item.product.name,
+                quantity:
+                  item.quantity,
+                unitCostPaise:
+                  item.unitCostPaise,
+                gstRate:
+                  item.gstRate,
+                gstPaise:
+                  item.gstPaise,
+                lineTotalPaise:
+                  item.lineTotalPaise,
+              },
+            });
+
+            const previousStock =
+              item.product.stock;
+
+            const newStock =
+              previousStock +
+              item.quantity;
+
+            await tx.product.update({
+              where: {
+                id:
+                  item.productId,
+              },
+              data: {
+                stock:
+                  newStock,
+                purchasePrice:
+                  item.unitCostPaise /
+                  100,
+              },
+            });
+
+            const movement =
+              await tx.stockMovement.create({
+                data: {
+                  productId:
+                    item.productId,
+                  type:
+                    "IN",
+                  quantity:
+                    item.quantity,
+                  previousStock,
+                  newStock,
+                  note:
+                    `Purchase ${created.purchaseNumber}`,
+                },
+              });
+
+            await writeAuditLog({
+              db: tx,
+              actorUserId:
+                user.id,
+              actorRole:
+                user.role,
+              ...getRequestAuditMeta(
+                request
+              ),
+              action:
+                AUDIT_ACTIONS.STOCK_IN,
+              entityType:
+                "Product",
+              entityId:
+                item.productId,
+              description:
+                "Stock received against purchase.",
+              oldValues: {
+                stock:
+                  previousStock,
+              },
+              newValues: {
+                stock:
+                  newStock,
+                quantity:
+                  item.quantity,
+                purchaseId:
+                  created.id,
+                movementId:
+                  movement.id,
+              },
+              referenceType:
+                "Purchase",
+              referenceId:
+                created.id,
+            });
+          }
+
+          await writeAuditLog({
+            db: tx,
+            actorUserId:
+              user.id,
+            actorRole:
+              user.role,
+            ...getRequestAuditMeta(
+              request
+            ),
+            action:
+              AUDIT_ACTIONS.CREATE,
+            entityType:
+              "Purchase",
+            entityId:
+              created.id,
+            description:
+              "Purchase created.",
+            newValues:
+              created,
+            referenceType:
+              "Supplier",
+            referenceId:
+              supplier.id,
+          });
+
+          await writeAuditLog({
+            db: tx,
+            actorUserId:
+              user.id,
+            actorRole:
+              user.role,
+            ...getRequestAuditMeta(
+              request
+            ),
+            action:
+              AUDIT_ACTIONS.PURCHASE,
+            entityType:
+              "Purchase",
+            entityId:
+              created.id,
+            description:
+              "Purchase completed and stock received.",
+            newValues: {
+              purchaseNumber:
+                created.purchaseNumber,
+              subtotalPaise,
+              gstPaise,
+              deliveryPaise,
+              totalPaise,
+              paymentStatus,
+            },
+            referenceType:
+              "Supplier",
+            referenceId:
+              supplier.id,
+          });
+
+          if (
+            gstPaise > 0
+          ) {
+
+            const gstRecord =
+              await tx.gstRecord.create({
+                data: {
+                  gstNumber:
+                    makeNumber(
+                      "GSTIN"
+                    ),
+                  entryType:
+                    "INPUT",
+                  sourceType:
+                    "Purchase",
+                  sourceId:
+                    created.id,
+                  gstRate:
+                    normalizedItems.length ===
+                    1
+                      ? normalizedItems[0]
+                          .gstRate
+                      : 0,
+                  taxablePaise:
+                    subtotalPaise,
+                  gstPaise,
+                  status:
+                    "ACTIVE",
+                },
+              });
+
+            await writeAuditLog({
+              db: tx,
+              actorUserId:
+                user.id,
+              actorRole:
+                user.role,
+              ...getRequestAuditMeta(
+                request
+              ),
+              action:
+                AUDIT_ACTIONS.GST_CREATE,
+              entityType:
+                "GstRecord",
+              entityId:
+                gstRecord.id,
+              description:
+                "Input GST record created.",
+              newValues:
+                gstRecord,
+              referenceType:
+                "Purchase",
+              referenceId:
+                created.id,
+            });
+          }
+
+          if (
+            paymentAmountPaise >
+            0
+          ) {
+
+            const payment =
+              await tx.payment.create({
+                data: {
+                  paymentNumber:
+                    makeNumber(
+                      "PAY"
+                    ),
+                  type:
+                    "PAY",
+                  status:
+                    "SUCCESS",
+                  purchaseId:
+                    created.id,
+                  amountPaise:
+                    paymentAmountPaise,
+                  method:
+                    String(
+                      body.paymentMethod ||
+                        "BANK_TRANSFER"
+                    ),
+                  reference:
+                    body.paymentReference
+                      ? String(
+                          body.paymentReference
+                        )
+                      : null,
+                  notes:
+                    body.paymentNotes
+                      ? String(
+                          body.paymentNotes
+                        )
+                      : null,
+                },
+              });
+
+            const ledger =
+              await tx.ledgerEntry.create({
+                data: {
+                  ledgerNumber:
+                    makeNumber(
+                      "LED"
+                    ),
+                  entryType:
+                    "DEBIT",
+                  accountType:
+                    "SUPPLIER",
+                  accountId:
+                    supplier.id,
+                  purchaseId:
+                    created.id,
+                  paymentId:
+                    payment.id,
+                  amountPaise:
+                    paymentAmountPaise,
+                  description:
+                    `Supplier payment for ${created.purchaseNumber}`,
+                  referenceType:
+                    "Payment",
+                  referenceId:
+                    payment.id,
+                },
+              });
+
+            await writeAuditLog({
+              db: tx,
+              actorUserId:
+                user.id,
+              actorRole:
+                user.role,
+              ...getRequestAuditMeta(
+                request
+              ),
+              action:
+                AUDIT_ACTIONS.PAYMENT_PAY,
+              entityType:
+                "Payment",
+              entityId:
+                payment.id,
+              description:
+                "Supplier payment recorded.",
+              newValues:
+                payment,
+              referenceType:
+                "Purchase",
+              referenceId:
+                created.id,
+            });
+
+            await writeAuditLog({
+              db: tx,
+              actorUserId:
+                user.id,
+              actorRole:
+                user.role,
+              ...getRequestAuditMeta(
+                request
+              ),
+              action:
+                AUDIT_ACTIONS.LEDGER_CREATE,
+              entityType:
+                "LedgerEntry",
+              entityId:
+                ledger.id,
+              description:
+                "Supplier payment ledger created.",
+              newValues:
+                ledger,
+              referenceType:
+                "Payment",
+              referenceId:
+                payment.id,
+            });
+          }
+
+          return created;
+        }
+      );
+
+    return NextResponse.json({
+      success: true,
+      purchase,
+    });
+  } catch (error) {
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "";
+
+    if (
+      message ===
+      "SUPPLIER_NOT_FOUND"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Supplier not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (
+      message ===
+      "PRODUCT_NOT_FOUND"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Product not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (
+      message ===
+      "INVALID_ITEM"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Invalid purchase item.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      message ===
+      "PAYMENT_EXCEEDS_TOTAL"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Payment cannot exceed purchase total.",
+        },
+        { status: 400 }
+      );
+    }
+
+    console.error(
+      "Purchase create error:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Purchase creation failed.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+============================================================
+FILE: .\app\api\admin\purchases\[id]\cancel\route.ts
+============================================================
+import { NextResponse } from "next/server";
+
+import {
+  requireCurrentAdminUser,
+} from "@/lib/admin-auth";
+
+import {
+  AUDIT_ACTIONS,
+  getRequestAuditMeta,
+  writeAuditLog,
+} from "@/lib/audit";
+
+import { prisma } from "@/lib/prisma";
+
+type Context = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function POST(
+  request: Request,
+  context: Context
+) {
+  const user =
+    await requireCurrentAdminUser();
+
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Unauthorized.",
+      },
+      { status: 401 }
+    );
+  }
+
+  const { id } =
+    await context.params;
+
+  try {
+    const body =
+      await request.json();
+
+    const reason =
+      String(
+        body.reason || ""
+      ).trim();
+
+    if (!reason) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Cancellation reason is required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const purchase =
+      await prisma.$transaction(
+        async (tx) => {
+
+          const existing =
+            await tx.purchase.findUnique({
+              where: {
+                id,
+              },
+            });
+
+          if (!existing) {
+            throw new Error(
+              "PURCHASE_NOT_FOUND"
+            );
+          }
+
+          if (
+            String(
+              existing.status
+            ).toUpperCase() ===
+            "CANCELLED"
+          ) {
+            throw new Error(
+              "ALREADY_CANCELLED"
+            );
+          }
+
+          const items =
+            await tx.purchaseItem.findMany({
+              where: {
+                purchaseId:
+                  existing.id,
+              },
+            });
+
+          for (
+            const item of items
+          ) {
+
+            const product =
+              await tx.product.findUnique({
+                where: {
+                  id:
+                    item.productId,
+                },
+              });
+
+            if (!product) {
+              throw new Error(
+                "PRODUCT_NOT_FOUND"
+              );
+            }
+
+            const quantity =
+              Number(
+                item.quantity
+              );
+
+            if (
+              !Number.isInteger(
+                quantity
+              ) ||
+              quantity <= 0
+            ) {
+              throw new Error(
+                "INVALID_PURCHASE_ITEM"
+              );
+            }
+
+            if (
+              product.stock <
+              quantity
+            ) {
+              throw new Error(
+                "INSUFFICIENT_STOCK_TO_REVERSE"
+              );
+            }
+
+            const previousStock =
+              product.stock;
+
+            const newStock =
+              previousStock -
+              quantity;
+
+            await tx.product.update({
+              where: {
+                id:
+                  product.id,
+              },
+              data: {
+                stock:
+                  newStock,
+              },
+            });
+
+            const movement =
+              await tx.stockMovement.create({
+                data: {
+                  productId:
+                    product.id,
+                  type:
+                    "OUT",
+                  quantity:
+                    -quantity,
+                  previousStock,
+                  newStock,
+                  note:
+                    `Purchase cancellation reversal ${existing.purchaseNumber}`,
+                },
+              });
+
+            await writeAuditLog({
+              db: tx,
+              actorUserId:
+                user.id,
+              actorRole:
+                user.role,
+              ...getRequestAuditMeta(
+                request
+              ),
+              action:
+                AUDIT_ACTIONS.STOCK_OUT,
+              entityType:
+                "Product",
+              entityId:
+                product.id,
+              description:
+                "Purchase stock receipt reversed because purchase was cancelled.",
+              oldValues: {
+                stock:
+                  previousStock,
+              },
+              newValues: {
+                stock:
+                  newStock,
+                quantity:
+                  -quantity,
+                movementId:
+                  movement.id,
+                purchaseId:
+                  existing.id,
+              },
+              reason,
+              referenceType:
+                "Purchase",
+              referenceId:
+                existing.id,
+            });
+          }
+
+          const updated =
+            await tx.purchase.update({
+              where: {
+                id:
+                  existing.id,
+              },
+              data: {
+                status:
+                  "CANCELLED",
+              },
+            });
+
+          await writeAuditLog({
+            db: tx,
+            actorUserId:
+              user.id,
+            actorRole:
+              user.role,
+            ...getRequestAuditMeta(
+              request
+            ),
+            action:
+              AUDIT_ACTIONS.CORRECTION,
+            entityType:
+              "Purchase",
+            entityId:
+              existing.id,
+            description:
+              "Purchase cancelled and received stock reversed.",
+            oldValues: {
+              status:
+                existing.status,
+            },
+            newValues: {
+              status:
+                updated.status,
+              itemCount:
+                items.length,
+            },
+            reason,
+            referenceType:
+              "Purchase",
+            referenceId:
+              existing.id,
+          });
+
+          await writeAuditLog({
+            db: tx,
+            actorUserId:
+              user.id,
+            actorRole:
+              user.role,
+            ...getRequestAuditMeta(
+              request
+            ),
+            action:
+              AUDIT_ACTIONS.REVERSAL,
+            entityType:
+              "Purchase",
+            entityId:
+              existing.id,
+            description:
+              "Purchase stock receipt reversed through cancellation.",
+            newValues: {
+              status:
+                "CANCELLED",
+              itemCount:
+                items.length,
+            },
+            reason,
+            referenceType:
+              "Purchase",
+            referenceId:
+              existing.id,
+          });
+
+          return updated;
+        }
+      );
+
+    return NextResponse.json({
+      success: true,
+      purchase,
+    });
+  } catch (error) {
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "";
+
+    if (
+      message ===
+      "PURCHASE_NOT_FOUND"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Purchase not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (
+      message ===
+      "ALREADY_CANCELLED"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Purchase is already cancelled.",
+        },
+        { status: 409 }
+      );
+    }
+
+    if (
+      message ===
+      "PRODUCT_NOT_FOUND"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "One or more products were not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (
+      message ===
+      "INVALID_PURCHASE_ITEM"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Invalid purchase quantity.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      message ===
+      "INSUFFICIENT_STOCK_TO_REVERSE"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Current stock is insufficient to reverse this purchase.",
+        },
+        { status: 409 }
+      );
+    }
+
+    console.error(
+      "Purchase cancellation error:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Purchase cancellation failed.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+============================================================
+FILE: .\app\api\admin\products\route.ts
+============================================================
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+
+import { requireCurrentAdminUser } from "@/lib/admin-auth";
+async function isAdminAuthenticated() {
+  const user =
+    await requireCurrentAdminUser();
+
+  return Boolean(user);
+}
+
+export async function GET() {
+  try {
+    const authenticated = await isAdminAuthenticated();
+
+    if (!authenticated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        { status: 401 }
+      );
+    }
+
+    const products = await prisma.product.findMany({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
+        sellingPrice: true,
+        stock: true,
+        unit: true,
+      },
+    });
+
+    const data = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: product.sellingPrice,
+      sellingPrice: product.sellingPrice,
+      stock: product.stock,
+      unit: product.unit,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("ADMIN PRODUCTS GET ERROR:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to load products.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+============================================================
+FILE: .\lib\audit.ts
+============================================================
+import "server-only";
+
+import {
+  createHash,
+} from "crypto";
+
+import { cookies } from "next/headers";
+
+import { prisma } from "@/lib/prisma";
+
+type AuditDb = {
+  auditLog: {
+    create: (args: {
+      data: {
+        actorUserId?: string | null;
+        actorRole?: string | null;
+        action: string;
+        entityType: string;
+        entityId?: string | null;
+        description?: string | null;
+        oldValues?: string | null;
+        newValues?: string | null;
+        reason?: string | null;
+        referenceType?: string | null;
+        referenceId?: string | null;
+        ipAddress?: string | null;
+        userAgent?: string | null;
+        sessionId?: string | null;
+      };
+    }) => Promise<unknown>;
+  };
+
+  adminSession: {
+    findUnique: (args: {
+      where: {
+        tokenHash: string;
+      };
+      select: {
+        id: true;
+        userId: true;
+        expiresAt: true;
+        revokedAt: true;
+        user: {
+          select: {
+            id: true;
+            role: true;
+            active: true;
+          };
+        };
+      };
+    }) => Promise<{
+      id: string;
+      userId: string;
+      expiresAt: Date;
+      revokedAt: Date | null;
+      user: {
+        id: string;
+        role: string;
+        active: boolean;
+      };
+    } | null>;
+  };
+};
+
+const SENSITIVE_KEYS = new Set([
+  "password",
+  "passwordHash",
+  "token",
+  "accessToken",
+  "refreshToken",
+  "admin_token",
+  "adminToken",
+  "auth_token",
+  "authorization",
+  "cookie",
+  "sessionToken",
+  "otp",
+  "secret",
+  "apiKey",
+  "api_key",
+]);
+
+function sanitizeValue(
+  value: unknown,
+  seen = new WeakSet<object>()
+): unknown {
+  if (
+    value === null ||
+    value === undefined
+  ) {
+    return value;
+  }
+
+  if (typeof value === "bigint") {
+    return value.toString();
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value !== "object") {
+    return value;
+  }
+
+  if (seen.has(value as object)) {
+    return "[Circular]";
+  }
+
+  seen.add(value as object);
+
+  if (Array.isArray(value)) {
+    return value.map((item) =>
+      sanitizeValue(item, seen)
+    );
+  }
+
+  const source =
+    value as Record<string, unknown>;
+
+  const result:
+    Record<string, unknown> = {};
+
+  for (const [
+    key,
+    item,
+  ] of Object.entries(source)) {
+
+    if (SENSITIVE_KEYS.has(key)) {
+      result[key] = "[REDACTED]";
+      continue;
+    }
+
+    result[key] =
+      sanitizeValue(item, seen);
+  }
+
+  return result;
+}
+
+function serializeAuditValue(
+  value: unknown
+): string | null {
+  if (
+    value === undefined ||
+    value === null
+  ) {
+    return null;
+  }
+
+  try {
+    return JSON.stringify(
+      sanitizeValue(value)
+    );
+  } catch {
+    return JSON.stringify({
+      serializationError: true,
+      valueType: typeof value,
+    });
+  }
+}
+
+export const AUDIT_ACTIONS = {
+  CREATE: "CREATE",
+  VIEW: "VIEW",
+  UPDATE: "UPDATE",
+  APPROVE: "APPROVE",
+  REJECT: "REJECT",
+  DELETE_REQUEST: "DELETE_REQUEST",
+  DELETE: "DELETE",
+  RESTORE: "RESTORE",
+  PAYMENT_RECEIVE: "PAYMENT_RECEIVE",
+  PAYMENT_PAY: "PAYMENT_PAY",
+  PURCHASE: "PURCHASE",
+  SALE: "SALE",
+  STOCK_IN: "STOCK_IN",
+  STOCK_OUT: "STOCK_OUT",
+  STOCK_ADJUSTMENT: "STOCK_ADJUSTMENT",
+  GST_CREATE: "GST_CREATE",
+  GST_UPDATE: "GST_UPDATE",
+  LEDGER_CREATE: "LEDGER_CREATE",
+  LEDGER_UPDATE: "LEDGER_UPDATE",
+  DOCUMENT_UPLOAD: "DOCUMENT_UPLOAD",
+  DOCUMENT_CHANGE: "DOCUMENT_CHANGE",
+  CORRECTION: "CORRECTION",
+  REVERSAL: "REVERSAL",
+  LOGIN: "LOGIN",
+  LOGOUT: "LOGOUT",
+  EXPORT: "EXPORT",
+} as const;
+
+export type AuditAction =
+  (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];
+
+export interface WriteAuditLogInput {
+  actorUserId?: string | null;
+  actorRole?: string | null;
+
+  action: AuditAction | string;
+
+  entityType: string;
+  entityId?: string | null;
+
+  description?: string | null;
+
+  oldValues?: unknown;
+  newValues?: unknown;
+
+  reason?: string | null;
+
+  referenceType?: string | null;
+  referenceId?: string | null;
+
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  sessionId?: string | null;
+
+  db?: AuditDb;
+}
+
+function hashSessionToken(
+  token: string
+) {
+  return createHash("sha256")
+    .update(token)
+    .digest("hex");
+}
+
+async function resolveAdminActor(
+  db: AuditDb
+) {
+  try {
+    const cookieStore =
+      await cookies();
+
+    const token =
+      cookieStore.get(
+        "officekart_admin_session"
+      )?.value;
+
+    if (!token) {
+      return null;
+    }
+
+    const tokenHash =
+      hashSessionToken(token);
+
+    const session =
+      await db.adminSession.findUnique({
+        where: {
+          tokenHash,
+        },
+        select: {
+          id: true,
+          userId: true,
+          expiresAt: true,
+          revokedAt: true,
+          user: {
+            select: {
+              id: true,
+              role: true,
+              active: true,
+            },
+          },
+        },
+      });
+
+    if (!session) {
+      return null;
+    }
+
+    if (session.revokedAt) {
+      return null;
+    }
+
+    if (
+      session.expiresAt.getTime() <=
+      Date.now()
+    ) {
+      return null;
+    }
+
+    if (!session.user.active) {
+      return null;
+    }
+
+    if (session.user.role !== "ADMIN") {
+      return null;
+    }
+
+    return {
+      actorUserId:
+        session.user.id,
+
+      actorRole:
+        session.user.role,
+
+      sessionId:
+        session.id,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function writeAuditLog({
+  actorUserId = null,
+  actorRole = null,
+  action,
+  entityType,
+  entityId = null,
+  description = null,
+  oldValues,
+  newValues,
+  reason = null,
+  referenceType = null,
+  referenceId = null,
+  ipAddress = null,
+  userAgent = null,
+  sessionId = null,
+  db = prisma,
+}: WriteAuditLogInput) {
+
+  /*
+   * Automatically resolve the logged-in Admin
+   * only when the caller identifies the action
+   * as an ADMIN action and actorUserId is absent.
+   *
+   * Customer/public audit events are untouched.
+   */
+  if (
+    actorRole === "ADMIN" &&
+    !actorUserId
+  ) {
+    const actor =
+      await resolveAdminActor(db);
+
+    if (actor) {
+      actorUserId =
+        actor.actorUserId;
+
+      actorRole =
+        actor.actorRole;
+
+      if (!sessionId) {
+        sessionId =
+          actor.sessionId;
+      }
+    }
+  }
+
+  return db.auditLog.create({
+    data: {
+      actorUserId,
+      actorRole,
+      action,
+      entityType,
+      entityId,
+      description,
+
+      oldValues:
+        serializeAuditValue(
+          oldValues
+        ),
+
+      newValues:
+        serializeAuditValue(
+          newValues
+        ),
+
+      reason,
+      referenceType,
+      referenceId,
+      ipAddress,
+      userAgent,
+      sessionId,
+    },
+  });
+}
+
+export function getRequestAuditMeta(
+  request: Request
+) {
+  const forwardedFor =
+    request.headers.get(
+      "x-forwarded-for"
+    );
+
+  const ipAddress =
+    forwardedFor
+      ?.split(",")[0]
+      ?.trim() ||
+    request.headers.get(
+      "x-real-ip"
+    ) ||
+    null;
+
+  const userAgent =
+    request.headers.get(
+      "user-agent"
+    );
+
+  return {
+    ipAddress,
+    userAgent,
+  };
+}
+
+============================================================
+FILE: .\prisma\schema.prisma
+============================================================
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  name           String
+  category       String
+  purchasePrice  Float
+  sellingPrice   Float
+  unit           String          @default("pcs")
+  stock          Int             @default(0)
+  image          String?
+  description    String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([category])
+  @@index([active])
+  @@index([name])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  companyName String?
+  gstin       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  subtotal        Float
+  deliveryCharge  Float       @default(0)
+  gstAmount       Float       @default(0)
+  totalAmount     Float
+  paymentStatus   String      @default("PENDING")
+  orderStatus     String      @default("PENDING")
+  paymentMethod   String      @default("COD")
+  shippingName    String
+  shippingPhone   String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingPincode String
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([orderStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  productId     String
+  productName   String
+  quantity      Int
+  unit          String
+  purchasePrice Float
+  sellingPrice  Float
+  totalPrice    Float
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model QuoteRequest {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  companyName    String?
+  message        String?
+  status         String   @default("NEW")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  decisionReason String?
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  productId     String
+  type          String
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  note          String?
+  orderId       String?
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  name         String
+  email        String?   @unique
+  phone        String?   @unique
+  passwordHash String?
+  role         String    @default("STAFF")
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs AuditLog[]
+  sessions  AdminSession[]
+
+  @@index([role])
+  @@index([active])
+  @@index([createdAt])
+}
+
+model AdminSession {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorUserId   String?
+  actorRole     String?
+  action        String
+  entityType    String
+  entityId      String?
+  description   String?
+  oldValues     String?
+  newValues     String?
+  reason        String?
+  referenceType String?
+  referenceId   String?
+  ipAddress     String?
+  userAgent     String?
+  sessionId     String?
+  createdAt     DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([referenceType, referenceId])
+  @@index([createdAt])
+}
+
+model Supplier {
+  id           String   @id @default(cuid())
+  supplierCode String   @unique
+  name         String
+  phone        String?
+  email        String?
+  address      String?
+  gstin        String?
+  status       String   @default("ACTIVE")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+  @@index([phone])
+  @@index([gstin])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Purchase {
+  id             String   @id @default(cuid())
+  purchaseNumber String   @unique
+  supplierId     String
+  status         String   @default("RECEIVED")
+  subtotalPaise  Int
+  gstPaise       Int      @default(0)
+  deliveryPaise  Int      @default(0)
+  totalPaise     Int
+  paymentStatus  String   @default("UNPAID")
+  notes          String?
+  purchasedAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([purchasedAt])
+  @@index([createdAt])
+}
+
+model PurchaseItem {
+  id             String   @id @default(cuid())
+  purchaseId     String
+  productId      String
+  description    String?
+  quantity       Int
+  unitCostPaise  Int
+  gstRate        Float    @default(0)
+  gstPaise       Int      @default(0)
+  lineTotalPaise Int
+  createdAt      DateTime @default(now())
+
+  @@index([purchaseId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  orderId       String   @unique
+  customerId    String?
+  status        String   @default("ISSUED")
+  paymentStatus String   @default("UNPAID")
+  subtotalPaise Int
+  gstPaise      Int      @default(0)
+  deliveryPaise Int      @default(0)
+  totalPaise    Int
+  gstRate       Float    @default(0)
+  issuedAt      DateTime @default(now())
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([issuedAt])
+  @@index([createdAt])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  paymentNumber String   @unique
+  type          String
+  status        String   @default("SUCCESS")
+  orderId       String?
+  purchaseId    String?
+  amountPaise   Int
+  method        String
+  reference     String?
+  notes         String?
+  paidAt        DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([type])
+  @@index([status])
+  @@index([orderId])
+  @@index([purchaseId])
+  @@index([paidAt])
+  @@index([createdAt])
+}
+
+model LedgerEntry {
+  id            String   @id @default(cuid())
+  ledgerNumber  String   @unique
+  entryType     String
+  accountType   String
+  accountId     String?
+  orderId       String?
+  purchaseId    String?
+  paymentId     String?
+  amountPaise   Int
+  description   String
+  referenceType String?
+  referenceId   String?
+  transactionAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([entryType])
+  @@index([accountType])
+  @@index([accountId])
+  @@index([orderId])
+  @@index([purchaseId])
+  @@index([paymentId])
+  @@index([referenceType, referenceId])
+  @@index([transactionAt])
+  @@index([createdAt])
+}
+
+model GstRecord {
+  id           String   @id @default(cuid())
+  gstNumber    String   @unique
+  entryType    String
+  sourceType   String
+  sourceId     String
+  gstRate      Float    @default(0)
+  taxablePaise Int
+  gstPaise     Int
+  status       String   @default("ACTIVE")
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  @@index([entryType])
+  @@index([sourceType])
+  @@index([sourceId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Document {
+  id               String   @id @default(cuid())
+  documentNumber   String   @unique
+  entityType       String
+  entityId         String
+  documentType     String
+  fileName         String
+  storagePath      String
+  mimeType         String?
+  fileSize         Int
+  checksum         String
+  version          Int      @default(1)
+  status           String   @default("ACTIVE")
+  notes            String?
+  uploadedByUserId String?
+  createdAt        DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([documentType])
+  @@index([checksum])
+  @@index([version])
+  @@index([createdAt])
+}

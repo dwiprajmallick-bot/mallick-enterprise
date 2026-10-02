@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+<rect width="800" height="600" fill="#f8fafc"/>
+<rect x="250" y="70" width="300" height="460" rx="15" fill="#7c3aed"/>
+<rect x="275" y="95" width="250" height="410" rx="8" fill="#8b5cf6"/>
+<text x="400" y="210" text-anchor="middle" font-family="Arial" font-size="38" font-weight="bold" fill="white">EXECUTIVE</text>
+<text x="400" y="260" text-anchor="middle" font-family="Arial" font-size="38" font-weight="bold" fill="white">NOTEBOOK</text>
+<line x1="320" y1="330" x2="480" y2="330" stroke="white" stroke-width="5"/>
+<text x="400" y="390" text-anchor="middle" font-family="Arial" font-size="25" fill="white">OfficeKart</text>
+</svg>

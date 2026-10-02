@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  category      String
+  purchasePrice Float
+  sellingPrice  Float
+  unit          String   @default("pcs")
+  stock         Int      @default(0)
+  image         String?
+  description   String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+  @@index([active])
+  @@index([name])
+}

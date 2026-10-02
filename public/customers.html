@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfficeKart - Customer Database & Directory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-violet-600 text-white text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">Clients</span>
+        <h1 class="text-xl font-bold">OfficeKart Customer Directory</h1>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="/orders.html" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition">Orders Hub</a>
+        <a href="/analytics.html" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition">Analytics</a>
+        <a href="/receivables.html" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition">Ledger</a>
+        <a href="/" target="_blank" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition">Storefront</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    
+    <!-- Top Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Total Unique Customers</p>
+        <p id="total-cust-count" class="text-2xl font-black text-slate-900 mt-1">0</p>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Repeat Buying Clients</p>
+        <p id="repeat-cust-count" class="text-2xl font-black text-emerald-600 mt-1">0</p>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs text-slate-500 font-semibold uppercase">Clients with GSTIN</p>
+        <p id="gstin-cust-count" class="text-2xl font-black text-blue-600 mt-1">0</p>
+      </div>
+    </div>
+
+    <!-- Customer Directory Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <div>
+          <h2 class="text-base font-bold text-slate-800">Client Profiles & Purchase History</h2>
+          <p class="text-xs text-slate-500">Aggregated client metrics from order submissions</p>
+        </div>
+        <div class="w-full sm:w-72">
+          <input 
+            type="text" 
+            id="cust-search" 
+            oninput="renderCustomerTable()" 
+            placeholder="Search by client name or phone..." 
+            class="w-full border rounded-lg px-3 py-1.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 uppercase border-y">
+            <tr>
+              <th class="py-3 px-3">Client / Company</th>
+              <th class="py-3 px-3">Contact</th>
+              <th class="py-3 px-3">Delivery Address</th>
+              <th class="py-3 px-2 text-center">Orders Placed</th>
+              <th class="py-3 px-2 text-right">Lifetime Spend</th>
+              <th class="py-3 px-3 text-right">Direct Action</th>
+            </tr>
+          </thead>
+          <tbody id="customer-table-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function getCustomerAggregates() {
+      const orders = JSON.parse(localStorage.getItem('officekart_orders_log') || '[]');
+      const customerMap = {};
+
+      orders.forEach(o => {
+        const phone = (o.customer && o.customer.phone) ? o.customer.phone.trim() : 'UNKNOWN';
+        if (!customerMap[phone]) {
+          customerMap[phone] = {
+            name: o.customer.name || 'Walk-in Customer',
+            phone: phone,
+            address: o.customer.address || 'N/A',
+            gstin: o.customer.gstin || '',
+            orderCount: 0,
+            totalSpent: 0,
+            lastOrderDate: o.createdAt
+          };
+        }
+        customerMap[phone].orderCount += 1;
+        customerMap[phone].totalSpent += Number(o.total || 0);
+      });
+
+      return Object.values(customerMap);
+    }
+
+    function renderCustomerTable() {
+      const customers = getCustomerAggregates();
+      const searchQuery = document.getElementById('cust-search').value.toLowerCase().trim();
+      const tbody = document.getElementById('customer-table-body');
+
+      // Update counters
+      document.getElementById('total-cust-count').textContent = customers.length;
+      document.getElementById('repeat-cust-count').textContent = customers.filter(c => c.orderCount > 1).length;
+      document.getElementById('gstin-cust-count').textContent = customers.filter(c => Boolean(c.gstin)).length;
+
+      const filtered = customers.filter(c => 
+        c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No matching customers found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(c => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-3">
+            <div class="font-bold text-slate-800">${c.name}</div>
+            ${c.gstin ? `<div class="text-[10px] font-mono text-blue-600">GSTIN: ${c.gstin}</div>` : '<div class="text-[10px] text-slate-400">Regular Buyer</div>'}
+          </td>
+          <td class="py-3 px-3 font-medium text-slate-700">
+            ${c.phone}
+          </td>
+          <td class="py-3 px-3 text-slate-500 max-w-xs truncate" title="${c.address}">
+            ${c.address}
+          </td>
+          <td class="py-3 px-2 text-center">
+            <span class="inline-block px-2 py-0.5 rounded-full font-bold text-[10px] ${c.orderCount > 1 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}">
+              ${c.orderCount} Order(s)
+            </span>
+          </td>
+          <td class="py-3 px-2 text-right font-black text-slate-800">
+            INR ${c.totalSpent.toLocaleString('en-IN')}
+          </td>
+          <td class="py-3 px-3 text-right">
+            <a href="https://wa.me/${c.phone.replace(/[^0-9]/g, '')}" target="_blank" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-[10px] font-bold transition">
+              WhatsApp
+            </a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    renderCustomerTable();
+  </script>
+</body>
+</html>
+

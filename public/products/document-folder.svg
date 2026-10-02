@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+<rect width="800" height="600" fill="#f0fdf4"/>
+<rect x="220" y="110" width="360" height="380" rx="25" fill="#16a34a"/>
+<rect x="245" y="135" width="310" height="330" rx="15" fill="#22c55e"/>
+<rect x="285" y="190" width="230" height="120" rx="10" fill="white"/>
+<text x="400" y="245" text-anchor="middle" font-family="Arial" font-size="32" font-weight="bold" fill="#15803d">DOCUMENT</text>
+<text x="400" y="285" text-anchor="middle" font-family="Arial" font-size="32" font-weight="bold" fill="#15803d">FOLDER</text>
+<text x="400" y="380" text-anchor="middle" font-family="Arial" font-size="25" fill="white">OfficeKart</text>
+</svg>

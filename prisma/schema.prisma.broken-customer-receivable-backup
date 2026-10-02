@@ -1,0 +1,747 @@
+﻿generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  name           String
+  category       String
+  purchasePrice  Float
+  sellingPrice   Float
+  unit           String          @default("pcs")
+  stock          Int             @default(0)
+  image          String?
+  description    String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([category])
+  @@index([active])
+  @@index([name])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  companyName String?
+  gstin       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  subtotal        Float
+  deliveryCharge  Float       @default(0)
+  gstAmount       Float       @default(0)
+  totalAmount     Float
+  paymentStatus   String      @default("PENDING")
+  orderStatus     String      @default("PENDING")
+  paymentMethod   String      @default("COD")
+  shippingName    String
+  shippingPhone   String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingPincode String
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([orderStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  productId     String
+  productName   String
+  quantity      Int
+  unit          String
+  purchasePrice Float
+  sellingPrice  Float
+  totalPrice    Float
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model QuoteRequest {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  companyName    String?
+  message        String?
+  status         String   @default("NEW")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  decisionReason String?
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  productId     String
+  type          String
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  note          String?
+  orderId       String?
+  createdAt     DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  name         String
+  email        String?   @unique
+  phone        String?   @unique
+  passwordHash String?
+  role         String    @default("STAFF")
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  auditLogs AuditLog[]
+  sessions  AdminSession[]
+
+  @@index([role])
+  @@index([active])
+  @@index([createdAt])
+}
+
+model AdminSession {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorUserId   String?
+  actorRole     String?
+  action        String
+  entityType    String
+  entityId      String?
+  description   String?
+  oldValues     String?
+  newValues     String?
+  reason        String?
+  referenceType String?
+  referenceId   String?
+  ipAddress     String?
+  userAgent     String?
+  sessionId     String?
+  createdAt     DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([referenceType, referenceId])
+  @@index([createdAt])
+}
+
+model Supplier {
+  id           String   @id @default(cuid())
+  supplierCode String   @unique
+  name         String
+  phone        String?
+  email        String?
+  address      String?
+  gstin        String?
+  status       String   @default("ACTIVE")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+  @@index([phone])
+  @@index([gstin])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Purchase {
+  goodsReceiptId String?  @unique
+  id             String   @id @default(cuid())
+  purchaseNumber String   @unique
+  supplierId     String
+  status         String   @default("RECEIVED")
+  subtotalPaise  Int
+  gstPaise       Int      @default(0)
+  deliveryPaise  Int      @default(0)
+  totalPaise     Int
+  paymentStatus  String   @default("UNPAID")
+  notes          String?
+  purchasedAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([purchasedAt])
+  @@index([createdAt])
+}
+
+model PurchaseItem {
+  id             String   @id @default(cuid())
+  purchaseId     String
+  productId      String
+  description    String?
+  quantity       Int
+  unitCostPaise  Int
+  gstRate        Float    @default(0)
+  gstPaise       Int      @default(0)
+  lineTotalPaise Int
+  createdAt      DateTime @default(now())
+
+  @@index([purchaseId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  orderId       String   @unique
+  customerId    String?
+  status        String   @default("ISSUED")
+  paymentStatus String   @default("UNPAID")
+  subtotalPaise Int
+  gstPaise      Int      @default(0)
+  deliveryPaise Int      @default(0)
+  totalPaise    Int
+  gstRate       Float    @default(0)
+  issuedAt      DateTime @default(now())
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([issuedAt])
+  @@index([createdAt])
+}
+
+model Payment {
+  id                  String   @id @default(cuid())
+  paymentNumber       String   @unique
+  type                String
+  status              String   @default("SUCCESS")
+  orderId             String?
+  purchaseId          String?
+  customerId          String?
+  invoiceId           String?
+  amountPaise         Int
+  method              String
+  reference           String?
+  reversalOfPaymentId String?  @unique
+  notes               String?
+  paidAt              DateTime @default(now())
+  createdAt           DateTime @default(now())
+
+  @@index([type])
+  @@index([status])
+  @@index([orderId])
+  @@index([purchaseId])
+  @@index([customerId])
+  @@index([invoiceId])
+  @@index([paidAt])
+  @@index([createdAt])
+}
+
+
+model LedgerEntry {
+  id            String   @id @default(cuid())
+  ledgerNumber  String   @unique
+  entryType     String
+  accountType   String
+  accountId     String?
+  orderId       String?
+  purchaseId    String?
+  paymentId     String?
+  amountPaise   Int
+  description   String
+  referenceType String?
+  referenceId   String?
+  transactionAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([entryType])
+  @@index([accountType])
+  @@index([accountId])
+  @@index([orderId])
+  @@index([purchaseId])
+  @@index([paymentId])
+  @@index([referenceType, referenceId])
+  @@index([transactionAt])
+  @@index([createdAt])
+}
+
+model GstRecord {
+  id           String   @id @default(cuid())
+  gstNumber    String   @unique
+  entryType    String
+  sourceType   String
+  sourceId     String
+  gstRate      Float    @default(0)
+  taxablePaise Int
+  gstPaise     Int
+  status       String   @default("ACTIVE")
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  @@index([entryType])
+  @@index([sourceType])
+  @@index([sourceId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Document {
+  id               String   @id @default(cuid())
+  documentNumber   String   @unique
+  entityType       String
+  entityId         String
+  documentType     String
+  fileName         String
+  storagePath      String
+  mimeType         String?
+  fileSize         Int
+  checksum         String
+  version          Int      @default(1)
+  status           String   @default("ACTIVE")
+  notes            String?
+  uploadedByUserId String?
+  createdAt        DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([documentType])
+  @@index([checksum])
+  @@index([version])
+  @@index([createdAt])
+}
+
+model SalesReturn {
+  id           String   @id @default(cuid())
+  returnNumber String   @unique
+  orderId      String
+  customerId   String
+  status       String   @default("REQUESTED")
+  reason       String
+  subtotal     Float    @default(0)
+  gstAmount    Float    @default(0)
+  totalAmount  Float    @default(0)
+  refundStatus String   @default("PENDING")
+  refundAmount Float    @default(0)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([customerId])
+  @@index([status])
+  @@index([refundStatus])
+  @@index([createdAt])
+}
+
+model CreditNote {
+  id               String  @id @default(cuid())
+  creditNoteNumber String  @unique
+  salesReturnId    String
+  orderId          String
+  customerId       String
+  invoiceId        String?
+
+  status String @default("ISSUED")
+
+  taxableAmountPaise Int @default(0)
+  cgstPaise          Int @default(0)
+  sgstPaise          Int @default(0)
+  igstPaise          Int @default(0)
+  cessPaise          Int @default(0)
+  totalGstPaise      Int @default(0)
+  totalAmountPaise   Int @default(0)
+
+  reason String
+  notes  String?
+
+  issuedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([salesReturnId])
+  @@index([orderId])
+  @@index([customerId])
+  @@index([invoiceId])
+  @@index([status])
+  @@index([issuedAt])
+  @@index([createdAt])
+}
+
+model CreditNoteItem {
+  id                 String @id @default(cuid())
+  creditNoteId       String
+  productId          String
+  quantity           Int
+  unitPricePaise     Int
+  taxableAmountPaise Int    @default(0)
+  gstRate            Float  @default(0)
+  cgstPaise          Int    @default(0)
+  sgstPaise          Int    @default(0)
+  igstPaise          Int    @default(0)
+  cessPaise          Int    @default(0)
+  totalGstPaise      Int    @default(0)
+  totalAmountPaise   Int    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([creditNoteId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model SalesReturnItem {
+  id          String   @id @default(cuid())
+  returnId    String
+  productId   String
+  quantity    Int
+  unitPrice   Float
+  gstRate     Float    @default(0)
+  gstAmount   Float    @default(0)
+  totalAmount Float    @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([returnId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model ProductCostHistory {
+  id                    String   @id @default(cuid())
+  productId             String
+  supplierId            String?
+  purchaseId            String?
+  purchaseNumber        String?
+  previousUnitCostPaise Int      @default(0)
+  newUnitCostPaise      Int
+  quantity              Int      @default(0)
+  reason                String
+  effectiveAt           DateTime @default(now())
+  createdAt             DateTime @default(now())
+
+  @@index([productId])
+  @@index([supplierId])
+  @@index([purchaseId])
+  @@index([purchaseNumber])
+  @@index([effectiveAt])
+  @@index([createdAt])
+}
+
+model GoodsReceipt {
+  id                 String    @id @default(cuid())
+  receiptNumber      String    @unique
+  purchaseOrderId    String
+  supplierId         String
+  status             String    @default("DRAFT")
+  notes              String?
+  receivedAt         DateTime  @default(now())
+  postedAt           DateTime?
+  cancelledAt        DateTime?
+  cancellationReason String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([purchaseOrderId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([receivedAt])
+  @@index([createdAt])
+}
+
+model GoodsReceiptItem {
+  id                  String   @id @default(cuid())
+  goodsReceiptId      String
+  purchaseOrderItemId String
+  productId           String
+  orderedQuantity     Int
+  receivedQuantity    Int
+  unitCostPaise       Int
+  gstRate             Float    @default(0)
+  taxableAmountPaise  Int      @default(0)
+  gstPaise            Int      @default(0)
+  totalPaise          Int      @default(0)
+  createdAt           DateTime @default(now())
+
+  @@index([goodsReceiptId])
+  @@index([purchaseOrderItemId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model PurchaseOrder {
+  id                  String    @id @default(cuid())
+  poNumber            String    @unique
+  supplierId          String
+  status              String    @default("DRAFT")
+  subtotalPaise       Int       @default(0)
+  gstPaise            Int       @default(0)
+  deliveryPaise       Int       @default(0)
+  totalPaise          Int       @default(0)
+  notes               String?
+  requestedAt         DateTime  @default(now())
+  approvedAt          DateTime?
+  issuedAt            DateTime?
+  acknowledgedAt      DateTime?
+  partiallyReceivedAt DateTime?
+  receivedAt          DateTime?
+  closedAt            DateTime?
+  cancelledAt         DateTime?
+  cancellationReason  String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  grns                GRN[]
+
+  @@index([supplierId])
+  @@index([status])
+  @@index([requestedAt])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model PurchaseOrderItem {
+  id                 String    @id @default(cuid())
+  purchaseOrderId    String
+  productId          String
+  description        String?
+  quantity           Int
+  unitCostPaise      Int
+  gstRate            Float     @default(0)
+  taxableAmountPaise Int       @default(0)
+  gstPaise           Int       @default(0)
+  totalPaise         Int       @default(0)
+  receivedQuantity   Int       @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  grnItems           GRNItem[]
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model GRN {
+  id              String    @id @default(cuid())
+  grnNumber       String    @unique
+  purchaseOrderId String
+  supplierId      String?
+  receivedDate    DateTime  @default(now())
+  status          GRNStatus @default(DRAFT)
+  notes           String?
+  postedAt        DateTime?
+  postedBy        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  items         GRNItem[]
+
+  @@index([purchaseOrderId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([receivedDate])
+}
+
+model GRNItem {
+  id                  String   @id @default(cuid())
+  grnId               String
+  purchaseOrderItemId String
+  orderedQty          Int
+  alreadyReceived     Int      @default(0)
+  remainingQty        Int
+  receiveNow          Int
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  grn               GRN               @relation(fields: [grnId], references: [id], onDelete: Cascade)
+  purchaseOrderItem PurchaseOrderItem @relation(fields: [purchaseOrderItemId], references: [id])
+
+  @@unique([grnId, purchaseOrderItemId])
+  @@index([purchaseOrderItemId])
+}
+
+enum GRNStatus {
+  DRAFT
+  POSTED
+  CANCELLED
+}
+
+model SupplierPayment {
+  id                   String    @id @default(cuid())
+  paymentNumber        String    @unique
+  supplierId           String
+  purchaseId           String?
+  amountPaise          Int
+  paymentMethod        String
+  transactionReference String?
+  paymentDate          DateTime
+  status               String    @default("DRAFT")
+  notes                String?
+  approvedAt           DateTime?
+  postedAt             DateTime?
+  rejectedAt           DateTime?
+  rejectionReason      String?
+  reversedAt           DateTime?
+  reversalReason       String?
+  reversalPaymentId    String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([supplierId])
+  @@index([purchaseId])
+  @@index([status])
+  @@index([paymentDate])
+  @@index([createdAt])
+}
+
+model SupplierPaymentAllocation {
+  id                String   @id @default(cuid())
+  supplierPaymentId String
+  purchaseId        String
+  amountPaise       Int
+  createdAt         DateTime @default(now())
+
+  @@index([supplierPaymentId])
+  @@index([purchaseId])
+  @@index([createdAt])
+}
+
+model CashBankAccount {
+  id                  String   @id @default(cuid())
+  accountCode         String   @unique
+  accountName         String
+  accountType         String
+  paymentMethods      String?
+  bankName            String?
+  branchName          String?
+  accountNumber       String?
+  ifscCode            String?
+  upiId               String?
+  openingBalancePaise Int      @default(0)
+  currentBalancePaise Int      @default(0)
+  status              String   @default("ACTIVE")
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([accountType])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CashBankTransaction {
+  id                String    @id @default(cuid())
+  transactionNumber String    @unique
+  accountId         String
+  transactionType   String
+  amountPaise       Int
+  paymentMethod     String
+  transactionDate   DateTime  @default(now())
+  referenceNumber   String?
+  externalReference String?
+  partyType         String?
+  partyId           String?
+  customerId        String?
+  supplierId        String?
+  orderId           String?
+  purchaseId        String?
+  paymentId         String?
+  supplierPaymentId String?
+  direction         String
+  status            String    @default("POSTED")
+  description       String?
+  reversalOfId      String?
+  reversedAt        DateTime?
+  reversalReason    String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([accountId])
+  @@index([transactionDate])
+  @@index([transactionType])
+  @@index([paymentMethod])
+  @@index([status])
+  @@index([customerId])
+  @@index([supplierId])
+  @@index([orderId])
+  @@index([purchaseId])
+  @@index([paymentId])
+  @@index([supplierPaymentId])
+  @@index([reversalOfId])
+}
+
+model PaymentAllocation {
+  id          String   @id @default(cuid())
+  paymentId   String
+  customerId  String
+  invoiceId   String?
+  amountPaise Int
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([paymentId])
+  @@index([customerId])
+  @@index([invoiceId])
+  @@index([createdAt])
+}
+

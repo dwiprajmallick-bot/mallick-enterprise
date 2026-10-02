@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfficeKart - Accounts Receivable & Collections</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-amber-500 text-slate-950 text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">Ledger</span>
+        <h1 class="text-xl font-bold">Accounts Receivable & Collections</h1>
+      </div>
+      <div class="flex gap-2">
+        <a href="/orders.html" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition">Orders</a><a href="/admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">Product Admin</a>
+        <a href="/" target="_blank" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition">Storefront</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <section class="lg:col-span-5 space-y-6">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-bold text-slate-800 mb-1">Record Payment Received</h2>
+          <p class="text-xs text-slate-500 mb-5">Log cash, UPI, or cheque payment entries.</p>
+
+          <form id="payment-form" class="space-y-4 text-xs font-medium">
+            <div>
+              <label class="block text-slate-700 mb-1">Customer / Entity Name *</label>
+              <input type="text" id="pay-customer" required placeholder="Ex: Mallick Enterprise" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-700 mb-1">Amount Received (INR) *</label>
+                <input type="number" id="pay-amount" min="1" required placeholder="Ex: 1500" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-bold text-emerald-700">
+              </div>
+              <div>
+                <label class="block text-slate-700 mb-1">Payment Method</label>
+                <select id="pay-mode" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                  <option value="UPI">UPI (GPay / PhonePe)</option>
+                  <option value="CASH">Cash</option>
+                  <option value="BANK_TRANSFER">Bank Transfer</option>
+                  <option value="CHEQUE">Cheque</option>
+                  <option value="NEFT_RTGS">NEFT / RTGS</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-slate-700 mb-1">Transaction Ref / Cheque No</label>
+              <input type="text" id="pay-ref" placeholder="UPI Ref / Cheque No" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-sm">
+              Save Receipt & Update Balance
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-amber-50 rounded-xl border border-amber-200 p-6">
+          <h3 class="text-sm font-bold text-amber-900 mb-1">WhatsApp Payment Reminder</h3>
+          <p class="text-xs text-amber-700 mb-4">Send payment balance reminder directly to customer WhatsApp.</p>
+
+          <form id="reminder-form" class="space-y-3 text-xs">
+            <div>
+              <input type="text" id="rem-name" required placeholder="Customer Name" class="w-full border rounded-lg p-2 text-xs bg-white outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="tel" id="rem-phone" required placeholder="10-digit Phone No" class="w-full border rounded-lg p-2 text-xs bg-white outline-none">
+              <input type="number" id="rem-due" required placeholder="Outstanding Due (INR)" class="w-full border rounded-lg p-2 text-xs bg-white outline-none font-bold text-rose-700">
+            </div>
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 rounded-lg text-xs transition">
+              Send Reminder via WhatsApp
+            </button>
+          </form>
+        </div>
+
+      </section>
+
+      <section class="lg:col-span-7">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800">Payment Receipts Log</h2>
+              <p class="text-xs text-slate-500">Live records of collected payments</p>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg text-right">
+              <span class="text-[10px] uppercase font-bold text-emerald-800">Total Collected</span>
+              <p class="text-sm font-extrabold text-emerald-700">INR <span id="total-collected">0</span></p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase border-y">
+                <tr>
+                  <th class="py-3 px-3">Receipt No</th>
+                  <th class="py-3 px-3">Customer</th>
+                  <th class="py-3 px-2">Mode</th>
+                  <th class="py-3 px-2 text-right">Amount (INR)</th>
+                  <th class="py-3 px-3 text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody id="payment-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    let localReceipts = JSON.parse(localStorage.getItem('officekart_receipts') || '[]');
+
+    function renderReceiptsTable() {
+      const tbody = document.getElementById('payment-table-body');
+      const totalCollectedEl = document.getElementById('total-collected');
+
+      if (localReceipts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No payment receipts recorded yet.</td></tr>`;
+        totalCollectedEl.textContent = "0";
+        return;
+      }
+
+      const total = localReceipts.reduce((sum, item) => sum + Number(item.amountReceived), 0);
+      totalCollectedEl.textContent = total.toLocaleString('en-IN');
+
+      tbody.innerHTML = localReceipts.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-3 font-mono font-bold text-blue-700">${r.paymentReceiptNumber}</td>
+          <td class="py-3 px-3">
+            <div class="font-semibold text-slate-800">${r.customerName}</div>
+            <div class="text-[10px] text-slate-400">${r.transactionRef ? 'Ref: ' + r.transactionRef : 'No ref'}</div>
+          </td>
+          <td class="py-3 px-2">
+            <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-semibold">${r.paymentMode}</span>
+          </td>
+          <td class="py-3 px-2 text-right font-extrabold text-emerald-700">INR ${Number(r.amountReceived).toLocaleString('en-IN')}</td>
+          <td class="py-3 px-3 text-right text-slate-400 text-[11px]">${new Date(r.receivedDate).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('payment-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const year = new Date().getFullYear();
+      const seq = String(localReceipts.length + 1).padStart(4, '0');
+      const receiptNo = `REC-${year}-${seq}`;
+
+      const paymentData = {
+        paymentReceiptNumber: receiptNo,
+        customerName: document.getElementById('pay-customer').value.trim(),
+        amountReceived: Number(document.getElementById('pay-amount').value),
+        paymentMode: document.getElementById('pay-mode').value,
+        transactionRef: document.getElementById('pay-ref').value.trim(),
+        receivedDate: new Date().toISOString()
+      };
+
+      localReceipts.unshift(paymentData);
+      localStorage.setItem('officekart_receipts', JSON.stringify(localReceipts));
+
+      alert(`Receipt ${receiptNo} recorded successfully!`);
+      document.getElementById('payment-form').reset();
+      renderReceiptsTable();
+    });
+
+    document.getElementById('reminder-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('rem-name').value.trim();
+      let phone = document.getElementById('rem-phone').value.trim();
+      const due = document.getElementById('rem-due').value;
+
+      if (!phone.startsWith('91')) {
+        phone = '91' + phone;
+      }
+
+      const msg = `*Payment Reminder - OfficeKart*\n\nDear ${name},\nThis is a friendly reminder that an outstanding stationery invoice balance of *INR ${due}* is pending.\n\nPlease arrange payment via UPI or Bank Transfer. Thank you!`;
+
+      const waURL = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(waURL, '_blank');
+    });
+
+    renderReceiptsTable();
+  </script>
+</body>
+</html>
+
