@@ -3,398 +3,507 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OfficeKart - Admin & Inventory Dashboard</title>
+  <title>DWIPRAJ MALLICK - Office & School Stationery</title>
   <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  a[href*="admin"], a[href*="orders"],
+  button:has-text("Admin Panel"), button:has-text("Orders") {
+    display: none !important;
+  }
+</style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-  <header class="bg-slate-900 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+  <!-- Header -->
+  <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
-        <span class="bg-blue-600 text-white text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">Admin</span>
-        <h1 class="text-xl font-bold">OfficeKart Inventory Manager</h1>
+        <h1 class="text-2xl font-bold text-blue-700">DWIPRAJ MALLICK</h1>
+        
+        
       </div>
-      <div class="flex gap-2">
-        <a href="/receivables.html" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition">
-          Accounts & Payments
-        </a>
-        <a href="/" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">
-          Open Storefront
-        </a>
+
+      <div class="w-full sm:w-80">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search items (paper, pen, file)..." 
+          class="w-full border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+        />
       </div>
+
+      <button id="open-cart-btn" class="relative bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium transition text-sm flex items-center gap-1">
+        <span>Cart</span> 
+        <span id="cart-count-badge" class="ml-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+      </button>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-6 py-8">
-    
-    <div id="low-stock-banner" class="hidden mb-6 bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl shadow-sm">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-sm font-bold text-rose-800">Low Stock Alert!</h3>
-          <p id="low-stock-count-text" class="text-xs text-rose-600 mt-0.5">Some products are out of stock or below 5 units. Please restock immediately.</p>
-        </div>
-        <span class="bg-rose-600 text-white text-xs font-bold px-2.5 py-1 rounded-full animate-pulse" id="low-stock-badge">0 Items</span>
-      </div>
+  <!-- Main Catalog -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+    <!-- Admin Internal Top Navigation Tabs -->
+    <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">
+      <button id="btn-tab-inventory" onclick="showAdminSection('inventory')" style="padding:10px 20px; font-weight:bold; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+        📦 ইনভেন্টরি ও প্রোডাক্ট
+      </button>
+      <button id="btn-tab-orders" onclick="showAdminSection('orders')" style="padding:10px 20px; font-weight:bold; background:#e2e8f0; color:#334155; border:none; border-radius:6px; cursor:pointer;">
+        🛒 কাস্টমারদের অর্ডার সমূহ (<span id="ordersCountBadge">0</span>)
+      </button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <section class="lg:col-span-5">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-6">
-          <h2 class="text-lg font-bold text-slate-800 mb-1">Add New Product</h2>
-          <p class="text-xs text-slate-500 mb-6">Enter stationery product details below.</p>
-
-          <form id="product-form" class="space-y-4 text-xs font-medium">
-            <div>
-              <label class="block text-slate-700 mb-1">Product Name *</label>
-              <input type="text" id="prod-name" required placeholder="Ex: JK Copier A4 Paper 75 GSM" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-slate-700 mb-1">Category *</label>
-                <select id="prod-category" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                  <option value="paper">Paper & Notebooks</option>
-                  <option value="pen">Pens & Markers</option>
-                  <option value="folder">Files & Folders</option>
-                  <option value="desk">Desk Accessories</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-slate-700 mb-1">Unit Type</label>
-                <select id="prod-unit" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                  <option value="Piece">Piece</option>
-                  <option value="Rim">Rim</option>
-                  <option value="Box">Box</option>
-                  <option value="Packet">Packet</option>
-                  <option value="Set">Set</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-slate-700 mb-1">Selling Price (INR) *</label>
-                <input type="number" id="prod-price" min="0" step="0.5" required placeholder="Ex: 290" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-bold">
-              </div>
-              <div>
-                <label class="block text-slate-700 mb-1">Initial Stock *</label>
-                <input type="number" id="prod-stock" min="0" required placeholder="Ex: 50" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-slate-700 mb-1">HSN Code</label>
-                <input type="text" id="prod-hsn" value="9983" placeholder="9983" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-mono">
-              </div>
-              <div>
-                <label class="block text-slate-700 mb-1">GST Tax Rate (%)</label>
-                <select id="prod-tax" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                  <option value="0">0%</option>
-                  <option value="5">5%</option>
-                  <option value="12">12%</option>
-                  <option value="18" selected>18%</option>
-                  <option value="28">28%</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-slate-700 mb-1">Image URL (Optional)</label>
-              <input type="url" id="prod-image" placeholder="https://example.com/image.jpg" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-sm">
-              Save Product
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <section class="lg:col-span-7">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-            <div>
-              <h2 class="text-lg font-bold text-slate-800">Inventory Catalog</h2>
-              <p id="table-status" class="text-xs text-slate-500">Loading...</p>
-            </div>
-            <button onclick="fetchExistingProducts()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border font-medium transition">
-              Refresh
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 text-slate-500 uppercase border-y">
-                <tr>
-                  <th class="py-3 px-3">Item</th>
-                  <th class="py-3 px-2">Price</th>
-                  <th class="py-3 px-2">Stock</th>
-                  <th class="py-3 px-2 text-center">Quick Refill</th>
-                  <th class="py-3 px-2 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody id="product-table-body" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <script>
-    const form = document.getElementById('product-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const tableBody = document.getElementById('product-table-body');
-    const tableStatus = document.getElementById('table-status');
-    const lowStockBanner = document.getElementById('low-stock-banner');
-    const lowStockBadge = document.getElementById('low-stock-badge');
-
-    let currentProductsList = [];
-
-    async function fetchExistingProducts() {
-      tableStatus.textContent = "Updating records...";
-      try {
-        const res = await fetch('/api/products');
-        const json = await res.json();
-
-        if (json.success && json.data.length > 0) {
-          currentProductsList = json.data;
-          tableStatus.textContent = `Total Products: ${json.data.length}`;
-          
-          const lowStockItems = json.data.filter(item => item.stockQuantity <= 5);
-          if (lowStockItems.length > 0) {
-            lowStockBanner.classList.remove('hidden');
-            lowStockBadge.textContent = `${lowStockItems.length} Items`;
-          } else {
-            lowStockBanner.classList.add('hidden');
-          }
-
-          renderProductsTable(json.data);
-        } else {
-          tableStatus.textContent = "No products found";
-          lowStockBanner.classList.add('hidden');
-          tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No products available in database.</td></tr>`;
-        }
-      } catch (err) {
-        tableStatus.textContent = "Server offline";
-        lowStockBanner.classList.add('hidden');
-        tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-rose-500">Failed to connect to API server.</td></tr>`;
-      }
-    }
-
-    function renderProductsTable(products) {
-      tableBody.innerHTML = products.map(item => {
-        const isZero = item.stockQuantity <= 0;
-        const isCritical = item.stockQuantity > 0 && item.stockQuantity <= 5;
-
-        let badgeHtml = '';
-        if (isZero) {
-          badgeHtml = `<span class="inline-block px-2 py-0.5 text-[10px] rounded-full font-bold bg-rose-600 text-white shadow-sm">Out of Stock</span>`;
-        } else if (isCritical) {
-          badgeHtml = `<span class="inline-block px-2 py-0.5 text-[10px] rounded-full font-bold bg-rose-100 text-rose-700 border border-rose-300">Only ${item.stockQuantity} Left</span>`;
-        } else {
-          badgeHtml = `<span class="inline-block px-2 py-0.5 text-[10px] rounded-full font-semibold bg-emerald-100 text-emerald-700">In Stock</span>`;
-        }
-
-        return `
-          <tr class="hover:bg-slate-50 ${isCritical || isZero ? 'bg-rose-50/40' : ''}">
-            <td class="py-3 px-3">
-              <div class="font-semibold text-slate-800">${item.name}</div>
-              <div class="text-[10px] text-slate-400">${item.category} | HSN: ${item.hsnCode || '9983'}</div>
-            </td>
-            <td class="py-3 px-2 font-bold text-blue-700">INR ${item.price}</td>
-            <td class="py-3 px-2 font-bold ${isCritical || isZero ? 'text-rose-600 text-sm' : 'text-slate-700'}">
-              ${item.stockQuantity} <span class="text-[10px] font-normal text-slate-400">${item.unit}</span>
-            </td>
-            <td class="py-3 px-2 text-center">
-              <div class="inline-flex items-center gap-1">
-                <button onclick="quickAddStock('${item._id}', 5)" title="Add 5" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 px-2 py-1 rounded text-[11px] font-bold border transition">
-                  +5
-                </button>
-                <button onclick="quickAddStock('${item._id}', 10)" title="Add 10" class="bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 px-2 py-1 rounded text-[11px] font-bold border transition">
-                  +10
-                </button>
-                <button onclick="customAddStock('${item._id}', '${item.name}', ${item.stockQuantity})" title="Custom quantity" class="bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 px-2 py-1 rounded text-[11px] font-bold border transition">
-                  Edit
-                </button>
-              </div>
-            </td>
-            <td class="py-3 px-2 text-right">
-              ${badgeHtml}
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    async function quickAddStock(productId, amountToAdd) {
-      const product = currentProductsList.find(p => p._id === productId);
-      if (!product) return;
-
-      const newStock = product.stockQuantity + amountToAdd;
-
-      try {
-        const res = await fetch(`/api/products/${productId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stockQuantity: newStock })
-        });
-        const result = await res.json();
-        if (result.success) {
-          fetchExistingProducts();
-        } else {
-          alert('Failed to update stock: ' + result.message);
-        }
-      } catch (err) {
-        alert('Server connection error');
-      }
-    }
-
-    async function customAddStock(productId, name, currentStock) {
-      const input = prompt(`Enter quantity to add to "${name}":`, "20");
-      if (!input || isNaN(input)) return;
-
-      const amountToAdd = parseInt(input, 10);
-      if (amountToAdd <= 0) return alert("Please enter a valid number greater than 0");
-
-      const newStock = currentStock + amountToAdd;
-
-      try {
-        const res = await fetch(`/api/products/${productId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stockQuantity: newStock })
-        });
-        const result = await res.json();
-        if (result.success) {
-          fetchExistingProducts();
-        } else {
-          alert('Failed to update stock: ' + result.message);
-        }
-      } catch (err) {
-        alert('Server connection error');
-      }
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const payload = {
-        name: document.getElementById('prod-name').value.trim(),
-        category: document.getElementById('prod-category').value,
-        unit: document.getElementById('prod-unit').value,
-        price: Number(document.getElementById('prod-price').value),
-        stockQuantity: Number(document.getElementById('prod-stock').value),
-        hsnCode: document.getElementById('prod-hsn').value.trim() || '9983',
-        taxRate: Number(document.getElementById('prod-tax').value),
-        imageUrl: document.getElementById('prod-image').value.trim() || undefined
-      };
-
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `Saving...`;
-
-      try {
-        const res = await fetch('/api/products/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await res.json();
-
-        if (result.success) {
-          alert("Product added successfully!");
-          form.reset();
-          fetchExistingProducts();
-        } else {
-          alert("Error: " + (result.message || "Failed to save product"));
-        }
-      } catch (err) {
-        alert("Failed to connect to backend server.");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `Save Product`;
-      }
-    });
-
-    fetchExistingProducts();
-  </script>
-    <!-- Orders Section Inside Admin Panel -->
-    <div id="tab-orders" class="admin-tab-content active" style="margin-top:20px;">
+    <!-- Orders Management Section -->
+    <div id="section-orders" style="display:none; margin-bottom:30px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h2>🛒 গ্রাহকদের সমস্ত অর্ডার তালিকা</h2>
-        <button onclick="loadAdminOrders()" style="padding:8px 15px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">🔄 রিফ্রেশ অর্ডার</button>
+        <h3 style="margin:0; color:#1e293b;">🛒 কাস্টমারদের অর্ডার তালিকা</h3>
+        <button onclick="fetchAdminOrdersList()" style="padding:6px 14px; background:#0284c7; color:#fff; border:none; border-radius:5px; cursor:pointer;">🔄 রিফ্রেশ অর্ডার</button>
       </div>
 
-      <div style="overflow-x:auto; background:#fff; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-        <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <div style="overflow-x:auto; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
           <thead>
-            <tr style="background:#f1f5f9; border-bottom:2px solid #e2e8f0; font-weight:600;">
-              <th style="padding:12px;">অর্ডার আইডি</th>
-              <th style="padding:12px;">গ্রাহকের নাম ও ফোন</th>
-              <th style="padding:12px;">ঠিকানা</th>
-              <th style="padding:12px;">আইটেম / পণ্য</th>
-              <th style="padding:12px;">মোট মূল্য</th>
-              <th style="padding:12px;">পেমেন্ট মেথড</th>
-              <th style="padding:12px;">স্ট্যাটাস</th>
+            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569;">
+              <th style="padding:10px 14px;">অর্ডার আইডি</th>
+              <th style="padding:10px 14px;">গ্রাহকের নাম ও ফোন</th>
+              <th style="padding:10px 14px;">ডেলিভারি ঠিকানা</th>
+              <th style="padding:10px 14px;">অর্ডার করা পণ্য</th>
+              <th style="padding:10px 14px;">মোট টাকা</th>
+              <th style="padding:10px 14px;">পেমেন্ট</th>
+              <th style="padding:10px 14px;">স্ট্যাটাস</th>
             </tr>
           </thead>
-          <tbody id="adminOrdersTableBody">
+          <tbody id="ordersTableListBody">
             <tr>
-              <td colspan="7" style="text-align:center; padding:20px; color:#64748b;">অর্ডার লোড হচ্ছে...</td>
+              <td colspan="7" style="text-align:center; padding:18px; color:#64748b;">কোনো অর্ডার লোড হয়নি।</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    <div id="category-filter-buttons" class="flex flex-wrap gap-2 mb-6">
+      <button onclick="filterCategory('all', event)" class="cat-btn active bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-medium transition shadow-sm">All Products</button>
+      <button onclick="filterCategory('paper', event)" class="cat-btn bg-white border hover:bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-xs transition">Paper & Notebooks</button>
+      <button onclick="filterCategory('pen', event)" class="cat-btn bg-white border hover:bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-xs transition">Pens & Markers</button>
+      <button onclick="filterCategory('folder', event)" class="cat-btn bg-white border hover:bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-xs transition">Files & Folders</button>
+      <button onclick="filterCategory('desk', event)" class="cat-btn bg-white border hover:bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-xs transition">Desk Accessories</button>
+      <button onclick="filterCategory('other', event)" class="cat-btn bg-white border hover:bg-slate-100 text-slate-700 px-4 py-1.5 rounded-full text-xs transition">Others</button>
+    </div>
 
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-slate-800">Stationery Catalog</h2>
+      <p id="product-count" class="text-xs text-slate-500 font-semibold">Loading...</p>
+    </div>
+
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </main>
+
+  <!-- Cart Drawer -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/40 hidden justify-end">
+    <div class="bg-white w-full max-w-md h-full p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+          <h3 class="text-lg font-bold text-slate-800">Shopping Cart</h3>
+          <button id="close-cart-btn" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
+        </div>
+        <div id="cart-items-container" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
+      </div>
+
+      <div class="border-t pt-4">
+        <div class="flex justify-between font-bold text-lg mb-4 text-slate-800">
+          <span>Total Bill:</span>
+          <span>INR <span id="cart-total-price">0</span></span>
+        </div>
+        <button id="proceed-checkout-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-semibold text-center transition shadow-sm">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout & Payment Modal -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative my-8">
+      <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+      <h3 class="text-lg font-bold mb-1 text-slate-800">Checkout & Payment</h3>
+      <p class="text-xs text-slate-500 mb-4">Complete delivery details and select payment method</p>
+
+      <form id="order-form" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer / Company Name *</label>
+          <input type="text" id="cust-name" required placeholder="Ex: Mallick Enterprise" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Phone (WhatsApp) *</label>
+            <input type="tel" id="cust-phone" required placeholder="Ex: 9876543210" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">GSTIN (Optional)</label>
+            <input type="text" id="cust-gstin" placeholder="19AAAAA0000A1Z5" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Delivery Address *</label>
+          <textarea id="cust-address" required rows="2" placeholder="Full address..." class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+        </div>
+
+        <!-- Payment Method Selector -->
+        <div class="pt-2">
+          <label class="block text-xs font-semibold text-slate-700 mb-2">Choose Payment Option *</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
+              <input type="radio" name="pay-option" value="UPI" checked onchange="togglePaymentSection()" class="accent-blue-600">
+              <span class="text-xs font-bold text-slate-800">Scan UPI QR</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
+              <input type="radio" name="pay-option" value="COD" onchange="togglePaymentSection()" class="accent-blue-600">
+              <span class="text-xs font-bold text-slate-800">Cash on Delivery</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Dynamic UPI QR Scanner Box -->
+        <div id="upi-qr-box" class="bg-blue-50/60 border border-blue-200 rounded-xl p-4 text-center mt-3">
+          <p class="text-xs font-bold text-blue-900 mb-1">পাঞ্জাব ন্যাশনাল ব্যাংক (PNB) অফিসিয়াল QR</p>
+          <p class="text-[11px] text-slate-500 mb-3">Google Pay, PhonePe, Paytm or BHIM UPI</p>
+          
+          <div class="inline-block bg-white p-2.5 rounded-xl border border-blue-100 shadow-sm">
+            <img id="dynamic-qr-img" src="" alt="UPI QR Code" class="w-40 h-40 mx-auto object-contain">
+          </div>
+
+          <div class="mt-2 text-xs font-bold text-blue-800">
+            Amount: INR <span id="qr-amount-display">0</span>
+          </div>
+          <div class="mt-2">
+            <input type="text" id="upi-txn-id" placeholder="Enter UPI Ref / Transaction ID (after payment)" class="w-full border rounded-lg p-1.5 text-xs bg-white outline-none">
+          </div>
+        </div>
+
+        <button type="submit" id="confirm-order-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition mt-4 shadow-sm">
+          Confirm Order & Generate Invoice
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t py-4 text-center text-xs text-slate-500">
+    &copy; 2026 DWIPRAJ MALLICK - Wholesale & Retail Office Supplies
+  </footer>
+
+  <script>
+    // Configuration: You can change your UPI ID here
+    const MERCHANT_UPI_ID = "dwiprajmallick@pnb";
+    const MERCHANT_NAME = "DWIPRAJ MALLICK";
+
+    const fallbackProducts = [
+      { _id: "f1", name: "A4 Copier Paper (Rim)", category: "paper", price: 290, imageUrl: "https://placehold.co/300x200?text=A4+Paper", stockQuantity: 40, unit: "Rim" },
+      { _id: "f2", name: "Ball Pen Set (Pack of 10)", category: "pen", price: 100, imageUrl: "https://placehold.co/300x200?text=Ball+Pens", stockQuantity: 3, unit: "Box" },
+      { _id: "f3", name: "Office Document Folder (5 Pcs)", category: "folder", price: 250, imageUrl: "https://placehold.co/300x200?text=File+Folder", stockQuantity: 0, unit: "Set" },
+      { _id: "f4", name: "Metal Stapler with Pins", category: "desk", price: 160, imageUrl: "https://placehold.co/300x200?text=Stapler", stockQuantity: 15, unit: "Piece" },
+      { _id: "f5", name: "Color Sticky Notes", category: "paper", price: 75, imageUrl: "https://placehold.co/300x200?text=Sticky+Notes", stockQuantity: 4, unit: "Packet" },
+      { _id: "f6", name: "Desk Pen & Clip Stand", category: "desk", price: 180, imageUrl: "https://placehold.co/300x200?text=Pen+Stand", stockQuantity: 18, unit: "Piece" }
+    ];
+
+    let liveProducts = [];
+    let cart = [];
+    let selectedCategory = 'all';
+    let searchQuery = '';
+
+    const productGrid = document.getElementById("product-grid");
+    const searchInput = document.getElementById("search-input");
+    const productCount = document.getElementById("product-count");
+
+    async function loadProductsFromBackend() {
+      try {
+        const res = await fetch('/api/products');
+        const json = await res.json();
+        if (json.success && json.data.length > 0) {
+          liveProducts = json.data;
+        } else {
+          liveProducts = fallbackProducts;
+        }
+      } catch (err) {
+        liveProducts = fallbackProducts;
+      }
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const filtered = liveProducts.filter(item => {
+        const matchesCategory = (selectedCategory === 'all' || item.category === selectedCategory);
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      productCount.textContent = `Total Products: ${filtered.length}`;
+
+      if (filtered.length === 0) {
+        productGrid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">No products found.</div>`;
+        return;
+      }
+
+      productGrid.innerHTML = filtered.map(item => {
+        const isOutOfStock = item.stockQuantity <= 0;
+        const isLowStock = item.stockQuantity > 0 && item.stockQuantity <= 5;
+
+        let stockInfoHtml = '';
+        if (isOutOfStock) {
+          stockInfoHtml = `<span class="text-rose-600 font-bold text-xs">Out of Stock</span>`;
+        } else if (isLowStock) {
+          stockInfoHtml = `<span class="text-rose-600 font-bold text-xs">Low Stock: Only ${item.stockQuantity} left!</span>`;
+        } else {
+          stockInfoHtml = `<span class="text-slate-400 text-xs">Stock: ${item.stockQuantity} ${item.unit || 'Units'}</span>`;
+        }
+
+        return `
+          <div class="bg-white border ${isOutOfStock ? 'opacity-75 border-rose-200' : 'border-slate-200'} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <img src="${item.imageUrl || 'https://placehold.co/300x200?text=Stationery'}" alt="${item.name}" class="h-40 w-full object-cover">
+            <div class="p-4 flex flex-col flex-grow justify-between">
+              <div>
+                <div class="flex justify-between items-start gap-1">
+                  <h3 class="font-semibold text-slate-800 text-sm leading-snug">${item.name}</h3>
+                  <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium uppercase">${item.unit || 'Piece'}</span>
+                </div>
+                <p class="text-blue-600 font-bold mt-2">INR ${item.price}</p>
+                <div class="mt-1">${stockInfoHtml}</div>
+              </div>
+              
+              <button 
+                onclick="addToCart('${item._id}')" 
+                ${isOutOfStock ? 'disabled' : ''} 
+                class="mt-4 w-full ${isOutOfStock ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'} py-2 rounded-lg text-xs font-semibold transition shadow-sm">
+                ${isOutOfStock ? 'Unavailable' : 'Add to Cart'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.filterCategory = function(cat, ev) {
+      selectedCategory = cat;
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.classList.remove("bg-blue-600", "text-white", "shadow-sm");
+        btn.classList.add("bg-white", "text-slate-700", "border");
+      });
+      ev.target.classList.remove("bg-white", "text-slate-700", "border");
+      ev.target.classList.add("bg-blue-600", "text-white", "shadow-sm");
+      renderProducts();
+    };
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value.trim();
+      renderProducts();
+    });
+
+    window.addToCart = function(productId) {
+      const product = liveProducts.find(p => p._id === productId);
+      if (!product || product.stockQuantity <= 0) return;
+      
+      const existing = cart.find(item => item._id === productId);
+      if (existing) {
+        if (existing.quantity >= product.stockQuantity) {
+          alert(`Maximum available stock reached (${product.stockQuantity})`);
+          return;
+        }
+        existing.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+      updateCartUI();
+    };
+
+    window.changeQuantity = function(productId, delta) {
+      const item = cart.find(p => p._id === productId);
+      const product = liveProducts.find(p => p._id === productId);
+      if (!item) return;
+
+      if (delta > 0 && product && item.quantity >= product.stockQuantity) {
+        alert("Maximum available stock reached");
+        return;
+      }
+
+      item.quantity += delta;
+      if (item.quantity <= 0) { cart = cart.filter(p => p._id !== productId); }
+      updateCartUI();
+    };
+
+    window.removeItem = function(productId) {
+      cart = cart.filter(p => p._id !== productId);
+      updateCartUI();
+    };
+
+    function updateCartUI() {
+      const badge = document.getElementById("cart-count-badge");
+      const container = document.getElementById("cart-items-container");
+      const price = document.getElementById("cart-total-price");
+
+      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+      badge.textContent = totalCount;
+
+      if (cart.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-sm text-center py-8">Your cart is empty</p>`;
+        price.textContent = "0";
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="flex items-center justify-between border-b pb-3 pt-1">
+          <div class="flex-grow pr-2">
+            <p class="font-medium text-xs text-slate-800 leading-tight">${item.name}</p>
+            <p class="text-xs text-slate-500 mt-1">INR ${item.price} / ${item.unit || 'Piece'}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center border rounded bg-slate-50">
+              <button onclick="changeQuantity('${item._id}', -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 text-xs font-bold">-</button>
+              <span class="px-2 text-xs font-semibold text-slate-800">${item.quantity}</span>
+              <button onclick="changeQuantity('${item._id}', 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 text-xs font-bold">+</button>
+            </div>
+            <button onclick="removeItem('${item._id}')" class="text-red-500 hover:text-red-700 text-xs ml-1 font-semibold">x</button>
+          </div>
+        </div>
+      `).join("");
+
+      price.textContent = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+
+    const cartDrawer = document.getElementById("cart-drawer");
+    const checkoutModal = document.getElementById("checkout-modal");
+
+    document.getElementById("open-cart-btn").onclick = () => { cartDrawer.classList.remove("hidden"); cartDrawer.classList.add("flex"); };
+    document.getElementById("close-cart-btn").onclick = () => { cartDrawer.classList.add("hidden"); cartDrawer.classList.remove("flex"); };
+
+    document.getElementById("proceed-checkout-btn").onclick = () => {
+      if (cart.length === 0) return alert("Your cart is empty!");
+      cartDrawer.classList.add("hidden"); 
+      cartDrawer.classList.remove("flex");
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      document.getElementById('qr-amount-display').textContent = total;
+
+      // Generate Standard UPI String URL
+      const upiUrl = `upi://pay?pa=${MERCHANT_UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${total}&cu=INR&tn=${encodeURIComponent('Stationery Order')}`;
+      const qrApiUrl = `/pnb-qr.jpg`;
+      document.getElementById('dynamic-qr-img').src = qrApiUrl;
+
+      checkoutModal.classList.remove("hidden"); 
+      checkoutModal.classList.add("flex");
+    };
+
+    document.getElementById("close-modal-btn").onclick = () => {
+      checkoutModal.classList.add("hidden"); 
+      checkoutModal.classList.remove("flex");
+    };
+
+    function togglePaymentSection() {
+      const selected = document.querySelector('input[name="pay-option"]:checked').value;
+      const upiBox = document.getElementById('upi-qr-box');
+      if (selected === 'UPI') {
+        upiBox.classList.remove('hidden');
+      } else {
+        upiBox.classList.add('hidden');
+      }
+    }
+
+    document.getElementById("order-form").onsubmit = async function(e) {
+      e.preventDefault();
+
+      const paymentMethod = document.querySelector('input[name="pay-option"]:checked').value;
+      const upiTxnId = document.getElementById("upi-txn-id").value.trim();
+
+      const customer = {
+        name: document.getElementById("cust-name").value.trim(),
+        phone: document.getElementById("cust-phone").value.trim(),
+        address: document.getElementById("cust-address").value.trim(),
+        gstin: document.getElementById("cust-gstin").value.trim()
+      };
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const invoiceNumber = "INV-" + new Date().getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000);
+
+      localStorage.setItem('last_DWIPRAJ MALLICK_order', JSON.stringify({
+        invoiceNumber,
+        customer,
+        items: cart,
+        total,
+        paymentMethod,
+        transactionId: upiTxnId || 'N/A'
+      }));
+
+      let waMsg = `*New Order & Invoice: ${invoiceNumber}*\n\n`;
+      waMsg += `*Customer:* ${customer.name}\n*Phone:* ${customer.phone}\n*Address:* ${customer.address}\n`;
+      waMsg += `*Payment Mode:* ${paymentMethod}\n`;
+      if (upiTxnId) waMsg += `*UPI Txn Ref:* ${upiTxnId}\n`;
+      waMsg += `\n*Items:*\n`;
+      cart.forEach((i, idx) => { waMsg += `${idx+1}. ${i.name} x ${i.quantity} = INR ${i.price * i.quantity}\n`; });
+      waMsg += `\n*Total Amount:* INR ${total}`;
+
+      const waURL = `https://wa.me/919876543210?text=${encodeURIComponent(waMsg)}`;
+      window.open(waURL, "_blank");
+
+      window.location.href = '/invoice-view.html';
+    };
+
+    loadProductsFromBackend();
+  </script>
     <script>
-      async function loadAdminOrders() {
-        const tbody = document.getElementById('adminOrdersTableBody');
+      function showAdminSection(type) {
+        const invSection = document.querySelector('.grid, .main-content, #inventorySection') || document.querySelector('form')?.parentElement;
+        const ordSection = document.getElementById('section-orders');
+        const btnInv = document.getElementById('btn-tab-inventory');
+        const btnOrd = document.getElementById('btn-tab-orders');
+
+        if (type === 'orders') {
+          if (invSection) invSection.style.display = 'none';
+          if (ordSection) ordSection.style.display = 'block';
+          btnOrd.style.background = '#2563eb';
+          btnOrd.style.color = '#fff';
+          btnInv.style.background = '#e2e8f0';
+          btnInv.style.color = '#334155';
+          fetchAdminOrdersList();
+        } else {
+          if (invSection) invSection.style.display = '';
+          if (ordSection) ordSection.style.display = 'none';
+          btnInv.style.background = '#2563eb';
+          btnInv.style.color = '#fff';
+          btnOrd.style.background = '#e2e8f0';
+          btnOrd.style.color = '#334155';
+        }
+      }
+
+      async function fetchAdminOrdersList() {
+        const tbody = document.getElementById('ordersTableListBody');
+        const badge = document.getElementById('ordersCountBadge');
         try {
           const res = await fetch('/api/orders');
-          if (!res.ok) throw new Error('Failed to fetch');
+          if (!res.ok) throw new Error();
           const data = await res.json();
           const orders = Array.isArray(data) ? data : (data.orders || []);
+          if (badge) badge.innerText = orders.length;
 
           if (orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">কোনো নতুন অর্ডার পাওয়া যায়নি।</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:18px; color:#94a3b8;">এখনো পর্যন্ত কোনো কাস্টমার অর্ডার দেয়নি।</td></tr>';
             return;
           }
 
           tbody.innerHTML = orders.map(o => `
             <tr style="border-bottom:1px solid #f1f5f9;">
-              <td style="padding:12px; font-weight:600;">#${o.id || o._id || 'ORD-NEW'}</td>
-              <td style="padding:12px;">${o.customerName || o.name || 'N/A'}<br><small style="color:#64748b;">${o.phone || ''}</small></td>
-              <td style="padding:12px;">${o.shippingAddress || o.address || 'N/A'}</td>
-              <td style="padding:12px;">${o.items ? (typeof o.items === 'string' ? o.items : JSON.stringify(o.items)) : 'অফিস স্টেশনারি সামগ্রী'}</td>
-              <td style="padding:12px; font-weight:bold; color:#16a34a;">₹${o.totalAmount || o.total || 0}</td>
-              <td style="padding:12px;"><span style="padding:3px 8px; border-radius:4px; font-size:12px; background:#e0f2fe; color:#0369a1;">${o.paymentMethod || 'UPI/COD'}</span></td>
-              <td style="padding:12px;">
-                <span style="padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; background:#dcfce7; color:#15803d;">
-                  ${o.status || 'Pending'}
-                </span>
-              </td>
+              <td style="padding:10px 14px; font-weight:600;">#${o.id || o._id || 'ORD'}</td>
+              <td style="padding:10px 14px;">${o.customerName || o.name || 'গ্রাহক'}<br><small style="color:#64748b;">${o.phone || ''}</small></td>
+              <td style="padding:10px 14px;">${o.shippingAddress || o.address || 'N/A'}</td>
+              <td style="padding:10px 14px;">${typeof o.items === 'object' ? JSON.stringify(o.items) : (o.items || 'স্টেশনারি পণ্য')}</td>
+              <td style="padding:10px 14px; font-weight:bold; color:#16a34a;">₹${o.totalAmount || o.total || 0}</td>
+              <td style="padding:10px 14px;"><span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-size:12px;">${o.paymentMethod || 'UPI/Cash'}</span></td>
+              <td style="padding:10px 14px;"><span style="background:#dcfce7; color:#15803d; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:600;">${o.status || 'Pending'}</span></td>
             </tr>
           `).join('');
-        } catch (err) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">অর্ডার তথ্য লোড করতে ব্যর্থ হয়েছে বা কোনো অর্ডার ডাটা নেই।</td></tr>';
+        } catch(e) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:18px; color:#ef4444;">অর্ডারের তথ্য আনতে ব্যর্থ হয়েছে।</td></tr>';
         }
       }
-
-      function switchAdminTab(tabName) {
-        document.querySelectorAll('.admin-tab-content').forEach(el => el.style.display = 'none');
-        const target = document.getElementById('tab-' + tabName);
-        if (target) target.style.display = 'block';
-      }
-
-      // পেজ লোড হওয়ার সাথে সাথে অর্ডার লোড হবে
-      document.addEventListener('DOMContentLoaded', loadAdminOrders);
+      document.addEventListener('DOMContentLoaded', fetchAdminOrdersList);
     </script>
 </body>
 </html>
+
+
 
