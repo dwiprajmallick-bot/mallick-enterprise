@@ -41,6 +41,39 @@
 
   <!-- Main Catalog -->
   <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+    <!-- Top Unified Admin Menu -->
+    <div style="background:#1e293b; padding:12px 20px; border-radius:8px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+      <span style="color:#f8fafc; font-weight:bold; font-size:16px; margin-right:15px;">🏢 MALLICK ENTERPRISE ADMIN</span>
+      <button onclick="toggleSection('inventory')" style="background:#2563eb; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">📦 ইনভেন্টরি ও প্রোডাক্ট</button>
+      <button onclick="toggleSection('orders')" style="background:#059669; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">🛒 কাস্টমারদের অর্ডার সমূহ</button>
+      <button onclick="toggleSection('accounts')" style="background:#475569; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">💳 অ্যাকাউন্টস ও পেমেন্ট</button>
+    </div>
+
+    <!-- Orders Section -->
+    <div id="admin-orders-view" style="display:none; background:#ffffff; padding:20px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:25px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3 style="margin:0; color:#0f172a;">🛒 সমস্ত কাস্টমার অর্ডারের তালিকা</h3>
+        <button onclick="loadLiveOrders()" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">🔄 রিফ্রেশ তালিকা</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
+          <thead>
+            <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1; color:#334155;">
+              <th style="padding:10px;">আইডি</th>
+              <th style="padding:10px;">গ্রাহকের নাম ও ফোন</th>
+              <th style="padding:10px;">ঠিকানা</th>
+              <th style="padding:10px;">অর্ডারকৃত পণ্য</th>
+              <th style="padding:10px;">মূল্য</th>
+              <th style="padding:10px;">পেমেন্ট</th>
+              <th style="padding:10px;">স্ট্যাটাস</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="7" style="text-align:center; padding:15px; color:#64748b;">লোড হচ্ছে...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <!-- Admin Internal Top Navigation Tabs -->
     <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">
       <button id="btn-tab-inventory" onclick="showAdminSection('inventory')" style="padding:10px 20px; font-weight:bold; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">
@@ -501,6 +534,50 @@
         }
       }
       document.addEventListener('DOMContentLoaded', fetchAdminOrdersList);
+    </script>
+    <script>
+      function toggleSection(sec) {
+        const invBox = document.querySelector('.grid, .main-content, #inventorySection') || document.querySelector('form')?.parentElement;
+        const ordBox = document.getElementById('admin-orders-view');
+        
+        if (sec === 'orders') {
+          if (invBox) invBox.style.display = 'none';
+          if (ordBox) ordBox.style.display = 'block';
+          loadLiveOrders();
+        } else if (sec === 'inventory') {
+          if (invBox) invBox.style.display = '';
+          if (ordBox) ordBox.style.display = 'none';
+        } else {
+          if (invBox) invBox.style.display = '';
+          if (ordBox) ordBox.style.display = 'none';
+        }
+      }
+
+      async function loadLiveOrders() {
+        const tbody = document.getElementById('ordersTableBody');
+        try {
+          const res = await fetch('/api/orders');
+          const data = await res.json();
+          const list = Array.isArray(data) ? data : (data.orders || []);
+          if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:15px; color:#94a3b8;">এখনো কোনো নতুন অর্ডার আসেনি।</td></tr>';
+            return;
+          }
+          tbody.innerHTML = list.map(o => `
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:10px; font-weight:600;">#${o.id || o._id || 'ORD'}</td>
+              <td style="padding:10px;">${o.customerName || o.name || 'গ্রাহক'}<br><small style="color:#64748b;">${o.phone || ''}</small></td>
+              <td style="padding:10px;">${o.shippingAddress || o.address || 'N/A'}</td>
+              <td style="padding:10px;">${typeof o.items === 'object' ? JSON.stringify(o.items) : (o.items || 'স্টেশনারি')}</td>
+              <td style="padding:10px; font-weight:bold; color:#16a34a;">₹${o.totalAmount || o.total || 0}</td>
+              <td style="padding:10px;"><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-size:12px;">${o.paymentMethod || 'UPI/Cash'}</span></td>
+              <td style="padding:10px;"><span style="background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:12px; font-weight:600;">${o.status || 'Pending'}</span></td>
+            </tr>
+          `).join('');
+        } catch(e) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:15px; color:#ef4444;">অর্ডারের তথ্য আনা যায়নি।</td></tr>';
+        }
+      }
     </script>
 </body>
 </html>
