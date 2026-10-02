@@ -323,6 +323,78 @@
 
     fetchExistingProducts();
   </script>
+    <!-- Orders Section Inside Admin Panel -->
+    <div id="tab-orders" class="admin-tab-content active" style="margin-top:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2>🛒 গ্রাহকদের সমস্ত অর্ডার তালিকা</h2>
+        <button onclick="loadAdminOrders()" style="padding:8px 15px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">🔄 রিফ্রেশ অর্ডার</button>
+      </div>
+
+      <div style="overflow-x:auto; background:#fff; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+          <thead>
+            <tr style="background:#f1f5f9; border-bottom:2px solid #e2e8f0; font-weight:600;">
+              <th style="padding:12px;">অর্ডার আইডি</th>
+              <th style="padding:12px;">গ্রাহকের নাম ও ফোন</th>
+              <th style="padding:12px;">ঠিকানা</th>
+              <th style="padding:12px;">আইটেম / পণ্য</th>
+              <th style="padding:12px;">মোট মূল্য</th>
+              <th style="padding:12px;">পেমেন্ট মেথড</th>
+              <th style="padding:12px;">স্ট্যাটাস</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTableBody">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:20px; color:#64748b;">অর্ডার লোড হচ্ছে...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      async function loadAdminOrders() {
+        const tbody = document.getElementById('adminOrdersTableBody');
+        try {
+          const res = await fetch('/api/orders');
+          if (!res.ok) throw new Error('Failed to fetch');
+          const data = await res.json();
+          const orders = Array.isArray(data) ? data : (data.orders || []);
+
+          if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">কোনো নতুন অর্ডার পাওয়া যায়নি।</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = orders.map(o => `
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:12px; font-weight:600;">#${o.id || o._id || 'ORD-NEW'}</td>
+              <td style="padding:12px;">${o.customerName || o.name || 'N/A'}<br><small style="color:#64748b;">${o.phone || ''}</small></td>
+              <td style="padding:12px;">${o.shippingAddress || o.address || 'N/A'}</td>
+              <td style="padding:12px;">${o.items ? (typeof o.items === 'string' ? o.items : JSON.stringify(o.items)) : 'অফিস স্টেশনারি সামগ্রী'}</td>
+              <td style="padding:12px; font-weight:bold; color:#16a34a;">₹${o.totalAmount || o.total || 0}</td>
+              <td style="padding:12px;"><span style="padding:3px 8px; border-radius:4px; font-size:12px; background:#e0f2fe; color:#0369a1;">${o.paymentMethod || 'UPI/COD'}</span></td>
+              <td style="padding:12px;">
+                <span style="padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; background:#dcfce7; color:#15803d;">
+                  ${o.status || 'Pending'}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        } catch (err) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">অর্ডার তথ্য লোড করতে ব্যর্থ হয়েছে বা কোনো অর্ডার ডাটা নেই।</td></tr>';
+        }
+      }
+
+      function switchAdminTab(tabName) {
+        document.querySelectorAll('.admin-tab-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('tab-' + tabName);
+        if (target) target.style.display = 'block';
+      }
+
+      // পেজ লোড হওয়ার সাথে সাথে অর্ডার লোড হবে
+      document.addEventListener('DOMContentLoaded', loadAdminOrders);
+    </script>
 </body>
 </html>
 
