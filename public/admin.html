@@ -1,1 +1,279 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mallick Enterprise - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900 text-white px-6 py-4 flex flex-wrap justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <span class="font-bold text-xl tracking-wide text-blue-400">MALLICK</span>
+      <span class="text-sm bg-slate-800 px-2 py-1 rounded text-slate-300">Inventory Manager</span>
+    </div>
+
+    <!-- লাল চিহ্নিত জায়গায় দৃশ্যমান বাটনসমূহ -->
+    <div class="flex items-center gap-3 mt-2 sm:mt-0">
+      <button type="button" onclick="switchAdminTab('inventory')" id="btn-inv" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow">
+        📦 Inventory
+      </button>
+      <button type="button" onclick="switchAdminTab('orders')" id="btn-ord" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow">
+        🛒 Orders
+      </button>
+      <button type="button" onclick="switchAdminTab('accounts')" id="btn-acc" class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow">
+        💳 Account & Payment
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6">
+    <!-- ১. ইনভেন্টরি ও প্রোডাক্ট সেকশন -->
+    <div id="section-inventory" class="block">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Add Product Form -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <h2 class="text-lg font-bold text-slate-800 mb-1">Add Product</h2>
+          <p class="text-xs text-slate-500 mb-4">Enter product details below.</p>
+          <form id="addProductForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Product Title *</label>
+              <input type="text" id="prodTitle" placeholder="Ex: A4 Paper 75 GSM" required class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:outline-blue-500" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                <select id="prodCategory" class="w-full text-sm border border-slate-300 rounded-lg p-2.5">
+                  <option value="Paper & Notebooks">Paper & Notebooks</option>
+                  <option value="Pens & Markers">Pens & Markers</option>
+                  <option value="Files & Folders">Files & Folders</option>
+                  <option value="Desk Accessories">Desk Accessories</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Unit Type</label>
+                <select id="prodUnit" class="w-full text-sm border border-slate-300 rounded-lg p-2.5">
+                  <option value="Piece">Piece</option>
+                  <option value="Box">Box</option>
+                  <option value="Rim">Rim</option>
+                  <option value="Set">Set</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Price (INR) *</label>
+                <input type="number" id="prodPrice" placeholder="Ex: 250" required class="w-full text-sm border border-slate-300 rounded-lg p-2.5" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Initial Stock *</label>
+                <input type="number" id="prodStock" placeholder="Ex: 50" required class="w-full text-sm border border-slate-300 rounded-lg p-2.5" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">GST Tax Rate (%)</label>
+              <select id="prodTax" class="w-full text-sm border border-slate-300 rounded-lg p-2.5">
+                <option value="18">18%</option>
+                <option value="12">12%</option>
+                <option value="5">5%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Image URL (Optional)</label>
+              <input type="url" id="prodImage" placeholder="https://example.com/image.jpg" class="w-full text-sm border border-slate-300 rounded-lg p-2.5" />
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">
+              Save Product
+            </button>
+          </form>
+        </div>
+
+        <!-- Inventory Catalog -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800">Inventory Catalog</h2>
+              <p class="text-xs text-slate-500" id="invCountLabel">Available products in database</p>
+            </div>
+            <button onclick="fetchInventoryCatalog()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded border border-slate-300">
+              Refresh
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Item</th>
+                  <th class="p-3">Price</th>
+                  <th class="p-3">Stock</th>
+                  <th class="p-3">Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryListBody" class="divide-y divide-slate-100">
+                <tr><td colspan="4" class="p-4 text-center text-slate-400">Loading catalog...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ২. কাস্টমারদের অর্ডার সেকশন -->
+    <div id="section-orders" class="hidden">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Customer Orders</h2>
+            <p class="text-xs text-slate-500">Live order details and status</p>
+          </div>
+          <button onclick="fetchAdminOrders()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded transition">
+            Refresh Orders
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+              <tr>
+                <th class="p-3">Order ID</th>
+                <th class="p-3">Customer</th>
+                <th class="p-3">Address</th>
+                <th class="p-3">Items</th>
+                <th class="p-3">Amount</th>
+                <th class="p-3">Payment</th>
+                <th class="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrdersBody" class="divide-y divide-slate-100">
+              <tr><td colspan="7" class="p-4 text-center text-slate-400">Loading orders...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ৩. একাউন্ট ও পেমেন্ট সেকশন -->
+    <div id="section-accounts" class="hidden">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-800 mb-2">Accounts & Payment Overview</h2>
+        <p class="text-xs text-slate-500 mb-6">Financial settlements and transaction history.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+            <span class="text-xs text-slate-500">Total Sales</span>
+            <div class="text-2xl font-bold text-slate-800 mt-1" id="totalSalesAmount">₹0.00</div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+            <span class="text-xs text-slate-500">Total Received (UPI/Bank)</span>
+            <div class="text-2xl font-bold text-emerald-600 mt-1">₹0.00</div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+            <span class="text-xs text-slate-500">Pending Receivables</span>
+            <div class="text-2xl font-bold text-amber-600 mt-1">₹0.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function switchAdminTab(tab) {
+      document.getElementById('section-inventory').classList.add('hidden');
+      document.getElementById('section-orders').classList.add('hidden');
+      document.getElementById('section-accounts').classList.add('hidden');
+
+      if (tab === 'orders') {
+        document.getElementById('section-orders').classList.remove('hidden');
+        fetchAdminOrders();
+      } else if (tab === 'accounts') {
+        document.getElementById('section-accounts').classList.remove('hidden');
+      } else {
+        document.getElementById('section-inventory').classList.remove('hidden');
+        fetchInventoryCatalog();
+      }
+    }
+
+    async function fetchInventoryCatalog() {
+      const tbody = document.getElementById('inventoryListBody');
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.products || []);
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">No products available in database.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = items.map(p => `
+          <tr>
+            <td class="p-3 font-medium text-slate-800">${p.title || p.name}</td>
+            <td class="p-3 font-semibold text-slate-700">₹${p.price}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${p.stock > 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${p.stock}</span></td>
+            <td class="p-3 text-xs text-slate-400">Active</td>
+          </tr>
+        `).join('');
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-rose-500">Unable to load catalog.</td></tr>';
+      }
+    }
+
+    async function fetchAdminOrders() {
+      const tbody = document.getElementById('adminOrdersBody');
+      try {
+        const res = await fetch('/api/orders');
+        const data = await res.json();
+        const orders = Array.isArray(data) ? data : (data.orders || []);
+        if (orders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">No customer orders found.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = orders.map(o => `
+          <tr>
+            <td class="p-3 font-semibold text-slate-700">#${o.id || o._id || 'ORD'}</td>
+            <td class="p-3">${o.customerName || o.name || 'Customer'}<br><span class="text-xs text-slate-400">${o.phone || ''}</span></td>
+            <td class="p-3 text-xs text-slate-600">${o.shippingAddress || o.address || 'N/A'}</td>
+            <td class="p-3 text-xs text-slate-600">${typeof o.items === 'object' ? JSON.stringify(o.items) : (o.items || 'Stationery')}</td>
+            <td class="p-3 font-bold text-emerald-600">₹${o.totalAmount || o.total || 0}</td>
+            <td class="p-3 text-xs"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">${o.paymentMethod || 'UPI/Cash'}</span></td>
+            <td class="p-3 text-xs"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">${o.status || 'Pending'}</span></td>
+          </tr>
+        `).join('');
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-rose-500">Failed to fetch orders.</td></tr>';
+      }
+    }
+
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('prodTitle').value,
+        category: document.getElementById('prodCategory').value,
+        unit: document.getElementById('prodUnit').value,
+        price: parseFloat(document.getElementById('prodPrice').value),
+        stock: parseInt(document.getElementById('prodStock').value),
+        taxRate: parseFloat(document.getElementById('prodTax').value),
+        imageUrl: document.getElementById('prodImage').value
+      };
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          alert('Product saved successfully!');
+          e.target.reset();
+          fetchInventoryCatalog();
+        } else {
+          alert('Failed to save product.');
+        }
+      } catch(err) {
+        alert('Error saving product.');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchInventoryCatalog);
+  </script>
+</body>
+</html>
