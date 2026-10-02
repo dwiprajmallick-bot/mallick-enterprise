@@ -782,16 +782,7 @@ export default function OrdersPage() {
 
                         <td className="px-5 py-5">
                           <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                (window.location.href =
-                                  `/admin/orders/${order.id}`)
-                              }
-                              className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-extrabold text-slate-700 hover:bg-slate-100"
-                            >
-                              View
-                            </button>
+                            
 
                             {!cancelled && (
                               <button

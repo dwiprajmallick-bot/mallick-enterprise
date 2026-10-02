@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -451,16 +451,7 @@ export default function CreateSalesReturnPage() {
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
           <div>
-            <button
-              onClick={() =>
-                router.push(
-                  `/admin/orders/${order.id}`
-                )
-              }
-              className="mb-3 text-sm font-bold text-blue-600 hover:underline"
-            >
-              ← Back to Order
-            </button>
+            
 
             <h1 className="text-3xl font-black text-slate-900">
               Create Sales Return

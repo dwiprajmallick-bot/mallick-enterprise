@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -304,12 +304,7 @@ export default function AdminQuotesPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Link
-              href="/admin/orders"
-              className="rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm"
-            >
-              Orders
-            </Link>
+            
 
             <Link
               href="/admin/audit-logs"

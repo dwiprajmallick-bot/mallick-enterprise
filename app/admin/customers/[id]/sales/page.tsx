@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -430,14 +430,7 @@ export default function CustomerSalesPage() {
             </p>
           </div>
 
-          <button
-            onClick={() =>
-              router.push("/admin/orders")
-            }
-            className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white"
-          >
-            All Orders
-          </button>
+          
         </div>
 
         {/* ERROR */}
@@ -753,16 +746,7 @@ export default function CustomerSalesPage() {
                         className="border-b border-slate-100"
                       >
                         <td className="px-5 py-4">
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/admin/orders/${order.id}`
-                              )
-                            }
-                            className="font-black text-blue-600 hover:underline"
-                          >
-                            {order.orderNumber}
-                          </button>
+                          
                         </td>
 
                         <td className="px-5 py-4 text-slate-500">

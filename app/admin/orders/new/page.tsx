@@ -286,13 +286,7 @@ export default function NewOrderPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => router.push("/admin/orders")}
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700"
-          >
-            Back to Orders
-          </button>
+          
         </div>
 
         {loading && (
